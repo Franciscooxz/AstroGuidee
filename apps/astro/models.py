@@ -214,6 +214,7 @@ class Profile(models.Model):
     weekly_xp = models.PositiveIntegerField('XP de la semana', default=0)
     week_key = models.CharField('Semana', max_length=10, blank=True, default='')
     frame = models.CharField('Marco de avatar', max_length=40, blank=True, default='')
+    onboarded = models.BooleanField('Vio la bienvenida', default=False)
 
     class Meta:
         verbose_name = 'Perfil'

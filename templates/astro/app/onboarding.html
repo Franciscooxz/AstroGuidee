@@ -1,0 +1,59 @@
+{% extends 'astro/base.html' %}
+{% block title %}Bienvenido — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap auth-wrap">
+  <div class="auth-card onb-card">
+
+    <div class="onb-slide" data-step="0">
+      <div class="ico-wrap">{% include 'astro/_icon.html' with name='rocket' size=64 %}</div>
+      <h1>¡Bienvenido a AstroGuide! 🚀</h1>
+      <p class="auth-sub">Vas a aprender el universo con tarjetas claras y quizzes cortos. La idea no es memorizar, sino <b>entender</b> la astronomia y la astrofisica.</p>
+    </div>
+
+    <div class="onb-slide" data-step="1" hidden>
+      <div class="ico-wrap">{% include 'astro/_icon.html' with name='orbit' size=64 %}</div>
+      <h1>Tu ruta de aprendizaje</h1>
+      <p class="auth-sub">Completa cada leccion y su quiz para <b>desbloquear la siguiente</b>. Cada acierto suma <b>XP</b>, y estudiar dias seguidos crea una <b>racha</b> 🔥.</p>
+    </div>
+
+    <div class="onb-slide" data-step="2" hidden>
+      <div class="ico-wrap">{% include 'astro/_icon.html' with name='coin' size=64 %}</div>
+      <h1>Cosmos, logros y ligas</h1>
+      <p class="auth-sub">Ganas <b>Cosmos</b> para gastar en la tienda (power-ups y marcos de avatar), desbloqueas <b>logros</b> y compites cada semana en las <b>ligas</b>.</p>
+    </div>
+
+    <div class="onb-dots">
+      <span class="onb-dot on"></span><span class="onb-dot"></span><span class="onb-dot"></span>
+    </div>
+
+    <button type="button" id="onbNext" class="btn btn-primary btn-block">Siguiente</button>
+    <form method="post" id="onbFinish" hidden>
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary btn-block">¡Empezar a aprender! →</button>
+    </form>
+    <button type="button" id="onbSkip" class="btn btn-block" style="margin-top:10px;">Saltar</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.onb-slide'));
+  var dots = Array.prototype.slice.call(document.querySelectorAll('.onb-dot'));
+  var next = document.getElementById('onbNext');
+  var finish = document.getElementById('onbFinish');
+  var skip = document.getElementById('onbSkip');
+  var i = 0;
+  function render() {
+    slides.forEach(function (s, k) { s.hidden = k !== i; });
+    dots.forEach(function (d, k) { d.classList.toggle('on', k === i); });
+    var last = i === slides.length - 1;
+    next.hidden = last;
+    finish.hidden = !last;
+    skip.hidden = last;
+  }
+  next.addEventListener('click', function () { if (i < slides.length - 1) { i++; render(); } });
+  skip.addEventListener('click', function () { finish.querySelector('button').click(); });
+  render();
+})();
+</script>
+{% endblock %}

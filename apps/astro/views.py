@@ -81,7 +81,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('astro:ruta')
+            return redirect('astro:onboarding')  # a la bienvenida
     else:
         form = RegisterForm()
     return render(request, 'astro/auth/register.html', {'form': form})
@@ -177,6 +177,18 @@ def ruta(request):
         'coins': profile.coins,
         'active_nav': 'ruta',
     })
+
+
+@login_required(login_url=LOGIN_URL)
+def onboarding(request):
+    profile = _get_profile(request.user)
+    if request.method == 'POST':
+        profile.onboarded = True
+        profile.save(update_fields=['onboarded'])
+        return redirect('astro:ruta')
+    if profile.onboarded:
+        return redirect('astro:ruta')
+    return render(request, 'astro/app/onboarding.html', {})
 
 
 @login_required(login_url=LOGIN_URL)

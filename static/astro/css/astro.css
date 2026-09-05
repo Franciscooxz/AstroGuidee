@@ -649,6 +649,13 @@ a.sbadge.link:hover { border-color: var(--purple-soft); transform: translateY(-2
 .league-empty p { margin-bottom: 16px; }
 .lg-hint { color: var(--text-faint); font-size: 13px; text-align: center; margin-top: 10px; }
 
+/* ===== Onboarding / bienvenida ===== */
+.onb-card { max-width: 480px; }
+.onb-slide h1 { font-size: 26px; margin-top: 4px; }
+.onb-dots { display: flex; gap: 8px; justify-content: center; margin: 22px 0 22px; }
+.onb-dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,.18); transition: all .2s; }
+.onb-dot.on { background: linear-gradient(135deg, var(--blue), var(--purple)); transform: scale(1.25); }
+
 /* ===== Selector de avatar ===== */
 .avatar-picker { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 22px; }
 .av-opt { cursor: pointer; }
