@@ -1,0 +1,12 @@
+{% extends 'astro/base.html' %}
+{% block title %}Contraseña cambiada — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap auth-wrap">
+  <div class="auth-card">
+    <div class="ico-wrap">{% include 'astro/_icon.html' with name='check' size=52 %}</div>
+    <h1>¡Listo!</h1>
+    <p class="auth-sub">Tu contraseña se cambio correctamente. Ya puedes iniciar sesion.</p>
+    <a href="{% url 'astro:login' %}" class="btn btn-primary btn-block">Entrar</a>
+  </div>
+</div>
+{% endblock %}

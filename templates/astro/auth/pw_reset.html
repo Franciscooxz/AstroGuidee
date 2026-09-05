@@ -1,0 +1,21 @@
+{% extends 'astro/base.html' %}
+{% block title %}Recuperar contraseña — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap auth-wrap">
+  <div class="auth-card">
+    <div class="ico-wrap">{% include 'astro/_icon.html' with name='orbit' size=52 %}</div>
+    <h1>Recuperar contraseña</h1>
+    <p class="auth-sub">Escribe tu correo y te enviaremos un enlace para restablecerla.</p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="form-row">
+        <label for="{{ form.email.id_for_label }}">Correo electronico</label>
+        {{ form.email }}
+        {% for error in form.email.errors %}<small class="err">{{ error }}</small>{% endfor %}
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Enviar enlace</button>
+    </form>
+    <p class="auth-alt"><a href="{% url 'astro:login' %}">← Volver a entrar</a></p>
+  </div>
+</div>
+{% endblock %}

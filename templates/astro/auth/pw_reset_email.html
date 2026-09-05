@@ -1,0 +1,13 @@
+{% autoescape off %}
+Hola,
+
+Recibimos una solicitud para restablecer la contraseña de tu cuenta en AstroGuide.
+
+Entra en este enlace para crear una nueva contraseña:
+
+{{ protocol }}://{{ domain }}{% url 'astro:password_reset_confirm' uidb64=uid token=token %}
+
+Si tu no lo pediste, puedes ignorar este correo; tu contraseña seguira igual.
+
+— El equipo de AstroGuide
+{% endautoescape %}
