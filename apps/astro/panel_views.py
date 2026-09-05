@@ -140,7 +140,7 @@ def cards(request):
 def card_edit(request, pk=None):
     obj = get_object_or_404(Card, pk=pk) if pk else None
     if request.method == 'POST':
-        form = CardForm(request.POST, instance=obj)
+        form = CardForm(request.POST, request.FILES, instance=obj)
         if form.is_valid():
             form.save()
             return redirect('gestion:cards')

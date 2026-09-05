@@ -2,7 +2,11 @@
 <div class="flip" tabindex="0" style="--_glow: {{ card.category.accent|default:'#8b5cff' }}44;">
   <div class="flip-inner">
     <div class="flip-face flip-front">
-      <div class="ico-wrap">{% include 'astro/_icon.html' with name=card.icon size=76 %}</div>
+      {% if card.image %}
+        <div class="card-img-wrap"><img class="card-img" src="{{ card.image.url }}" alt="{{ card.title }}" loading="lazy"></div>
+      {% else %}
+        <div class="ico-wrap">{% include 'astro/_icon.html' with name=card.icon size=76 %}</div>
+      {% endif %}
       <h3>{{ card.title }}</h3>
       {% if card.subtitle %}<div class="sub">{{ card.subtitle }}</div>{% endif %}
       <div class="hint">Toca para saber mas ↺</div>

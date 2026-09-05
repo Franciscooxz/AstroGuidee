@@ -46,7 +46,7 @@ class CardForm(StyledForm):
     class Meta:
         model = Card
         fields = ['lesson', 'title', 'subtitle', 'summary', 'content', 'fun_fact',
-                  'icon', 'order', 'is_active']
+                  'icon', 'image', 'image_credit', 'order', 'is_active']
         widgets = {'icon': forms.Select(choices=ICON_CHOICES)}
 
 
