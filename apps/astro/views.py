@@ -14,7 +14,7 @@ from django.views.decorators.http import require_POST
 
 from .forms import LoginForm, RegisterForm, StyledPasswordChangeForm
 from .models import (Achievement, Category, Lesson, LessonProgress, Profile,
-                     ShopItem, UserAchievement)
+                     Purchase, ShopItem, UserAchievement)
 
 LOGIN_URL = 'astro:login'
 AVATAR_ICONS = ['orbit', 'sun', 'earth', 'saturn', 'galaxy', 'blackhole',
@@ -385,8 +385,12 @@ def settings_view(request):
 @login_required(login_url=LOGIN_URL)
 def store(request):
     profile = _get_profile(request.user)
+    items = ShopItem.objects.filter(is_active=True)
+    owned = set(Purchase.objects.filter(user=request.user).values_list('item__key', flat=True))
     return render(request, 'astro/app/store.html', {
-        'items': ShopItem.objects.filter(is_active=True),
+        'powerups': [i for i in items if i.effect != 'frame'],
+        'frames': [i for i in items if i.effect == 'frame'],
+        'owned': owned,
         'profile': profile,
         'active_nav': 'store',
     })
@@ -397,16 +401,45 @@ def store(request):
 def buy_item(request, key):
     item = get_object_or_404(ShopItem, key=key, is_active=True)
     profile = _get_profile(request.user)
+
+    if item.effect == 'frame':
+        if Purchase.objects.filter(user=request.user, item=item).exists():
+            messages.info(request, f'Ya tienes "{item.name}".')
+            return redirect('astro:store')
+
     if profile.coins < item.price:
         messages.error(request, f'Te faltan Cosmos para comprar "{item.name}".')
         return redirect('astro:store')
+
     profile.coins -= item.price
     if item.effect == 'streak_freeze':
         profile.streak_freezes += 1
     elif item.effect == 'double_xp':
         profile.double_xp_pending = True
+    elif item.effect == 'frame':
+        Purchase.objects.create(user=request.user, item=item)
+        profile.frame = item.key  # lo equipa al comprarlo
     profile.save()
     messages.success(request, f'Compraste "{item.name}". Te quedan {profile.coins} Cosmos.')
+    return redirect('astro:store')
+
+
+@login_required(login_url=LOGIN_URL)
+@require_POST
+def equip_frame(request, key):
+    profile = _get_profile(request.user)
+    if key == 'none':
+        profile.frame = ''
+        profile.save()
+        messages.success(request, 'Marco quitado.')
+        return redirect('astro:store')
+    item = get_object_or_404(ShopItem, key=key, effect='frame', is_active=True)
+    if not Purchase.objects.filter(user=request.user, item=item).exists():
+        messages.error(request, 'No tienes ese marco.')
+        return redirect('astro:store')
+    profile.frame = item.key
+    profile.save()
+    messages.success(request, f'Marco "{item.name}" equipado.')
     return redirect('astro:store')
 
 

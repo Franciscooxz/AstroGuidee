@@ -213,6 +213,7 @@ class Profile(models.Model):
     avatar = models.CharField('Avatar (icono)', max_length=40, blank=True, default='')
     weekly_xp = models.PositiveIntegerField('XP de la semana', default=0)
     week_key = models.CharField('Semana', max_length=10, blank=True, default='')
+    frame = models.CharField('Marco de avatar', max_length=40, blank=True, default='')
 
     class Meta:
         verbose_name = 'Perfil'
@@ -255,6 +256,7 @@ class ShopItem(models.Model):
     EFFECTS = [
         ('streak_freeze', 'Congelar racha'),
         ('double_xp', 'Doble XP en el proximo quiz'),
+        ('frame', 'Marco de avatar (cosmetico)'),
     ]
     key = models.SlugField('Clave', max_length=40, unique=True)
     name = models.CharField('Nombre', max_length=100)
@@ -272,6 +274,22 @@ class ShopItem(models.Model):
 
     def __str__(self):
         return f'{self.name} ({self.price} Cosmos)'
+
+
+class Purchase(models.Model):
+    """Registro de un cosmetico comprado por un usuario (para saber que posee)."""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='purchases',
+                             on_delete=models.CASCADE)
+    item = models.ForeignKey(ShopItem, related_name='purchases', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Compra'
+        verbose_name_plural = 'Compras'
+        unique_together = ('user', 'item')
+
+    def __str__(self):
+        return f'{self.user} · {self.item.name}'
 
 
 class Achievement(models.Model):

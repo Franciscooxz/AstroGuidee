@@ -17,8 +17,9 @@
     </div>
     {% endif %}
 
+    <h3 class="shop-sec">Power-ups</h3>
     <div class="shop-grid">
-      {% for item in items %}
+      {% for item in powerups %}
       <div class="shop-card">
         <div class="shop-ic">{% include 'astro/_icon.html' with name=item.icon size=44 %}</div>
         <h3>{{ item.name }}</h3>
@@ -35,10 +36,35 @@
           </button>
         </form>
       </div>
-      {% empty %}
-      <p style="color:var(--text-dim)">La tienda esta vacia por ahora.</p>
       {% endfor %}
     </div>
+
+    {% if frames %}
+    <h3 class="shop-sec">Marcos de avatar</h3>
+    <div class="shop-grid">
+      {% for item in frames %}
+      <div class="shop-card">
+        <div class="frame-preview av-{{ item.key }}">{{ user.username|first|upper }}</div>
+        <h3>{{ item.name }}</h3>
+        <p>{{ item.description }}</p>
+        {% if item.key in owned %}
+          {% if profile.frame == item.key %}
+            <form method="post" action="{% url 'astro:equip_frame' 'none' %}">{% csrf_token %}
+              <button type="submit" class="btn buy-btn on">Equipado ✓ (quitar)</button></form>
+          {% else %}
+            <form method="post" action="{% url 'astro:equip_frame' item.key %}">{% csrf_token %}
+              <button type="submit" class="btn btn-primary buy-btn">Equipar</button></form>
+          {% endif %}
+        {% else %}
+          <form method="post" action="{% url 'astro:buy_item' item.key %}">{% csrf_token %}
+            <button type="submit" class="btn btn-primary buy-btn" {% if profile.coins < item.price %}disabled{% endif %}>
+              {% include 'astro/_icon.html' with name='coin' size=18 %} {{ item.price }}
+            </button></form>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
   </section>
 </div>
 {% endblock %}

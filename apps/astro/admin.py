@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import (Category, Lesson, Card, CardProgress, LessonProgress,
-                     Question, Option, Profile, ShopItem, Achievement, UserAchievement)
+                     Question, Option, Profile, ShopItem, Achievement, UserAchievement,
+                     Purchase)
 
 
 class LessonInline(admin.TabularInline):
@@ -83,6 +84,12 @@ class ShopItemAdmin(admin.ModelAdmin):
     list_display = ['name', 'effect', 'price', 'order', 'is_active']
     list_editable = ['price', 'order', 'is_active']
     prepopulated_fields = {'key': ('name',)}
+
+
+@admin.register(Purchase)
+class PurchaseAdmin(admin.ModelAdmin):
+    list_display = ['user', 'item', 'created_at']
+    search_fields = ['user__username', 'item__name']
 
 
 @admin.register(Achievement)

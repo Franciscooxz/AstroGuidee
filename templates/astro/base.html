@@ -35,7 +35,7 @@
         {% if user.is_authenticated %}
           {% if user.is_staff %}<a href="{% url 'gestion:dashboard' %}" class="btn">Gestion</a>{% endif %}
           <a href="{% url 'astro:profile' %}" class="nav-user {% if active_nav == 'profile' %}active{% endif %}" title="Ver mi perfil">
-            <span class="nav-avatar">{% if astro_profile.avatar %}{% include 'astro/_icon.html' with name=astro_profile.avatar size=18 %}{% else %}{{ user.username|first|upper }}{% endif %}</span>
+            <span class="nav-avatar {% if astro_profile.frame %}av-{{ astro_profile.frame }}{% endif %}">{% if astro_profile.avatar %}{% include 'astro/_icon.html' with name=astro_profile.avatar size=18 %}{% else %}{{ user.username|first|upper }}{% endif %}</span>
             <span class="nav-uname">{{ user.username }}</span>
           </a>
           <a href="{% url 'astro:logout' %}" class="btn">Salir</a>

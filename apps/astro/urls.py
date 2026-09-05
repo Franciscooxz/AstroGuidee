@@ -38,6 +38,7 @@ urlpatterns = [
     path('app/ligas/', views.league, name='league'),
     path('app/tienda/', views.store, name='store'),
     path('app/tienda/comprar/<slug:key>/', views.buy_item, name='buy_item'),
+    path('app/tienda/equipar/<slug:key>/', views.equip_frame, name='equip_frame'),
     path('app/leccion/<slug:slug>/', views.lesson, name='lesson'),
     path('app/leccion/<slug:slug>/completar/', views.complete_lesson, name='complete_lesson'),
     path('app/leccion/<slug:slug>/quiz/', views.quiz, name='quiz'),

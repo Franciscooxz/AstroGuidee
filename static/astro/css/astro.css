@@ -584,7 +584,17 @@ a.sbadge.link:hover { border-color: var(--purple-soft); transform: translateY(-2
 .msg.success { background: rgba(61,220,132,.14); border-color: rgba(61,220,132,.4); color: #b7f5d0; }
 .msg.error { background: rgba(255,107,129,.14); border-color: rgba(255,107,129,.4); color: #ffc0cb; }
 
+.shop-sec { font-size: 16px; margin: 6px 0 14px; color: var(--text-dim); }
+.shop-sec + .shop-grid { margin-bottom: 26px; }
 .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+.frame-preview { width: 62px; height: 62px; border-radius: 50%; margin: 4px auto 12px; display: grid; place-items: center;
+  font-size: 24px; font-weight: 700; color: #fff; background: linear-gradient(150deg, var(--blue), var(--purple)); }
+.buy-btn.on { background: rgba(255,255,255,.08); border-color: var(--glass-hi); }
+
+/* Marcos de avatar (cosmeticos) */
+.av-frame-gold { box-shadow: 0 0 0 3px #f5b301, 0 0 14px 2px rgba(245,179,1,.6); }
+.av-frame-nebula { box-shadow: 0 0 0 3px #6ea8ff, 0 0 15px 2px rgba(139,92,255,.75); }
+.av-frame-ember { box-shadow: 0 0 0 3px #ff7a3c, 0 0 14px 2px rgba(255,90,40,.65); }
 .shop-card {
   padding: 26px 24px; border-radius: 20px; text-align: center;
   background: var(--glass-bg); border: 1px solid var(--glass-brd);

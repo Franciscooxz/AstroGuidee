@@ -10,7 +10,7 @@
 
     <!-- Cabecera del perfil -->
     <div class="profile-hero">
-      <div class="avatar">{% if profile.avatar %}{% include 'astro/_icon.html' with name=profile.avatar size=46 %}{% else %}{{ user.username|first|upper }}{% endif %}</div>
+      <div class="avatar {% if profile.frame %}av-{{ profile.frame }}{% endif %}">{% if profile.avatar %}{% include 'astro/_icon.html' with name=profile.avatar size=46 %}{% else %}{{ user.username|first|upper }}{% endif %}</div>
       <div class="profile-id">
         <h1>{{ user.username }}</h1>
         {% if user.email %}<p class="pi-email">{{ user.email }}</p>{% endif %}
