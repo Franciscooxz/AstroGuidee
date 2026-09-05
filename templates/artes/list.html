@@ -1,0 +1,67 @@
+﻿{% extends "base.html" %}
+{% load static %}
+{% block title %}Artes & Disciplinas{% endblock %}
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero-content">
+      <div class="section-label mb-2"><span class="label-line"></span> Más de 50 disciplinas</div>
+      <h1 class="page-hero-title">Artes <span class="text-yellow">&</span> Disciplinas</h1>
+      <p class="page-hero-sub">Descubrimos y potenciamos los dones y talentos que Dios nos dio.</p>
+    </div>
+  </div>
+</section>
+
+<section class="py-6">
+  <div class="container">
+    <!-- Filter by category -->
+    {% if categories %}
+    <div class="filter-tabs mb-5">
+      <a href="/artes/" class="filter-tab {% if not active_category %}active{% endif %}">
+        <i class="fas fa-th me-1"></i> Todas
+      </a>
+      {% for cat in categories %}
+      <a href="/artes/?cat={{ cat.slug }}" class="filter-tab {% if active_category.slug == cat.slug %}active{% endif %}">
+        <i class="fas {{ cat.icon }} me-1"></i> {{ cat.name }}
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if disciplines %}
+    <div class="row g-4">
+      {% for disc in disciplines %}
+      <div class="col-sm-6 col-lg-4 col-xl-3">
+        <a href="{{ disc.get_absolute_url }}" class="discipline-card">
+          <div class="disc-card-inner">
+            {% if disc.image %}
+            <div class="disc-card-img" style="background-image:url('{{ disc.image.url }}')"></div>
+            {% else %}
+            <div class="disc-card-img disc-no-img">
+              <i class="fas {{ disc.category.icon }} fa-2x text-yellow"></i>
+            </div>
+            {% endif %}
+            <div class="disc-card-body">
+              <span class="disc-category">{{ disc.category.name }}</span>
+              <h4 class="disc-name">{{ disc.name }}</h4>
+              {% if disc.description %}
+              <p class="disc-desc">{{ disc.description|striptags|truncatewords:12 }}</p>
+              {% endif %}
+              <span class="disc-link">Explorar <i class="fas fa-arrow-right"></i></span>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-palette fa-3x text-yellow mb-3"></i>
+      <h4>Cargando disciplinas...</h4>
+      <p class="text-muted">Pronto aparecerán todas nuestras artes y disciplinas aquí.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

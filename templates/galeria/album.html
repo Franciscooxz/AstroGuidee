@@ -1,0 +1,57 @@
+﻿{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ album.title }} ({{ album.year }}){% endblock %}
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero-content">
+      <div class="section-label mb-2"><span class="label-line"></span> {{ album.year }}</div>
+      <h1 class="page-hero-title">{{ album.title }}</h1>
+      {% if album.description %}<p class="page-hero-sub">{{ album.description }}</p>{% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="py-6">
+  <div class="container">
+    <a href="/galeria/" class="btn am-btn-outline mb-4"><i class="fas fa-arrow-left me-2"></i>Volver a la Galería</a>
+    {% if photos %}
+    <div class="photo-grid">
+      {% for photo in photos %}
+      <div class="photo-item" onclick="openLightbox('{{ photo.image.url }}', '{{ photo.caption }}')">
+        <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:'Foto AM' }}" loading="lazy">
+        {% if photo.caption %}<div class="photo-overlay"><span>{{ photo.caption }}</span></div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-images fa-3x text-yellow mb-3"></i>
+      <h4>Sin fotos todavía</h4>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+    <img id="lightbox-img" src="" alt="">
+    <p id="lightbox-caption" class="lightbox-caption"></p>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function openLightbox(url, caption) {
+  document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox-caption').textContent = caption;
+  document.getElementById('lightbox').classList.add('active');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+}
+</script>
+{% endblock %}

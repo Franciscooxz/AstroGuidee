@@ -1,0 +1,39 @@
+{% extends 'astro/panel/base.html' %}
+{% block title %}Estadisticas — Gestion{% endblock %}
+{% block content %}
+<div class="panel-head">
+  <div><h1>Estadisticas</h1><p>Como va AstroGuide y sus usuarios.</p></div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-tile"><span class="stat-ic">{% include 'astro/_icon.html' with name='user' size=30 %}</span><b>{{ n_users }}</b><span>Usuarios</span></div>
+  <div class="stat-tile"><span class="stat-ic">{% include 'astro/_icon.html' with name='flame' size=30 %}</span><b>{{ active_week }}</b><span>Activos (7 dias)</span></div>
+  <div class="stat-tile"><span class="stat-ic">{% include 'astro/_icon.html' with name='check' size=30 %}</span><b>{{ total_completions }}</b><span>Lecciones completadas</span></div>
+  <div class="stat-tile"><span class="stat-ic">{% include 'astro/_icon.html' with name='star' size=30 %}</span><b>{{ total_xp }}</b><span>XP total otorgado</span></div>
+  <div class="stat-tile"><span class="stat-ic">{% include 'astro/_icon.html' with name='rocket' size=30 %}</span><b>{{ total_achievements }}</b><span>Logros desbloqueados</span></div>
+  <div class="stat-tile"><span class="stat-ic">{% include 'astro/_icon.html' with name='quiz' size=30 %}</span><b>{{ perfect_quizzes }}</b><span>Quizzes perfectos</span></div>
+</div>
+
+<div class="stats-cols">
+  <div class="stats-card">
+    <h3>Lecciones mas completadas</h3>
+    <table class="p-table">
+      <tbody>
+      {% for l in top_lessons %}
+        <tr><td><b>{{ l.title }}</b><br><small>{{ l.category.name }}</small></td><td class="num">{{ l.completions }}</td></tr>
+      {% empty %}<tr><td class="empty">Sin datos</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="stats-card">
+    <h3>Mas dificiles (menos completadas)</h3>
+    <table class="p-table">
+      <tbody>
+      {% for l in hardest %}
+        <tr><td><b>{{ l.title }}</b><br><small>{{ l.category.name }}</small></td><td class="num">{{ l.completions }}</td></tr>
+      {% empty %}<tr><td class="empty">Sin datos</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

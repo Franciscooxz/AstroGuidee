@@ -1,0 +1,39 @@
+{% extends 'astro/base.html' %}
+{% block title %}Liga semanal — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap">
+  <section class="section">
+    <div class="section-head">
+      <div><h2><span class="bar"></span>Liga semanal</h2>
+        <p>Ranking por XP ganado esta semana. Se reinicia cada lunes.</p></div>
+      {% if my_rank %}<div class="my-rank">Tu puesto: <b>#{{ my_rank }}</b></div>{% endif %}
+    </div>
+
+    <div class="league-list">
+      {% for p in top %}
+      <div class="lg-row {% if p.user == user %}me{% endif %} {% if forloop.counter <= 3 %}top{{ forloop.counter }}{% endif %}">
+        <span class="lg-rank">{% if forloop.counter <= 3 %}<span class="medal">{{ forloop.counter }}</span>{% else %}{{ forloop.counter }}{% endif %}</span>
+        <span class="lg-av">{% if p.avatar %}{% include 'astro/_icon.html' with name=p.avatar size=22 %}{% else %}{{ p.user.username|first|upper }}{% endif %}</span>
+        <span class="lg-name">{{ p.user.username }}{% if p.user == user %} <small>(tu)</small>{% endif %}</span>
+        <span class="lg-xp">{% include 'astro/_icon.html' with name='star' size=18 %} {{ p.weekly_xp }}</span>
+      </div>
+      {% empty %}
+      <div class="league-empty">
+        <p>Aun nadie ha ganado XP esta semana. ¡Completa una leccion y ponte primero!</p>
+        <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Ir a mi ruta</a>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% if top and not my_rank %}
+    <div class="lg-row me out">
+      <span class="lg-rank">–</span>
+      <span class="lg-av">{% if astro_profile.avatar %}{% include 'astro/_icon.html' with name=astro_profile.avatar size=22 %}{% else %}{{ user.username|first|upper }}{% endif %}</span>
+      <span class="lg-name">{{ user.username }} <small>(tu)</small></span>
+      <span class="lg-xp">{% include 'astro/_icon.html' with name='star' size=18 %} {{ my_weekly }}</span>
+    </div>
+    <p class="lg-hint">Gana XP esta semana para entrar en el ranking.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "panel/base.html" %}
+{% block title %}{% if obj %}Editar Post{% else %}Nuevo Post{% endif %}{% endblock %}
+{% block page_title %}{% if obj %}Editar Post{% else %}Nuevo Post{% endif %}{% endblock %}
+{% block breadcrumb %}<a href="/panel/blog/">Blog</a> / {% if obj %}Editar{% else %}Nuevo{% endif %}{% endblock %}
+{% block panel_content %}
+<form method="post" enctype="multipart/form-data">
+{% csrf_token %}
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="am-card mb-4">
+      <div class="am-card-header"><h5>Contenido</h5></div>
+      <div class="am-card-body">
+        <div class="am-form-group">
+          <label class="am-form-label">Titulo *</label>
+          <input type="text" name="title" class="am-form-control" value="{{ obj.title|default:'' }}" required>
+        </div>
+        <div class="am-form-group">
+          <label class="am-form-label">Resumen</label>
+          <textarea name="excerpt" class="am-form-control" rows="3">{{ obj.excerpt|default:'' }}</textarea>
+        </div>
+        <div class="am-form-group">
+          <label class="am-form-label">Contenido *</label>
+          <textarea name="content" class="am-form-control rich-editor">{{ obj.content|default:'' }}</textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="am-card mb-4">
+      <div class="am-card-header"><h5>Publicacion</h5></div>
+      <div class="am-card-body">
+        <div class="am-form-group">
+          <label class="am-checkbox-label">
+            <input type="checkbox" name="is_published" class="am-checkbox" {% if obj and obj.is_published %}checked{% endif %}>
+            Publicado
+          </label>
+        </div>
+        <div class="am-form-group">
+          <label class="am-checkbox-label">
+            <input type="checkbox" name="is_featured" class="am-checkbox" {% if obj and obj.is_featured %}checked{% endif %}>
+            Destacado en home
+          </label>
+        </div>
+        <button type="submit" class="btn-am-primary" style="width:100%;justify-content:center;margin-top:8px"><i class="fas fa-save"></i> Guardar</button>
+        <a href="/panel/blog/" class="btn-am-secondary" style="width:100%;justify-content:center;margin-top:8px">Cancelar</a>
+      </div>
+    </div>
+    <div class="am-card mb-4">
+      <div class="am-card-header"><h5>Portada</h5></div>
+      <div class="am-card-body">
+        {% if obj and obj.cover %}<div class="current-img mb-2"><img src="{{ obj.cover.url }}" alt=""></div>{% endif %}
+        <input type="file" name="cover" class="am-form-control" accept="image/*">
+      </div>
+    </div>
+    <div class="am-card">
+      <div class="am-card-header"><h5>Categoria</h5></div>
+      <div class="am-card-body">
+        <select name="category" class="am-form-control">
+          <option value="">Sin categoria</option>
+          {% for cat in categories %}
+          <option value="{{ cat.pk }}" {% if obj and obj.category_id == cat.pk %}selected{% endif %}>{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+{% endblock %}

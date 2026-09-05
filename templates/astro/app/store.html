@@ -1,0 +1,44 @@
+{% extends 'astro/base.html' %}
+{% block title %}Tienda — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap">
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <h2><span class="bar"></span>Tienda</h2>
+        <p>Gana Cosmos completando lecciones y gastalos aqui.</p>
+      </div>
+      <div class="coins-balance">{% include 'astro/_icon.html' with name='coin' size=26 %} <b>{{ profile.coins }}</b> Cosmos</div>
+    </div>
+
+    {% if messages %}
+    <div class="msgs">
+      {% for m in messages %}<div class="msg {{ m.tags }}">{{ m }}</div>{% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="shop-grid">
+      {% for item in items %}
+      <div class="shop-card">
+        <div class="shop-ic">{% include 'astro/_icon.html' with name=item.icon size=44 %}</div>
+        <h3>{{ item.name }}</h3>
+        <p>{{ item.description }}</p>
+        {% if item.effect == 'streak_freeze' %}
+          <div class="owned">Tienes: <b>{{ profile.streak_freezes }}</b></div>
+        {% elif item.effect == 'double_xp' %}
+          <div class="owned">{% if profile.double_xp_pending %}Activo para tu proximo quiz{% else %}&nbsp;{% endif %}</div>
+        {% endif %}
+        <form method="post" action="{% url 'astro:buy_item' item.key %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary buy-btn" {% if profile.coins < item.price %}disabled{% endif %}>
+            {% include 'astro/_icon.html' with name='coin' size=18 %} {{ item.price }}
+          </button>
+        </form>
+      </div>
+      {% empty %}
+      <p style="color:var(--text-dim)">La tienda esta vacia por ahora.</p>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

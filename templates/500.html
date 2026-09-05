@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Error del servidor — Artistic Mold</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #0d0d0d;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+    }
+    .error-wrap { max-width: 560px; }
+    .error-code {
+      font-size: clamp(100px, 20vw, 160px);
+      font-weight: 900;
+      line-height: 1;
+      color: #1a1a1a;
+      position: relative;
+      display: inline-block;
+    }
+    .error-code::after {
+      content: '500';
+      position: absolute;
+      inset: 0;
+      color: #F5C518;
+      clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+    }
+    .error-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      margin: 24px 0 12px;
+    }
+    .error-desc {
+      color: #888;
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+    .btn-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #F5C518;
+      color: #000;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px 28px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-home:hover { background: #d4a400; color: #000; }
+    .divider {
+      width: 48px;
+      height: 3px;
+      background: #F5C518;
+      margin: 0 auto 24px;
+    }
+    .icon-wrap {
+      font-size: 28px;
+      color: #F5C518;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="error-wrap">
+    <div class="error-code">500</div>
+    <div class="divider"></div>
+    <div class="icon-wrap"><i class="fas fa-wrench"></i></div>
+    <h1 class="error-title">Error interno del servidor</h1>
+    <p class="error-desc">Algo salió mal de nuestro lado.<br>Estamos trabajando para solucionarlo. Intenta de nuevo en unos minutos.</p>
+    <a href="/" class="btn-home"><i class="fas fa-home"></i> Volver al inicio</a>
+  </div>
+</body>
+</html>

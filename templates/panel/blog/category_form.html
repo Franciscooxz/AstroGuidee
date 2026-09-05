@@ -1,0 +1,29 @@
+{% extends "panel/base.html" %}
+{% block title %}{% if obj %}Editar Categoría{% else %}Nueva Categoría{% endif %}{% endblock %}
+{% block page_title %}{% if obj %}Editar Categoría{% else %}Nueva Categoría{% endif %} del Blog{% endblock %}
+{% block breadcrumb %}<a href="/panel/blog/">Blog</a> / <a href="/panel/blog/categorias/">Categorías</a> / {% if obj %}Editar{% else %}Nueva{% endif %}{% endblock %}
+{% block panel_content %}
+<div class="row">
+  <div class="col-12">
+    <div class="am-card">
+      <div class="am-card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="am-form-group">
+            <label class="am-form-label">Nombre *</label>
+            <input type="text" name="name" class="am-form-control" value="{{ obj.name|default:'' }}" required placeholder="Ej: Eventos">
+          </div>
+          <div class="am-form-group" style="max-width:200px">
+            <label class="am-form-label">Orden</label>
+            <input type="number" name="order" class="am-form-control" value="{{ obj.order|default:0 }}">
+          </div>
+          <div style="display:flex;gap:10px;margin-top:10px">
+            <button type="submit" class="btn-am-primary"><i class="fas fa-save"></i> Guardar</button>
+            <a href="/panel/blog/categorias/" class="btn-am-secondary">Cancelar</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

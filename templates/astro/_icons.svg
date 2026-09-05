@@ -1,0 +1,176 @@
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <radialGradient id="g-sun" cx="42%" cy="35%" r="72%">
+      <stop offset="0%" stop-color="#fff6c2"/><stop offset="45%" stop-color="#ffcf33"/><stop offset="100%" stop-color="#ff7a00"/>
+    </radialGradient>
+    <radialGradient id="g-mercury" cx="40%" cy="32%" r="75%">
+      <stop offset="0%" stop-color="#d8d3cb"/><stop offset="55%" stop-color="#a39a8c"/><stop offset="100%" stop-color="#6b6357"/>
+    </radialGradient>
+    <radialGradient id="g-venus" cx="40%" cy="32%" r="75%">
+      <stop offset="0%" stop-color="#ffe9b8"/><stop offset="55%" stop-color="#e8b96b"/><stop offset="100%" stop-color="#b07d33"/>
+    </radialGradient>
+    <radialGradient id="g-earth" cx="40%" cy="32%" r="75%">
+      <stop offset="0%" stop-color="#7ec8ff"/><stop offset="55%" stop-color="#2f7fd6"/><stop offset="100%" stop-color="#123f7a"/>
+    </radialGradient>
+    <radialGradient id="g-mars" cx="40%" cy="32%" r="75%">
+      <stop offset="0%" stop-color="#ff9e6b"/><stop offset="55%" stop-color="#d1502a"/><stop offset="100%" stop-color="#8a2e17"/>
+    </radialGradient>
+    <radialGradient id="g-jupiter" cx="40%" cy="32%" r="75%">
+      <stop offset="0%" stop-color="#f4dcc0"/><stop offset="55%" stop-color="#cda579"/><stop offset="100%" stop-color="#916640"/>
+    </radialGradient>
+    <radialGradient id="g-saturn" cx="40%" cy="32%" r="75%">
+      <stop offset="0%" stop-color="#f6e6c4"/><stop offset="55%" stop-color="#d9b877"/><stop offset="100%" stop-color="#9e7c3f"/>
+    </radialGradient>
+    <radialGradient id="g-uranus" cx="40%" cy="32%" r="75%">
+      <stop offset="0%" stop-color="#c9f6f2"/><stop offset="55%" stop-color="#78d7d3"/><stop offset="100%" stop-color="#3c8f92"/>
+    </radialGradient>
+    <radialGradient id="g-neptune" cx="40%" cy="32%" r="75%">
+      <stop offset="0%" stop-color="#8fb3ff"/><stop offset="55%" stop-color="#3f5fd6"/><stop offset="100%" stop-color="#1e2f8a"/>
+    </radialGradient>
+    <linearGradient id="g-ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f6e6c4"/><stop offset="100%" stop-color="#a07f43"/>
+    </linearGradient>
+    <radialGradient id="g-coin" cx="40%" cy="35%" r="72%">
+      <stop offset="0%" stop-color="#fff2b0"/><stop offset="50%" stop-color="#ffce4d"/><stop offset="100%" stop-color="#e59a12"/>
+    </radialGradient>
+    <radialGradient id="g-star" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#ffffff"/><stop offset="55%" stop-color="#b18bff"/><stop offset="100%" stop-color="#6ea8ff"/>
+    </radialGradient>
+    <radialGradient id="g-galaxy" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#ffffff"/><stop offset="40%" stop-color="#b18bff"/><stop offset="100%" stop-color="#4f7cff"/>
+    </radialGradient>
+    <radialGradient id="g-bh" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#05060f"/><stop offset="62%" stop-color="#05060f"/>
+      <stop offset="72%" stop-color="#ffb03a"/><stop offset="86%" stop-color="#ff5ea8"/><stop offset="100%" stop-color="#8b5cff00"/>
+    </radialGradient>
+  </defs>
+
+  <!-- ===== Planetas ===== -->
+  <symbol id="i-sun" viewBox="0 0 64 64">
+    <g stroke="#ffcf5a" stroke-width="3" stroke-linecap="round">
+      <line x1="32" y1="4" x2="32" y2="12"/><line x1="32" y1="52" x2="32" y2="60"/>
+      <line x1="4" y1="32" x2="12" y2="32"/><line x1="52" y1="32" x2="60" y2="32"/>
+      <line x1="12" y1="12" x2="17" y2="17"/><line x1="47" y1="47" x2="52" y2="52"/>
+      <line x1="52" y1="12" x2="47" y2="17"/><line x1="17" y1="47" x2="12" y2="52"/>
+    </g>
+    <circle cx="32" cy="32" r="15" fill="url(#g-sun)"/>
+  </symbol>
+  <symbol id="i-mercury" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="20" fill="url(#g-mercury)"/>
+    <circle cx="24" cy="26" r="3" fill="#000" opacity=".12"/><circle cx="39" cy="38" r="4" fill="#000" opacity=".12"/>
+  </symbol>
+  <symbol id="i-venus" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="20" fill="url(#g-venus)"/>
+    <ellipse cx="30" cy="27" rx="12" ry="3" fill="#fff" opacity=".18"/><ellipse cx="34" cy="37" rx="10" ry="2.5" fill="#000" opacity=".08"/>
+  </symbol>
+  <symbol id="i-earth" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="20" fill="url(#g-earth)"/>
+    <path d="M20 28c4-3 7 1 11-1s6 2 9 0c-1 5-5 6-8 5s-3 3-7 3-6-4-5-7z" fill="#3fae57" opacity=".92"/>
+    <path d="M38 40c3 0 6 2 7 4-3 1-7 0-9-2z" fill="#3fae57" opacity=".9"/>
+    <ellipse cx="26" cy="24" rx="6" ry="3" fill="#fff" opacity=".2"/>
+  </symbol>
+  <symbol id="i-mars" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="20" fill="url(#g-mars)"/>
+    <circle cx="26" cy="28" r="4" fill="#000" opacity=".12"/><ellipse cx="40" cy="36" rx="6" ry="3" fill="#000" opacity=".1"/>
+    <circle cx="34" cy="20" r="3" fill="#fff" opacity=".85"/>
+  </symbol>
+  <symbol id="i-jupiter" viewBox="0 0 64 64">
+    <clipPath id="c-jup"><circle cx="32" cy="32" r="20"/></clipPath>
+    <circle cx="32" cy="32" r="20" fill="url(#g-jupiter)"/>
+    <g clip-path="url(#c-jup)">
+      <rect x="12" y="24" width="40" height="3.5" fill="#a9784c" opacity=".55"/>
+      <rect x="12" y="33" width="40" height="4" fill="#8a5f38" opacity=".5"/>
+      <rect x="12" y="42" width="40" height="3" fill="#a9784c" opacity=".5"/>
+      <ellipse cx="38" cy="37" rx="5" ry="3" fill="#c0432a" opacity=".8"/>
+    </g>
+  </symbol>
+  <symbol id="i-saturn" viewBox="0 0 64 64">
+    <ellipse cx="32" cy="34" rx="29" ry="9" fill="none" stroke="url(#g-ring)" stroke-width="3.5" transform="rotate(-20 32 34)"/>
+    <circle cx="32" cy="30" r="15" fill="url(#g-saturn)"/>
+    <path d="M9 41 A29 9 -20 0 0 55 27" fill="none" stroke="url(#g-ring)" stroke-width="3.5" opacity=".95"/>
+  </symbol>
+  <symbol id="i-uranus" viewBox="0 0 64 64">
+    <ellipse cx="32" cy="32" rx="7" ry="26" fill="none" stroke="#bfeeea" stroke-width="2" opacity=".55"/>
+    <circle cx="32" cy="32" r="18" fill="url(#g-uranus)"/>
+  </symbol>
+  <symbol id="i-neptune" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="20" fill="url(#g-neptune)"/>
+    <ellipse cx="30" cy="26" rx="11" ry="2.5" fill="#fff" opacity=".18"/>
+    <circle cx="38" cy="37" r="3.5" fill="#0d1a4d" opacity=".7"/>
+  </symbol>
+
+  <!-- ===== Categorias / conceptos ===== -->
+  <symbol id="i-orbit" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="7" fill="url(#g-sun)"/>
+    <ellipse cx="32" cy="32" rx="26" ry="12" fill="none" stroke="#8b5cff" stroke-width="2.5" transform="rotate(-25 32 32)"/>
+    <circle cx="9" cy="24" r="3.5" fill="#6ea8ff"/>
+  </symbol>
+  <symbol id="i-star" viewBox="0 0 64 64">
+    <path d="M32 6l6 18 18 6-18 6-6 18-6-18-18-6 18-6z" fill="url(#g-star)"/>
+  </symbol>
+  <symbol id="i-galaxy" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="5" fill="#fff"/>
+    <path d="M32 32c0-12 20-14 24-4 3 8-6 18-16 16" fill="none" stroke="url(#g-galaxy)" stroke-width="4" stroke-linecap="round"/>
+    <path d="M32 32c0 12-20 14-24 4-3-8 6-18 16-16" fill="none" stroke="url(#g-galaxy)" stroke-width="4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-blackhole" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="26" fill="url(#g-bh)"/>
+    <circle cx="32" cy="32" r="12" fill="#05060f"/>
+  </symbol>
+  <symbol id="i-atom" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="4.5" fill="#b18bff"/>
+    <g fill="none" stroke="#6ea8ff" stroke-width="2.5">
+      <ellipse cx="32" cy="32" rx="24" ry="10"/>
+      <ellipse cx="32" cy="32" rx="24" ry="10" transform="rotate(60 32 32)"/>
+      <ellipse cx="32" cy="32" rx="24" ry="10" transform="rotate(120 32 32)"/>
+    </g>
+  </symbol>
+
+  <!-- ===== Interfaz ===== -->
+  <symbol id="i-cards" viewBox="0 0 64 64">
+    <rect x="14" y="20" width="30" height="34" rx="5" fill="none" stroke="#6ea8ff" stroke-width="3" transform="rotate(-8 29 37)"/>
+    <rect x="22" y="14" width="30" height="34" rx="5" fill="none" stroke="#b18bff" stroke-width="3"/>
+  </symbol>
+  <symbol id="i-quiz" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="24" fill="none" stroke="#8b5cff" stroke-width="3"/>
+    <path d="M25 26c0-5 4-8 8-7 4 1 6 5 4 9-1 3-5 3-5 7" fill="none" stroke="#6ea8ff" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="32" cy="45" r="2.4" fill="#6ea8ff"/>
+  </symbol>
+  <symbol id="i-progress" viewBox="0 0 64 64">
+    <path d="M10 42l12-12 9 8 20-20" fill="none" stroke="#6ea8ff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M44 18h8v8" fill="none" stroke="#b18bff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-rocket" viewBox="0 0 64 64">
+    <path d="M32 6c8 6 12 15 12 26l-6 6H26l-6-6C20 21 24 12 32 6z" fill="none" stroke="#b18bff" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="32" cy="26" r="4.5" fill="#6ea8ff"/>
+    <path d="M26 46l-6 10 8-4m14-6l6 10-8-4" fill="none" stroke="#8b5cff" stroke-width="3" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-planet" viewBox="0 0 64 64">
+    <ellipse cx="32" cy="34" rx="26" ry="8" fill="none" stroke="#8b5cff" stroke-width="3" transform="rotate(-20 32 34)" opacity=".8"/>
+    <circle cx="32" cy="30" r="15" fill="url(#g-star)"/>
+  </symbol>
+  <symbol id="i-coin" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="22" fill="url(#g-coin)" stroke="#c9800a" stroke-width="2"/>
+    <circle cx="32" cy="32" r="15" fill="none" stroke="#c9800a" stroke-width="1.5" opacity=".6"/>
+    <path d="M32 22l3 6 6 .8-4.5 4.2 1.1 6.2-5.6-3-5.6 3 1.1-6.2-4.5-4.2 6-.8z" fill="#fff6d6"/>
+  </symbol>
+  <symbol id="i-flame" viewBox="0 0 64 64">
+    <path d="M34 6c2 10-8 12-9 22-1 6 3 9 3 9s-6-1-8-6c-3 5-4 9-4 13a16 16 0 0 0 32 0c0-13-8-18-10-24-2 4-5 5-6 3-1-3 4-6 2-13z"
+          fill="url(#g-sun)"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 64 64">
+    <path d="M14 34l12 12 24-27" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-x" viewBox="0 0 64 64">
+    <path d="M20 20l24 24M44 20L20 44" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-user" viewBox="0 0 64 64">
+    <circle cx="32" cy="23" r="11" fill="none" stroke="currentColor" stroke-width="4"/>
+    <path d="M13 53c2-11 9-16 19-16s17 5 19 16" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-lock" viewBox="0 0 64 64">
+    <rect x="16" y="29" width="32" height="23" rx="5" fill="none" stroke="currentColor" stroke-width="4"/>
+    <path d="M22 29v-6a10 10 0 0 1 20 0v6" fill="none" stroke="currentColor" stroke-width="4"/>
+    <circle cx="32" cy="40" r="3.4" fill="currentColor"/>
+  </symbol>
+</svg>

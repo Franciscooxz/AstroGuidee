@@ -1,0 +1,85 @@
+﻿{% extends "base.html" %}
+{% block title %}Contacto{% endblock %}
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero-content">
+      <div class="section-label mb-2"><span class="label-line"></span> Estamos aquí</div>
+      <h1 class="page-hero-title">Contáctanos</h1>
+    </div>
+  </div>
+</section>
+
+<section class="py-6">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-5">
+        <h3 class="mb-4">Información de Contacto</h3>
+        <div class="contact-info-list">
+          {% if site_config.phone %}
+          <div class="contact-info-item">
+            <div class="ci-icon"><i class="fas fa-phone"></i></div>
+            <div><strong>Teléfono</strong><br>{{ site_config.phone }}</div>
+          </div>
+          {% endif %}
+          {% if site_config.whatsapp %}
+          <div class="contact-info-item">
+            <div class="ci-icon"><i class="fab fa-whatsapp"></i></div>
+            <div><strong>WhatsApp</strong><br><a href="https://wa.me/{{ site_config.whatsapp|cut:'+' }}" target="_blank">{{ site_config.whatsapp }}</a></div>
+          </div>
+          {% endif %}
+          {% if site_config.email %}
+          <div class="contact-info-item">
+            <div class="ci-icon"><i class="fas fa-envelope"></i></div>
+            <div><strong>Email</strong><br><a href="mailto:{{ site_config.email }}">{{ site_config.email }}</a></div>
+          </div>
+          {% endif %}
+          {% if site_config.address %}
+          <div class="contact-info-item">
+            <div class="ci-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div><strong>Ubicación</strong><br>{{ site_config.address }}</div>
+          </div>
+          {% endif %}
+        </div>
+        <div class="social-links mt-4">
+          {% if site_config.instagram_url %}<a href="{{ site_config.instagram_url }}" target="_blank" class="social-btn"><i class="fab fa-instagram"></i></a>{% endif %}
+          {% if site_config.facebook_url %}<a href="{{ site_config.facebook_url }}" target="_blank" class="social-btn"><i class="fab fa-facebook-f"></i></a>{% endif %}
+          {% if site_config.whatsapp %}<a href="https://wa.me/{{ site_config.whatsapp|cut:'+' }}" target="_blank" class="social-btn"><i class="fab fa-whatsapp"></i></a>{% endif %}
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="contact-form-box">
+          <h3 class="mb-4">Envíanos un Mensaje</h3>
+          <form method="post" action="/contacto/">
+            {% csrf_token %}
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="am-label">Nombre *</label>
+                <input type="text" name="nombre" class="am-input" required>
+              </div>
+              <div class="col-md-6">
+                <label class="am-label">Email *</label>
+                <input type="email" name="email" class="am-input" required>
+              </div>
+              <div class="col-12">
+                <label class="am-label">Asunto</label>
+                <input type="text" name="asunto" class="am-input">
+              </div>
+              <div class="col-12">
+                <label class="am-label">Mensaje *</label>
+                <textarea name="mensaje" class="am-input" rows="5" required></textarea>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn am-btn-yellow w-100">
+                  Enviar Mensaje <i class="fas fa-paper-plane ms-2"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

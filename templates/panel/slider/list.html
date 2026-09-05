@@ -1,0 +1,39 @@
+{% extends "panel/base.html" %}
+{% block title %}Slider{% endblock %}
+{% block page_title %}Slider Hero{% endblock %}
+{% block breadcrumb %}Slider{% endblock %}
+{% block topbar_actions %}
+<a href="/panel/slider/nuevo/" class="btn-am-primary"><i class="fas fa-plus"></i> Nuevo Slide</a>
+{% endblock %}
+{% block panel_content %}
+<div class="am-card">
+  <div class="am-card-body" style="padding:0">
+    {% if slides %}
+    <table class="am-table">
+      <thead><tr><th>Imagen</th><th>Titulo</th><th>Orden</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody>
+      {% for slide in slides %}
+      <tr>
+        <td>{% if slide.image %}<img src="{{ slide.image.url }}" alt="">{% endif %}</td>
+        <td><strong>{{ slide.title }}</strong><br><small style="color:#666">{{ slide.subtitle }}</small></td>
+        <td>{{ slide.order }}</td>
+        <td>{% if slide.is_active %}<span class="badge-active">Activo</span>{% else %}<span class="badge-inactive">Inactivo</span>{% endif %}</td>
+        <td>
+          <a href="/panel/slider/{{ slide.pk }}/editar/" class="btn-am-edit"><i class="fas fa-edit"></i></a>
+          <form method="post" action="/panel/slider/{{ slide.pk }}/eliminar/" style="display:inline" onsubmit="return confirm('Eliminar?')">
+            {% csrf_token %}<button type="submit" class="btn-am-danger"><i class="fas fa-trash"></i></button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div style="padding:40px;text-align:center;color:#555">
+      <i class="fas fa-images fa-3x mb-3" style="color:#F5C518"></i>
+      <p>No hay slides. <a href="/panel/slider/nuevo/" style="color:#F5C518">Agrega el primero</a></p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

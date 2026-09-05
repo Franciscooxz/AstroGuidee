@@ -1,0 +1,85 @@
+{% extends 'astro/base.html' %}
+{% block title %}Mi perfil — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap">
+  <section class="section">
+    <div class="section-head">
+      <div><h2><span class="bar"></span>Mi perfil</h2></div>
+      <a href="{% url 'astro:ruta' %}" class="btn">← Mi ruta</a>
+    </div>
+
+    <!-- Cabecera del perfil -->
+    <div class="profile-hero">
+      <div class="avatar">{% if profile.avatar %}{% include 'astro/_icon.html' with name=profile.avatar size=46 %}{% else %}{{ user.username|first|upper }}{% endif %}</div>
+      <div class="profile-id">
+        <h1>{{ user.username }}</h1>
+        {% if user.email %}<p class="pi-email">{{ user.email }}</p>{% endif %}
+        <p class="pi-since">Miembro desde {{ user.date_joined|date:"F Y" }}</p>
+      </div>
+      <div class="level-box">
+        <div class="level-num">Nivel {{ level }}</div>
+        <div class="level-bar"><span style="width: {{ xp_in_level }}%"></span></div>
+        <small>{{ xp_to_next }} XP para el nivel {{ level|add:1 }}</small>
+      </div>
+    </div>
+
+    <!-- Estadisticas -->
+    <div class="pstat-grid">
+      <div class="pstat">
+        <span class="pstat-ic">{% include 'astro/_icon.html' with name='star' size=30 %}</span>
+        <b>{{ profile.xp }}</b><span>XP total</span>
+      </div>
+      <div class="pstat">
+        <span class="pstat-ic">{% include 'astro/_icon.html' with name='flame' size=30 %}</span>
+        <b>{{ profile.streak }}</b><span>Racha actual</span>
+      </div>
+      <div class="pstat">
+        <span class="pstat-ic">{% include 'astro/_icon.html' with name='flame' size=30 %}</span>
+        <b>{{ profile.best_streak }}</b><span>Mejor racha</span>
+      </div>
+      <div class="pstat">
+        <span class="pstat-ic">{% include 'astro/_icon.html' with name='check' size=30 %}</span>
+        <b>{{ done_lessons }}</b><span>Lecciones completadas</span>
+      </div>
+      <div class="pstat">
+        <span class="pstat-ic">{% include 'astro/_icon.html' with name='coin' size=30 %}</span>
+        <b>{{ profile.coins }}</b><span>Cosmos</span>
+      </div>
+    </div>
+
+    <!-- Inventario -->
+    <div class="inventory">
+      <div class="inv-item">{% include 'astro/_icon.html' with name='flame' size=22 %} Congeladores de racha: <b>{{ profile.streak_freezes }}</b></div>
+      <div class="inv-item">{% include 'astro/_icon.html' with name='star' size=22 %} Doble XP: <b>{% if profile.double_xp_pending %}activo{% else %}no{% endif %}</b></div>
+      <a href="{% url 'astro:store' %}" class="btn sm">Ir a la tienda →</a>
+    </div>
+
+    <!-- Progreso general -->
+    <div class="profile-progress">
+      <div class="pp-head"><b>Progreso del curso</b><span>{{ done_lessons }} / {{ total_lessons }} lecciones · {{ pct }}%</span></div>
+      <div class="deck-bar"><span style="width: {{ pct }}%"></span></div>
+    </div>
+
+    <!-- Logros -->
+    <div class="ach-head">
+      <h3>Logros</h3>
+      <span>{{ earned_count }} / {{ achievements|length }} desbloqueados</span>
+    </div>
+    <div class="ach-grid">
+      {% for item in achievements %}
+      <div class="ach {% if item.earned %}on{% else %}locked{% endif %}" title="{{ item.a.description }}">
+        <div class="ach-badge">{% include 'astro/_icon.html' with name=item.a.icon size=30 %}</div>
+        <b>{{ item.a.name }}</b>
+        <small>{{ item.a.description }}</small>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="foot-actions">
+      <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Seguir aprendiendo →</a>
+      <a href="{% url 'astro:settings' %}" class="btn">Editar perfil</a>
+      <a href="{% url 'astro:logout' %}" class="btn">Cerrar sesion</a>
+    </div>
+  </section>
+</div>
+{% endblock %}

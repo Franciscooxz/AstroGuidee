@@ -1,0 +1,43 @@
+{% extends 'astro/panel/base.html' %}
+{% block title %}Tarjetas — Gestion{% endblock %}
+{% block content %}
+<div class="panel-head">
+  <div><h1>Tarjetas</h1><p>El contenido que estudian los usuarios.</p></div>
+  <a href="{% url 'gestion:card_new' %}" class="btn btn-primary">+ Nueva tarjeta</a>
+</div>
+
+<form method="get" class="filter-bar">
+  <label>Filtrar por leccion:</label>
+  <select name="lesson" class="field" onchange="this.form.submit()">
+    <option value="">Todas</option>
+    {% for l in all_lessons %}
+      <option value="{{ l.pk }}" {% if lesson_filter == l.pk|stringformat:'s' %}selected{% endif %}>{{ l.category.name }} · {{ l.title }}</option>
+    {% endfor %}
+  </select>
+</form>
+
+<div class="table-wrap">
+  <table class="p-table">
+    <thead><tr><th>Icono</th><th>Titulo</th><th>Leccion</th><th>Orden</th><th>Activa</th><th></th></tr></thead>
+    <tbody>
+    {% for c in cards %}
+      <tr>
+        <td>{% include 'astro/_icon.html' with name=c.icon size=28 %}</td>
+        <td><b>{{ c.title }}</b><br><small>{{ c.subtitle }}</small></td>
+        <td>{% if c.lesson %}{{ c.lesson.title }}{% else %}<small>(sin leccion)</small>{% endif %}</td>
+        <td>{{ c.order }}</td>
+        <td>{% if c.is_active %}<span class="tag on">Si</span>{% else %}<span class="tag">No</span>{% endif %}</td>
+        <td class="actions">
+          <a href="{% url 'gestion:card_edit' c.pk %}" class="btn sm">Editar</a>
+          <form method="post" action="{% url 'gestion:card_delete' c.pk %}" onsubmit="return confirm('Eliminar esta tarjeta?');">
+            {% csrf_token %}<button class="btn sm danger">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6" class="empty">No hay tarjetas para este filtro.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

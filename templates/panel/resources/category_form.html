@@ -1,0 +1,40 @@
+{% extends "panel/base.html" %}
+{% block title %}{% if obj %}Editar Categoría{% else %}Nueva Categoría{% endif %}{% endblock %}
+{% block page_title %}{% if obj %}Editar{% else %}Nueva{% endif %} Categoría de Recursos{% endblock %}
+{% block breadcrumb %}<a href="/panel/recursos/">Recursos</a> / {% if obj %}Editar{% else %}Nueva{% endif %} Categoría{% endblock %}
+{% block panel_content %}
+<div class="row">
+  <div class="col-12">
+    <div class="am-card">
+      <div class="am-card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="am-form-group">
+            <label class="am-form-label">Título *</label>
+            <input type="text" name="title" class="am-form-control" value="{{ obj.title|default:'' }}" required placeholder="Ej: Bienestar Integral">
+          </div>
+          <div class="am-form-group">
+            <label class="am-form-label">Introducción</label>
+            <textarea name="intro" class="am-form-control" rows="3">{{ obj.intro|default:'' }}</textarea>
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6 am-form-group">
+              <label class="am-form-label">Clase de icono Font Awesome</label>
+              <input type="text" name="icon" class="am-form-control" value="{{ obj.icon|default:'fa-book' }}" placeholder="fa-book">
+              <small style="color:#666">Ej: fa-book, fa-heart, fa-hands-helping</small>
+            </div>
+            <div class="col-md-3 am-form-group">
+              <label class="am-form-label">Orden</label>
+              <input type="number" name="order" class="am-form-control" value="{{ obj.order|default:0 }}">
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:10px">
+            <button type="submit" class="btn-am-primary"><i class="fas fa-save"></i> Guardar</button>
+            <a href="/panel/recursos/" class="btn-am-secondary">Cancelar</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

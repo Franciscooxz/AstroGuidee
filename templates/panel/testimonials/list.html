@@ -1,0 +1,39 @@
+{% extends "panel/base.html" %}
+{% block title %}Testimonios{% endblock %}
+{% block page_title %}Testimonios{% endblock %}
+{% block breadcrumb %}Testimonios{% endblock %}
+{% block topbar_actions %}
+<a href="/panel/testimonios/nuevo/" class="btn-am-primary"><i class="fas fa-plus"></i> Nuevo</a>
+{% endblock %}
+{% block panel_content %}
+<div class="am-card">
+  <div class="am-card-body" style="padding:0">
+    {% if testimonials %}
+    <table class="am-table">
+      <thead><tr><th>Foto</th><th>Nombre</th><th>Cita</th><th>Destacado</th><th>Acciones</th></tr></thead>
+      <tbody>
+      {% for t in testimonials %}
+      <tr>
+        <td>{% if t.photo %}<img src="{{ t.photo.url }}" alt="" style="border-radius:50%;width:40px;height:40px;object-fit:cover">{% endif %}</td>
+        <td><strong>{{ t.name }}</strong>{% if t.role %}<br><small style="color:#888">{{ t.role }}</small>{% endif %}</td>
+        <td style="color:#666;font-size:12px">{{ t.quote|truncatewords:10 }}</td>
+        <td>{% if t.is_featured %}<span class="badge-active">Si</span>{% else %}-{% endif %}</td>
+        <td>
+          <a href="/panel/testimonios/{{ t.pk }}/editar/" class="btn-am-edit"><i class="fas fa-edit"></i></a>
+          <form method="post" action="/panel/testimonios/{{ t.pk }}/eliminar/" style="display:inline" onsubmit="return confirm('Eliminar?')">
+            {% csrf_token %}<button type="submit" class="btn-am-danger"><i class="fas fa-trash"></i></button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div style="padding:40px;text-align:center;color:#555">
+      <i class="fas fa-quote-left fa-3x mb-3" style="color:#F5C518"></i>
+      <p>Sin testimonios. <a href="/panel/testimonios/nuevo/" style="color:#F5C518">Agrega el primero</a></p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'astro/panel/base.html' %}
+{% block title %}Tienda — Gestion{% endblock %}
+{% block content %}
+<div class="panel-head">
+  <div><h1>Tienda</h1><p>Articulos que los usuarios compran con Cosmos.</p></div>
+  <a href="{% url 'gestion:shop_new' %}" class="btn btn-primary">+ Nuevo articulo</a>
+</div>
+
+<div class="table-wrap">
+  <table class="p-table">
+    <thead><tr><th>Icono</th><th>Nombre</th><th>Efecto</th><th>Precio</th><th>Orden</th><th>Activo</th><th></th></tr></thead>
+    <tbody>
+    {% for i in items %}
+      <tr>
+        <td>{% include 'astro/_icon.html' with name=i.icon size=28 %}</td>
+        <td><b>{{ i.name }}</b><br><small>{{ i.description }}</small></td>
+        <td>{{ i.get_effect_display }}</td>
+        <td>{{ i.price }}</td>
+        <td>{{ i.order }}</td>
+        <td>{% if i.is_active %}<span class="tag on">Si</span>{% else %}<span class="tag">No</span>{% endif %}</td>
+        <td class="actions">
+          <a href="{% url 'gestion:shop_edit' i.pk %}" class="btn sm">Editar</a>
+          <form method="post" action="{% url 'gestion:shop_delete' i.pk %}" onsubmit="return confirm('Eliminar este articulo?');">
+            {% csrf_token %}<button class="btn sm danger">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7" class="empty">Aun no hay articulos.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

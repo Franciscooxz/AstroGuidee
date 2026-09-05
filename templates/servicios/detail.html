@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ service.title }}{% endblock %}
+{% block content %}
+
+<section class="page-hero {% if service.image %}has-bg{% endif %}" {% if service.image %}style="background-image:url('{{ service.image.url }}')"{% endif %}>
+  <div class="page-hero-overlay"></div>
+  <div class="container">
+    <div class="page-hero-content">
+      <span class="disc-cat-badge"><i class="fas {{ service.icon }} me-1"></i> Servicio</span>
+      <h1 class="page-hero-title">{{ service.title }}</h1>
+    </div>
+  </div>
+</section>
+
+<section class="py-6">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="discipline-detail-content rich-content">
+          {% if service.description %}
+          {{ service.description|safe }}
+          {% else %}
+          <p class="text-muted">Descripción próximamente.</p>
+          {% endif %}
+        </div>
+
+        <!-- Formulario de contacto -->
+        <div class="contact-form-box mt-5">
+          <h3 class="mb-2">¿Te interesa este servicio?</h3>
+          <p class="mb-4" style="color:var(--grey)">Escríbenos y te contactaremos con toda la información.</p>
+          <form method="post" action="/contacto/">
+            {% csrf_token %}
+            <input type="hidden" name="servicio" value="{{ service.title }}">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="am-label">Nombre *</label>
+                <input type="text" name="nombre" class="am-input" required>
+              </div>
+              <div class="col-md-6">
+                <label class="am-label">Email *</label>
+                <input type="email" name="email" class="am-input" required>
+              </div>
+              <div class="col-12">
+                <label class="am-label">Mensaje *</label>
+                <textarea name="mensaje" class="am-input" rows="5" required placeholder="Cuéntanos qué necesitas..."></textarea>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn am-btn-yellow w-100">
+                  <i class="fas fa-paper-plane me-2"></i>Enviar consulta
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <a href="/servicios/" class="btn am-btn-outline mt-4"><i class="fas fa-arrow-left me-2"></i>Ver todos los servicios</a>
+      </div>
+      <div class="col-lg-4">
+        {% if related %}
+        <div class="sidebar-widget">
+          <h5 class="widget-title">Otros Servicios</h5>
+          {% for r in related %}
+          <a href="{{ r.get_absolute_url }}" class="related-disc-item">
+            <i class="fas {{ r.icon }} text-yellow me-2"></i>{{ r.title }}
+          </a>
+          {% endfor %}
+        </div>
+        {% endif %}
+        {% if site_config.whatsapp %}
+        <div class="sidebar-widget">
+          <h5 class="widget-title">Contacto Directo</h5>
+          <a href="https://wa.me/{{ site_config.whatsapp|cut:'+' }}?text=Hola, quiero información sobre {{ service.title|urlencode }}" target="_blank" class="btn am-btn-yellow btn-sm w-100">
+            <i class="fab fa-whatsapp me-2"></i>WhatsApp
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

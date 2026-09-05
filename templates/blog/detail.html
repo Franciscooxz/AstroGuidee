@@ -1,0 +1,55 @@
+﻿{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+
+<section class="post-hero" {% if post.cover %}style="background-image:url('{{ post.cover.url }}')"{% endif %}>
+  <div class="post-hero-overlay"></div>
+  <div class="container post-hero-content">
+    {% if post.category %}<span class="blog-category">{{ post.category.name }}</span>{% endif %}
+    <h1 class="post-title">{{ post.title }}</h1>
+    <div class="post-meta-top">
+      {% if post.published_at %}<span><i class="fas fa-calendar-alt me-1"></i>{{ post.published_at|date:"d \d\e F \d\e Y" }}</span>{% endif %}
+      {% if post.author %}<span class="ms-3"><i class="fas fa-user me-1"></i>{{ post.author.get_full_name|default:post.author.username }}</span>{% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="py-6">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8">
+        <article class="post-content rich-content">
+          {{ post.content|safe }}
+        </article>
+      </div>
+      <div class="col-lg-4">
+        {% if recent_posts %}
+        <div class="sidebar-widget">
+          <h5 class="widget-title">Publicaciones Recientes</h5>
+          {% for rp in recent_posts %}
+          <div class="recent-post-item">
+            {% if rp.cover %}<img src="{{ rp.cover.url }}" alt="{{ rp.title }}" class="recent-post-img">{% endif %}
+            <div class="recent-post-info">
+              <a href="{{ rp.get_absolute_url }}" class="recent-post-title">{{ rp.title|truncatewords:8 }}</a>
+              {% if rp.published_at %}<span class="recent-post-date">{{ rp.published_at|date:"d M Y" }}</span>{% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+        <div class="sidebar-widget">
+          <h5 class="widget-title">Compartir</h5>
+          <div class="share-btns">
+            <a href="https://wa.me/?text={{ post.title|urlencode }}" target="_blank" class="share-btn whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="share-btn facebook"><i class="fab fa-facebook-f"></i> Facebook</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-4">
+      <a href="/blog/" class="btn am-btn-outline"><i class="fas fa-arrow-left me-2"></i>Volver al Blog</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

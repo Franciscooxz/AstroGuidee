@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Política de Privacidad{% endblock %}
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero-content">
+      <div class="section-label mb-2"><span class="label-line"></span> Legal</div>
+      <h1 class="page-hero-title">Política de <span class="text-yellow">Privacidad</span></h1>
+      {% if policy.updated_at %}
+      <p class="page-hero-sub">Última actualización: {{ policy.updated_at|date:"d \d\e F \d\e Y" }}</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="py-6">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="policy-content">
+          {{ policy.content|safe }}
+        </div>
+        <div class="mt-5">
+          <a href="/" class="btn am-btn-outline"><i class="fas fa-arrow-left me-2"></i>Volver al inicio</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'astro/base.html' %}
+{% block title %}Ajustes — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap">
+  <section class="section">
+    <div class="section-head">
+      <div><h2><span class="bar"></span>Ajustes</h2><p>Edita tu perfil y tu contraseña.</p></div>
+      <a href="{% url 'astro:profile' %}" class="btn">← Mi perfil</a>
+    </div>
+
+    {% if messages %}
+    <div class="msgs">{% for m in messages %}<div class="msg {{ m.tags }}">{{ m }}</div>{% endfor %}</div>
+    {% endif %}
+
+    <!-- Perfil -->
+    <form method="post" class="form-card">
+      {% csrf_token %}
+      <h3 class="fs-title">Tu avatar</h3>
+      <div class="avatar-picker">
+        <label class="av-opt">
+          <input type="radio" name="avatar" value="" {% if not profile.avatar %}checked{% endif %}>
+          <span class="av-tile av-initial">{{ user.username|first|upper }}</span>
+        </label>
+        {% for ic in avatar_icons %}
+        <label class="av-opt">
+          <input type="radio" name="avatar" value="{{ ic }}" {% if profile.avatar == ic %}checked{% endif %}>
+          <span class="av-tile">{% include 'astro/_icon.html' with name=ic size=30 %}</span>
+        </label>
+        {% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="id_email">Correo electronico</label>
+        <input type="email" name="email" id="id_email" class="field" value="{{ user.email }}" placeholder="tucorreo@ejemplo.com">
+      </div>
+      <button type="submit" name="save_profile" class="btn btn-primary">Guardar perfil</button>
+    </form>
+
+    <!-- Contraseña -->
+    <form method="post" class="form-card" style="margin-top: 20px;">
+      {% csrf_token %}
+      <h3 class="fs-title">Cambiar contraseña</h3>
+      {% for field in pw_form %}
+        <div class="form-row">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% for error in field.errors %}<small class="err">{{ error }}</small>{% endfor %}
+        </div>
+      {% endfor %}
+      {% for error in pw_form.non_field_errors %}<div class="err block">{{ error }}</div>{% endfor %}
+      <button type="submit" name="change_password" class="btn btn-primary">Cambiar contraseña</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

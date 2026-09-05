@@ -1,0 +1,48 @@
+{% extends "panel/base.html" %}
+{% block title %}Categorías del Blog{% endblock %}
+{% block page_title %}Categorías del Blog{% endblock %}
+{% block breadcrumb %}<a href="/panel/blog/">Blog</a> / Categorías{% endblock %}
+{% block topbar_actions %}
+<a href="/panel/blog/" class="btn-am-secondary"><i class="fas fa-arrow-left"></i> Volver</a>
+<a href="/panel/blog/categorias/nueva/" class="btn-am-primary"><i class="fas fa-plus"></i> Nueva Categoría</a>
+{% endblock %}
+{% block panel_content %}
+<div class="am-card">
+  <div class="am-card-body" style="padding:0">
+    {% if cats %}
+    <table class="am-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Posts</th>
+          <th>Orden</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for cat in cats %}
+      <tr>
+        <td><strong>{{ cat.name }}</strong></td>
+        <td><span style="background:rgba(245,197,24,0.1);color:#F5C518;padding:2px 10px;border-radius:10px;font-size:12px">{{ cat.n }}</span></td>
+        <td>{{ cat.order }}</td>
+        <td>
+          <a href="/panel/blog/categorias/{{ cat.pk }}/editar/" class="btn-am-edit"><i class="fas fa-edit"></i></a>
+          <form method="post" action="/panel/blog/categorias/{{ cat.pk }}/eliminar/" style="display:inline"
+                onsubmit="return confirm('¿Eliminar categoría «{{ cat.name }}»? Los posts que la usan quedarán sin categoría.')">
+            {% csrf_token %}
+            <button type="submit" class="btn-am-danger"><i class="fas fa-trash"></i></button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div style="padding:40px;text-align:center;color:#555">
+      <i class="fas fa-folder-open fa-3x mb-3" style="color:#F5C518"></i>
+      <p>Sin categorías. <a href="/panel/blog/categorias/nueva/" style="color:#F5C518">Crea la primera</a></p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

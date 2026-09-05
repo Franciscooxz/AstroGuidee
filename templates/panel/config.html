@@ -1,0 +1,92 @@
+{% extends "panel/base.html" %}
+{% block title %}Configuracion del Sitio{% endblock %}
+{% block page_title %}Configuracion del Sitio{% endblock %}
+{% block breadcrumb %}Configuracion{% endblock %}
+{% block extra_css %}
+<style>
+.config-tabs { border-bottom: 1px solid #2a2a2a; margin-bottom: 24px; }
+.config-tabs .nav-link {
+  color: #888; background: none; border: none; border-bottom: 2px solid transparent;
+  padding: 10px 20px; transition: color .2s, border-color .2s;
+}
+.config-tabs .nav-link:hover { color: #ccc; border-color: transparent; }
+.config-tabs .nav-link.active {
+  color: #F5C518; background: none; border: none; border-bottom: 2px solid #F5C518;
+}
+</style>
+{% endblock %}
+{% block panel_content %}
+<ul class="nav nav-tabs config-tabs">
+  <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tc" type="button">Sitio General</button></li>
+  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#th" type="button">Home</button></li>
+  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#ta" type="button">Nosotros</button></li>
+</ul>
+<div class="tab-content">
+  <div class="tab-pane fade show active" id="tc">
+    <div class="row"><div class="col-lg-8"><div class="am-card"><div class="am-card-body">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}<input type="hidden" name="section" value="config">
+      <div class="row g-3">
+        <div class="col-md-6 am-form-group"><label class="am-form-label">Nombre del Sitio</label><input type="text" name="site_name" class="am-form-control" value="{{ config.site_name }}"></div>
+        <div class="col-md-6 am-form-group"><label class="am-form-label">Tagline</label><input type="text" name="tagline" class="am-form-control" value="{{ config.tagline }}"></div>
+        <div class="col-md-6 am-form-group"><label class="am-form-label">Nombre menu Blog</label><input type="text" name="blog_section_name" class="am-form-control" value="{{ config.blog_section_name }}"></div>
+        <div class="col-md-6 am-form-group"><label class="am-form-label">Direccion</label><input type="text" name="address" class="am-form-control" value="{{ config.address }}"></div>
+        <div class="col-md-6 am-form-group"><label class="am-form-label">Telefono</label><input type="text" name="phone" class="am-form-control" value="{{ config.phone }}"></div>
+        <div class="col-md-6 am-form-group"><label class="am-form-label">WhatsApp</label><input type="text" name="whatsapp" class="am-form-control" value="{{ config.whatsapp }}"></div>
+        <div class="col-12 am-form-group"><label class="am-form-label">Email</label><input type="email" name="email" class="am-form-control" value="{{ config.email }}"></div>
+        <div class="col-md-6 am-form-group"><label class="am-form-label">Instagram usuario</label><input type="text" name="instagram" class="am-form-control" value="{{ config.instagram }}"></div>
+        <div class="col-md-6 am-form-group"><label class="am-form-label">Instagram URL</label><input type="url" name="instagram_url" class="am-form-control" value="{{ config.instagram_url }}"></div>
+        <div class="col-md-6 am-form-group"><label class="am-form-label">Facebook usuario</label><input type="text" name="facebook" class="am-form-control" value="{{ config.facebook }}"></div>
+        <div class="col-md-6 am-form-group"><label class="am-form-label">Facebook URL</label><input type="url" name="facebook_url" class="am-form-control" value="{{ config.facebook_url }}"></div>
+        <div class="col-12 am-form-group"><label class="am-form-label">Convenio</label><input type="text" name="convenio" class="am-form-control" value="{{ config.convenio }}"></div>
+      </div>
+      {% if config.logo %}<div class="am-form-group"><div class="current-img"><img src="{{ config.logo.url }}" alt="" style="height:40px;width:auto"> Logo actual</div></div>{% endif %}
+      <div class="am-form-group"><label class="am-form-label">Logo</label><input type="file" name="logo" class="am-form-control" accept="image/*"></div>
+      {% if config.favicon %}<div class="am-form-group"><div class="current-img"><img src="{{ config.favicon.url }}" alt="" style="height:32px;width:32px;object-fit:contain"> Favicon actual</div></div>{% endif %}
+      <div class="am-form-group"><label class="am-form-label">Favicon</label><input type="file" name="favicon" class="am-form-control" accept="image/*"><small style="color:#666">Icono que aparece en la pestaña del navegador. Recomendado: PNG cuadrado de 64x64 o 128x128.</small></div>
+      <button type="submit" class="btn-am-primary"><i class="fas fa-save"></i> Guardar</button>
+    </form>
+    </div></div></div></div>
+  </div>
+  <div class="tab-pane fade" id="th">
+    <div class="row"><div class="col-lg-8"><div class="am-card"><div class="am-card-body">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}<input type="hidden" name="section" value="home">
+      <div class="am-form-group"><label class="am-form-label">Titulo seccion</label><input type="text" name="title" class="am-form-control" value="{{ home.title }}"></div>
+      <div class="am-form-group"><label class="am-form-label">Descripcion</label><textarea name="description" class="am-form-control" rows="4">{{ home.description }}</textarea></div>
+      <div class="row g-3">
+        <div class="col-md-6 am-form-group"><label class="am-form-label">Texto CTA</label><input type="text" name="cta_text" class="am-form-control" value="{{ home.cta_text }}"></div>
+        <div class="col-md-6 am-form-group"><label class="am-form-label">URL CTA</label><input type="text" name="cta_url" class="am-form-control" value="{{ home.cta_url }}"></div>
+        <div class="col-md-4 am-form-group"><label class="am-form-label">Stat 1 Numero</label><input type="text" name="stat_1_number" class="am-form-control" value="{{ home.stat_1_number }}"></div>
+        <div class="col-md-8 am-form-group"><label class="am-form-label">Stat 1 Label</label><input type="text" name="stat_1_label" class="am-form-control" value="{{ home.stat_1_label }}"></div>
+        <div class="col-md-4 am-form-group"><label class="am-form-label">Stat 2 Numero</label><input type="text" name="stat_2_number" class="am-form-control" value="{{ home.stat_2_number }}"></div>
+        <div class="col-md-8 am-form-group"><label class="am-form-label">Stat 2 Label</label><input type="text" name="stat_2_label" class="am-form-control" value="{{ home.stat_2_label }}"></div>
+        <div class="col-md-4 am-form-group"><label class="am-form-label">Stat 3 Numero</label><input type="text" name="stat_3_number" class="am-form-control" value="{{ home.stat_3_number }}"></div>
+        <div class="col-md-8 am-form-group"><label class="am-form-label">Stat 3 Label</label><input type="text" name="stat_3_label" class="am-form-control" value="{{ home.stat_3_label }}"></div>
+      </div>
+      {% if home.image_1 %}<div class="am-form-group"><div class="current-img"><img src="{{ home.image_1.url }}" alt=""> Imagen 1 actual</div></div>{% endif %}
+      <div class="am-form-group"><label class="am-form-label">Imagen 1</label><input type="file" name="image_1" class="am-form-control" accept="image/*"></div>
+      {% if home.image_2 %}<div class="am-form-group"><div class="current-img"><img src="{{ home.image_2.url }}" alt=""> Imagen 2 actual</div></div>{% endif %}
+      <div class="am-form-group"><label class="am-form-label">Imagen 2</label><input type="file" name="image_2" class="am-form-control" accept="image/*"></div>
+      <button type="submit" class="btn-am-primary"><i class="fas fa-save"></i> Guardar</button>
+    </form>
+    </div></div></div></div>
+  </div>
+  <div class="tab-pane fade" id="ta">
+    <div class="row"><div class="col-lg-8"><div class="am-card"><div class="am-card-body">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}<input type="hidden" name="section" value="about">
+      <div class="am-form-group"><label class="am-form-label">Historia</label><textarea name="historia" class="am-form-control" rows="5">{{ about.historia }}</textarea></div>
+      <div class="am-form-group"><label class="am-form-label">Mision</label><textarea name="mision" class="am-form-control" rows="4">{{ about.mision }}</textarea></div>
+      <div class="am-form-group"><label class="am-form-label">Vision</label><textarea name="vision" class="am-form-control" rows="4">{{ about.vision }}</textarea></div>
+      <div class="am-form-group"><label class="am-form-label">Preceptos</label><textarea name="preceptos" class="am-form-control" rows="4">{{ about.preceptos }}</textarea></div>
+      <div class="am-form-group"><label class="am-form-label">Simbolos</label><textarea name="simbolos" class="am-form-control" rows="4">{{ about.simbolos }}</textarea></div>
+      <div class="am-form-group"><label class="am-form-label">Frase Emblema</label><textarea name="frase_emblema" class="am-form-control" rows="2">{{ about.frase_emblema }}</textarea></div>
+      {% if about.imagen_hero %}<div class="am-form-group"><div class="current-img"><img src="{{ about.imagen_hero.url }}" alt=""> Hero actual</div></div>{% endif %}
+      <div class="am-form-group"><label class="am-form-label">Imagen Hero</label><input type="file" name="imagen_hero" class="am-form-control" accept="image/*"></div>
+      <button type="submit" class="btn-am-primary"><i class="fas fa-save"></i> Guardar</button>
+    </form>
+    </div></div></div></div>
+  </div>
+</div>
+{% endblock %}

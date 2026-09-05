@@ -1,0 +1,41 @@
+{% extends 'astro/panel/base.html' %}
+{% block title %}{{ title }} — Gestion{% endblock %}
+{% block content %}
+<div class="panel-head">
+  <div><h1>{{ title }}</h1><p>Marca la opcion correcta. Minimo 2 opciones.</p></div>
+  <a href="{% url 'gestion:questions' %}" class="btn">← Volver</a>
+</div>
+
+<div class="form-card">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-row {% if field.field.widget.input_type == 'checkbox' %}row-check{% endif %}">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% for error in field.errors %}<small class="err">{{ error }}</small>{% endfor %}
+      </div>
+    {% endfor %}
+
+    <h3 class="fs-title">Opciones de respuesta</h3>
+    {{ formset.management_form }}
+    {% for error in formset.non_form_errors %}<div class="err block">{{ error }}</div>{% endfor %}
+    <div class="opt-formset">
+      {% for f in formset %}
+        <div class="opt-row">
+          {% for hidden in f.hidden_fields %}{{ hidden }}{% endfor %}
+          <div class="opt-text">{{ f.text }}{% for e in f.text.errors %}<small class="err">{{ e }}</small>{% endfor %}</div>
+          <label class="opt-correct">{{ f.is_correct }} Correcta</label>
+          <div class="opt-order">{{ f.order }}</div>
+          {% if f.instance.pk %}<label class="opt-del">{{ f.DELETE }} Borrar</label>{% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Guardar</button>
+      <a href="{% url 'gestion:questions' %}" class="btn">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

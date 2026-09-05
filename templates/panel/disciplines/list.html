@@ -1,0 +1,41 @@
+{% extends "panel/base.html" %}
+{% block title %}Artes y Disciplinas{% endblock %}
+{% block page_title %}Artes & Disciplinas{% endblock %}
+{% block breadcrumb %}Artes{% endblock %}
+{% block topbar_actions %}
+<a href="/panel/artes/categorias/" class="btn-am-secondary"><i class="fas fa-folder"></i> Categorías</a>
+<a href="/panel/artes/nuevo/" class="btn-am-primary"><i class="fas fa-plus"></i> Nueva Disciplina</a>
+{% endblock %}
+{% block panel_content %}
+<div class="am-card">
+  <div class="am-card-body" style="padding:0">
+    {% if disciplines %}
+    <table class="am-table">
+      <thead><tr><th>Imagen</th><th>Nombre</th><th>Categoria</th><th>Destacada</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody>
+      {% for d in disciplines %}
+      <tr>
+        <td>{% if d.image %}<img src="{{ d.image.url }}" alt="">{% endif %}</td>
+        <td><strong>{{ d.name }}</strong></td>
+        <td><span style="background:rgba(245,197,24,0.1);color:#F5C518;padding:2px 8px;border-radius:10px;font-size:11px">{{ d.category.name }}</span></td>
+        <td>{% if d.is_featured %}<span class="badge-active">Si</span>{% else %}-{% endif %}</td>
+        <td>{% if d.is_active %}<span class="badge-active">Activa</span>{% else %}<span class="badge-inactive">Inactiva</span>{% endif %}</td>
+        <td>
+          <a href="/panel/artes/{{ d.pk }}/editar/" class="btn-am-edit"><i class="fas fa-edit"></i></a>
+          <form method="post" action="/panel/artes/{{ d.pk }}/eliminar/" style="display:inline" onsubmit="return confirm('Eliminar?')">
+            {% csrf_token %}<button type="submit" class="btn-am-danger"><i class="fas fa-trash"></i></button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div style="padding:40px;text-align:center;color:#555">
+      <i class="fas fa-palette fa-3x mb-3" style="color:#F5C518"></i>
+      <p>Sin disciplinas. <a href="/panel/artes/nuevo/" style="color:#F5C518">Agrega la primera</a></p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

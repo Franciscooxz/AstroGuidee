@@ -1,0 +1,37 @@
+{% extends 'astro/panel/base.html' %}
+{% block title %}Inicio — Gestion AstroGuide{% endblock %}
+{% block content %}
+<div class="panel-head">
+  <h1>Panel de gestion</h1>
+  <p>Administra el contenido de AstroGuide.</p>
+</div>
+
+<div class="stat-grid">
+  <a href="{% url 'gestion:units' %}" class="stat-tile">
+    <span class="stat-ic">{% include 'astro/_icon.html' with name='orbit' size=32 %}</span>
+    <b>{{ n_units }}</b><span>Unidades</span>
+  </a>
+  <a href="{% url 'gestion:lessons' %}" class="stat-tile">
+    <span class="stat-ic">{% include 'astro/_icon.html' with name='cards' size=32 %}</span>
+    <b>{{ n_lessons }}</b><span>Lecciones</span>
+  </a>
+  <a href="{% url 'gestion:cards' %}" class="stat-tile">
+    <span class="stat-ic">{% include 'astro/_icon.html' with name='star' size=32 %}</span>
+    <b>{{ n_cards }}</b><span>Tarjetas</span>
+  </a>
+  <a href="{% url 'gestion:questions' %}" class="stat-tile">
+    <span class="stat-ic">{% include 'astro/_icon.html' with name='quiz' size=32 %}</span>
+    <b>{{ n_questions }}</b><span>Preguntas</span>
+  </a>
+  <div class="stat-tile">
+    <span class="stat-ic">{% include 'astro/_icon.html' with name='rocket' size=32 %}</span>
+    <b>{{ n_users }}</b><span>Usuarios</span>
+  </div>
+</div>
+
+<div class="quick-actions">
+  <a href="{% url 'gestion:unit_new' %}" class="btn btn-primary">+ Nueva unidad</a>
+  <a href="{% url 'gestion:lesson_new' %}" class="btn">+ Nueva leccion</a>
+  <a href="{% url 'gestion:card_new' %}" class="btn">+ Nueva tarjeta</a>
+</div>
+{% endblock %}

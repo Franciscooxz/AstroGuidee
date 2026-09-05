@@ -1,0 +1,59 @@
+{% extends "panel/base.html" %}
+{% block title %}Recursos{% endblock %}
+{% block page_title %}Centro de Recursos{% endblock %}
+{% block breadcrumb %}Recursos{% endblock %}
+{% block topbar_actions %}
+<a href="/panel/recursos/categorias/nueva/" class="btn-am-secondary"><i class="fas fa-folder-plus"></i> Nueva Categoría</a>
+<a href="/panel/recursos/nuevo/" class="btn-am-primary"><i class="fas fa-plus"></i> Nuevo Recurso</a>
+{% endblock %}
+{% block panel_content %}
+{% if categories %}
+{% for cat in categories %}
+<div class="am-card" style="margin-bottom:24px">
+  <div class="am-card-header">
+    <h5><i class="fas {{ cat.icon }}" style="color:#F5C518;margin-right:8px"></i>{{ cat.title }}</h5>
+    <div style="display:flex;gap:8px">
+      <a href="/panel/recursos/categorias/{{ cat.pk }}/editar/" class="btn-am-edit"><i class="fas fa-edit"></i> Categoría</a>
+      <form method="post" action="/panel/recursos/categorias/{{ cat.pk }}/eliminar/" style="display:inline"
+            onsubmit="return confirm('¿Eliminar categoría «{{ cat.title }}»? Solo es posible si no tiene recursos.')">
+        {% csrf_token %}
+        <button type="submit" class="btn-am-danger"><i class="fas fa-trash"></i></button>
+      </form>
+    </div>
+  </div>
+  <div class="am-card-body" style="padding:0">
+    {% if cat.items.all %}
+    <table class="am-table">
+      <thead><tr><th>Imagen</th><th>Título</th><th>Orden</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody>
+      {% for item in cat.items.all %}
+      <tr>
+        <td>{% if item.image %}<img src="{{ item.image.url }}" alt="">{% else %}<span style="color:#555">—</span>{% endif %}</td>
+        <td><strong>{{ item.title }}</strong></td>
+        <td>{{ item.order }}</td>
+        <td>{% if item.is_active %}<span class="badge-active">Activo</span>{% else %}<span class="badge-inactive">Inactivo</span>{% endif %}</td>
+        <td>
+          <a href="/panel/recursos/{{ item.pk }}/editar/" class="btn-am-edit"><i class="fas fa-edit"></i></a>
+          <form method="post" action="/panel/recursos/{{ item.pk }}/eliminar/" style="display:inline" onsubmit="return confirm('¿Eliminar recurso?')">
+            {% csrf_token %}<button type="submit" class="btn-am-danger"><i class="fas fa-trash"></i></button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div style="padding:24px;text-align:center;color:#555">Sin recursos en esta categoría.</div>
+    {% endif %}
+  </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="am-card">
+  <div class="am-card-body" style="padding:40px;text-align:center;color:#555">
+    <i class="fas fa-book-open fa-3x mb-3" style="color:#F5C518"></i>
+    <p>Sin categorías de recursos. <a href="/panel/recursos/categorias/nueva/" style="color:#F5C518">Crea la primera</a></p>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

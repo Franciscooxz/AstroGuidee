@@ -1,0 +1,65 @@
+{% extends "panel/base.html" %}
+{% block title %}{% if obj %}Editar Disciplina{% else %}Nueva Disciplina{% endif %}{% endblock %}
+{% block page_title %}{% if obj %}Editar{% else %}Nueva{% endif %} Disciplina{% endblock %}
+{% block breadcrumb %}<a href="/panel/artes/">Artes</a> / {% if obj %}Editar{% else %}Nueva{% endif %}{% endblock %}
+{% block panel_content %}
+<div class="row">
+  <div class="col-12">
+    <div class="am-card">
+      <div class="am-card-body">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="am-form-group">
+            <label class="am-form-label">Nombre *</label>
+            <input type="text" name="name" class="am-form-control" value="{{ obj.name|default:'' }}" required>
+          </div>
+          <div class="am-form-group">
+            <label class="am-form-label">Categoria *</label>
+            <select name="category" class="am-form-control" required>
+              <option value="">Selecciona categoria</option>
+              {% for cat in categories %}
+              <option value="{{ cat.pk }}" {% if obj and obj.category_id == cat.pk %}selected{% endif %}>{{ cat.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="am-form-group">
+            <label class="am-form-label">Descripcion</label>
+            <textarea name="description" class="am-form-control rich-editor">{{ obj.description|default:'' }}</textarea>
+          </div>
+          {% if obj and obj.image %}
+          <div class="am-form-group">
+            <div class="current-img"><img src="{{ obj.image.url }}" alt=""></div>
+          </div>
+          {% endif %}
+          <div class="am-form-group">
+            <label class="am-form-label">Imagen</label>
+            <input type="file" name="image" class="am-form-control" accept="image/*">
+          </div>
+          <div class="row g-3">
+            <div class="col-md-3 am-form-group">
+              <label class="am-form-label">Orden</label>
+              <input type="number" name="order" class="am-form-control" value="{{ obj.order|default:0 }}">
+            </div>
+            <div class="col-md-4" style="display:flex;align-items:flex-end;padding-bottom:16px">
+              <label class="am-checkbox-label">
+                <input type="checkbox" name="is_featured" class="am-checkbox" {% if obj and obj.is_featured %}checked{% endif %}>
+                Destacada en home
+              </label>
+            </div>
+            <div class="col-md-4" style="display:flex;align-items:flex-end;padding-bottom:16px">
+              <label class="am-checkbox-label">
+                <input type="checkbox" name="is_active" class="am-checkbox" {% if not obj or obj.is_active %}checked{% endif %}>
+                Activa
+              </label>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:10px">
+            <button type="submit" class="btn-am-primary"><i class="fas fa-save"></i> Guardar</button>
+            <a href="/panel/artes/" class="btn-am-secondary">Cancelar</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

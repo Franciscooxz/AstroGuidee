@@ -1,0 +1,33 @@
+{% extends 'astro/panel/base.html' %}
+{% block title %}Quizzes — Gestion{% endblock %}
+{% block content %}
+<div class="panel-head">
+  <div><h1>Quizzes</h1><p>Preguntas que aparecen al final de cada leccion.</p></div>
+  <a href="{% url 'gestion:question_new' %}" class="btn btn-primary">+ Nueva pregunta</a>
+</div>
+
+<div class="table-wrap">
+  <table class="p-table">
+    <thead><tr><th>Pregunta</th><th>Leccion</th><th>Opciones</th><th>Orden</th><th>Activa</th><th></th></tr></thead>
+    <tbody>
+    {% for q in questions %}
+      <tr>
+        <td><b>{{ q.text }}</b></td>
+        <td>{{ q.lesson.category.name }} · {{ q.lesson.title }}</td>
+        <td>{{ q.options.count }}</td>
+        <td>{{ q.order }}</td>
+        <td>{% if q.is_active %}<span class="tag on">Si</span>{% else %}<span class="tag">No</span>{% endif %}</td>
+        <td class="actions">
+          <a href="{% url 'gestion:question_edit' q.pk %}" class="btn sm">Editar</a>
+          <form method="post" action="{% url 'gestion:question_delete' q.pk %}" onsubmit="return confirm('Eliminar esta pregunta?');">
+            {% csrf_token %}<button class="btn sm danger">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6" class="empty">Aun no hay preguntas. Crea la primera.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

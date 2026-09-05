@@ -1,0 +1,27 @@
+{% extends 'astro/base.html' %}
+{% block title %}Entrar — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap auth-wrap">
+  <div class="auth-card">
+    <div class="ico-wrap">{% include 'astro/_icon.html' with name='orbit' size=52 %}</div>
+    <h1>Bienvenido de vuelta</h1>
+    <p class="auth-sub">Entra para seguir aprendiendo el universo.</p>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+      {% for field in form %}
+        <div class="form-row">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% for error in field.errors %}<small class="err">{{ error }}</small>{% endfor %}
+        </div>
+      {% endfor %}
+      {% for error in form.non_field_errors %}<div class="err block">{{ error }}</div>{% endfor %}
+      <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+    </form>
+
+    <p class="auth-alt">No tienes cuenta? <a href="{% url 'astro:register' %}">Crea una gratis</a></p>
+  </div>
+</div>
+{% endblock %}

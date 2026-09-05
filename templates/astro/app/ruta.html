@@ -1,0 +1,76 @@
+{% extends 'astro/base.html' %}
+{% block title %}Mi ruta — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap">
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <h2><span class="bar"></span>Hola, {{ user.username }}</h2>
+        <p>Sigue tu ruta. Completa cada leccion para desbloquear la siguiente.</p>
+      </div>
+      <div class="stat-badges">
+        <div class="sbadge">{% include 'astro/_icon.html' with name='flame' size=22 %} <b>{{ streak }}</b><span>racha</span></div>
+        <div class="sbadge">{% include 'astro/_icon.html' with name='star' size=22 %} <b>{{ xp }}</b><span>XP</span></div>
+        <a href="{% url 'astro:store' %}" class="sbadge link">{% include 'astro/_icon.html' with name='coin' size=22 %} <b>{{ coins }}</b><span>Cosmos</span></a>
+      </div>
+    </div>
+
+    <!-- Progreso general -->
+    <div class="route-progress">
+      <div class="deck-bar"><span style="width: {{ pct }}%"></span></div>
+      <div class="deck-meta"><b>{{ done }}</b> / {{ total }} lecciones · {{ pct }}%</div>
+    </div>
+
+    <!-- Continuar / Todo completado -->
+    {% if current_lesson %}
+    <a href="{% url 'astro:lesson' current_lesson.slug %}" class="continue-card" style="--acc: {{ current_lesson.category.accent|default:'#8b5cff' }}">
+      <div class="cc-ic">{% include 'astro/_icon.html' with name=current_lesson.icon size=44 %}</div>
+      <div class="cc-txt">
+        <small>CONTINUAR DONDE LO DEJASTE</small>
+        <b>{{ current_lesson.title }}</b>
+        <span>{{ current_lesson.card_count }} tarjeta{{ current_lesson.card_count|pluralize }} · {{ current_lesson.category.name }}</span>
+      </div>
+      <span class="cc-btn">Empezar →</span>
+    </a>
+    {% elif all_done %}
+    <div class="all-done-card">
+      <div class="ad-ic">{% include 'astro/_icon.html' with name='check' size=40 %}</div>
+      <h3>¡Completaste todo el contenido disponible! 🎉</h3>
+      <p>Repasa tus lecciones cuando quieras. Muy pronto llegaran mas unidades (Estrellas, Agujeros negros, Galaxias...).</p>
+    </div>
+    {% endif %}
+
+    {% for u in units %}
+    <div class="unit-banner {% if forloop.first %}first{% endif %}" style="--acc: {{ u.unit.accent|default:'#8b5cff' }}">
+      <span class="u-ic">{% include 'astro/_icon.html' with name=u.unit.icon size=26 %}</span>
+      <div><b>{{ u.unit.name }}</b><small>{{ u.unit.subtitle }}</small></div>
+      <span class="u-prog {% if u.complete %}done{% endif %}">
+        {% if u.complete %}{% include 'astro/_icon.html' with name='check' size=15 %} {% endif %}{{ u.done }}/{{ u.total }}
+      </span>
+    </div>
+
+    <div class="path" style="--acc: {{ u.unit.accent|default:'#8b5cff' }}">
+      {% for l in u.lessons %}
+      <div class="node-wrap">
+        {% if l.status == 'locked' %}
+          <div class="node locked" title="Completa la leccion anterior">
+            <div class="node-circle">{% include 'astro/_icon.html' with name='lock' size=28 %}</div>
+          </div>
+          <div class="node-label locked">{{ l.title }}</div>
+        {% else %}
+          <a href="{% url 'astro:lesson' l.slug %}" class="node {{ l.status }}">
+            {% if l.status == 'current' %}<span class="node-tip">¡Empieza!</span>{% endif %}
+            <div class="node-circle">
+              {% if l.status == 'completed' %}{% include 'astro/_icon.html' with name='check' size=30 %}
+              {% else %}{% include 'astro/_icon.html' with name=l.icon size=40 %}{% endif %}
+            </div>
+          </a>
+          <div class="node-label {{ l.status }}">{{ l.title }}</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </section>
+</div>
+{% endblock %}

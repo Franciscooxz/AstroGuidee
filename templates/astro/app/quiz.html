@@ -1,0 +1,39 @@
+{% extends 'astro/base.html' %}
+{% load static %}
+{% block title %}Quiz · {{ lesson.title }} — AstroGuide{% endblock %}
+{% block extrahead %}<meta name="csrf-token" content="{{ csrf_token }}">{% endblock %}
+{% block content %}
+<div class="wrap quiz-wrap">
+  <div class="quiz-top">
+    <a href="{% url 'astro:lesson' lesson.slug %}" class="quiz-close" title="Salir">✕</a>
+    <div class="quiz-bar"><span id="quizBar"></span></div>
+  </div>
+
+  <div id="quizStage"
+       data-finish="{% url 'astro:finish_quiz' lesson.slug %}"
+       data-ruta="{% url 'astro:ruta' %}">
+    {% for q in questions %}
+    <div class="q-block" data-qid="{{ q.id }}" data-qtype="{{ q.qtype }}" {% if not forloop.first %}hidden{% endif %}>
+      <div class="q-count">Pregunta {{ forloop.counter }} de {{ questions|length }}</div>
+      <h2 class="q-text">{{ q.text }}</h2>
+      {% if q.qtype == 'text' %}
+        <input type="text" class="q-text-input field" placeholder="Escribe tu respuesta..." autocomplete="off">
+        <div class="q-answers" hidden>{% for o in q.options.all %}{% if o.is_correct %}<span data-text="{{ o.text }}"></span>{% endif %}{% endfor %}</div>
+        <button type="button" class="btn q-check">Comprobar</button>
+      {% else %}
+        <div class="q-options {% if q.qtype == 'truefalse' %}tf{% endif %}">
+          {% for o in q.options.all %}
+          <button type="button" class="q-opt" data-oid="{{ o.id }}" data-correct="{{ o.is_correct|yesno:'1,0' }}">{{ o.text }}</button>
+          {% endfor %}
+        </div>
+      {% endif %}
+      <button type="button" class="btn btn-primary q-next" disabled>Continuar</button>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div id="quizResult" hidden></div>
+</div>
+
+<script src="{% static 'astro/js/quiz.js' %}"></script>
+{% endblock %}

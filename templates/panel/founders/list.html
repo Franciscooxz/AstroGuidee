@@ -1,0 +1,40 @@
+{% extends "panel/base.html" %}
+{% block title %}Fundadores{% endblock %}
+{% block page_title %}Fundadores{% endblock %}
+{% block breadcrumb %}Fundadores{% endblock %}
+{% block topbar_actions %}
+<a href="/panel/fundadores/nuevo/" class="btn-am-primary"><i class="fas fa-plus"></i> Nuevo Fundador</a>
+{% endblock %}
+{% block panel_content %}
+<div class="am-card">
+  <div class="am-card-body" style="padding:0">
+    {% if founders %}
+    <table class="am-table">
+      <thead><tr><th>Foto</th><th>Nombre</th><th>Rol</th><th>Orden</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody>
+      {% for f in founders %}
+      <tr>
+        <td>{% if f.photo %}<img src="{{ f.photo.url }}" alt="" style="border-radius:50%;width:40px;height:40px;object-fit:cover">{% else %}<span style="color:#555">—</span>{% endif %}</td>
+        <td><strong>{{ f.name }}</strong></td>
+        <td style="color:#888">{{ f.role }}</td>
+        <td>{{ f.order }}</td>
+        <td>{% if f.is_active %}<span class="badge-active">Activo</span>{% else %}<span class="badge-inactive">Inactivo</span>{% endif %}</td>
+        <td>
+          <a href="/panel/fundadores/{{ f.pk }}/editar/" class="btn-am-edit"><i class="fas fa-edit"></i></a>
+          <form method="post" action="/panel/fundadores/{{ f.pk }}/eliminar/" style="display:inline" onsubmit="return confirm('¿Eliminar fundador?')">
+            {% csrf_token %}<button type="submit" class="btn-am-danger"><i class="fas fa-trash"></i></button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div style="padding:40px;text-align:center;color:#555">
+      <i class="fas fa-users fa-3x mb-3" style="color:#F5C518"></i>
+      <p>Sin fundadores. <a href="/panel/fundadores/nuevo/" style="color:#F5C518">Agrega el primero</a></p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

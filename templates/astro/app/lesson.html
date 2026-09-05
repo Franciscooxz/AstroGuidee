@@ -1,0 +1,62 @@
+{% extends 'astro/base.html' %}
+{% load static %}
+{% block title %}{{ lesson.title }} — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap">
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <h2><span class="bar"></span>{% include 'astro/_icon.html' with name=lesson.icon size=30 class='inline' %} {{ lesson.title }}</h2>
+        <p>{{ lesson.subtitle|default:lesson.category.name }} · Toca cada tarjeta para girarla.</p>
+      </div>
+      <a href="{% url 'astro:ruta' %}" class="btn">← Mi ruta</a>
+    </div>
+
+    {% if cards %}
+    <div class="lesson-carousel">
+      <button type="button" class="car-nav" id="carPrev" aria-label="Anterior">‹</button>
+      <div class="car-viewport">
+        <div id="lessonCards">
+          {% for card in cards %}{% include 'astro/_card.html' %}{% endfor %}
+        </div>
+      </div>
+      <button type="button" class="car-nav" id="carNext" aria-label="Siguiente">›</button>
+    </div>
+    <div class="car-foot">
+      <div class="car-dots" id="carDots"></div>
+      <div class="car-count"><span id="carPos">1</span> / {{ cards|length }} tarjeta{{ cards|length|pluralize }}</div>
+    </div>
+    {% else %}
+    <p style="color:var(--text-dim)">Esta leccion aun no tiene tarjetas.</p>
+    {% endif %}
+
+    <!-- Completar leccion -->
+    <div class="lesson-foot">
+      {% if has_quiz %}
+        {% if is_completed %}
+          <div class="done-badge">{% include 'astro/_icon.html' with name='check' size=22 %} Leccion completada</div>
+          <div class="foot-actions">
+            <a href="{% url 'astro:quiz' lesson.slug %}" class="btn">Repetir quiz</a>
+            <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Volver a la ruta →</a>
+          </div>
+        {% else %}
+          <p>Cuando te sientas listo, pon a prueba lo aprendido con el quiz para completar la leccion y ganar XP.</p>
+          <a href="{% url 'astro:quiz' lesson.slug %}" class="btn btn-primary">{% include 'astro/_icon.html' with name='quiz' size=18 %} Empezar quiz</a>
+        {% endif %}
+      {% else %}
+        {% if is_completed %}
+          <div class="done-badge">{% include 'astro/_icon.html' with name='check' size=22 %} Leccion completada</div>
+          <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Volver a la ruta →</a>
+        {% else %}
+          <p>Cuando termines de repasar las tarjetas, marca la leccion como completada para desbloquear la siguiente.</p>
+          <form method="post" action="{% url 'astro:complete_lesson' lesson.slug %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">{% include 'astro/_icon.html' with name='check' size=18 %} Completar leccion</button>
+          </form>
+        {% endif %}
+      {% endif %}
+    </div>
+  </section>
+</div>
+{% if cards %}<script src="{% static 'astro/js/lesson.js' %}"></script>{% endif %}
+{% endblock %}

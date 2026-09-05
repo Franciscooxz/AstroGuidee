@@ -1,0 +1,27 @@
+{% extends 'astro/base.html' %}
+{% block title %}Crear cuenta — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap auth-wrap">
+  <div class="auth-card">
+    <div class="ico-wrap">{% include 'astro/_icon.html' with name='rocket' size=52 %}</div>
+    <h1>Crea tu cuenta</h1>
+    <p class="auth-sub">Gratis. Guarda tu progreso desde la primera tarjeta.</p>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="form-row">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}<small class="help">{{ field.help_text|safe }}</small>{% endif %}
+          {% for error in field.errors %}<small class="err">{{ error }}</small>{% endfor %}
+        </div>
+      {% endfor %}
+      {% for error in form.non_field_errors %}<div class="err block">{{ error }}</div>{% endfor %}
+      <button type="submit" class="btn btn-primary btn-block">Crear cuenta</button>
+    </form>
+
+    <p class="auth-alt">Ya tienes cuenta? <a href="{% url 'astro:login' %}">Entra aqui</a></p>
+  </div>
+</div>
+{% endblock %}

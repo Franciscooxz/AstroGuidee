@@ -1,0 +1,26 @@
+{% extends 'astro/panel/base.html' %}
+{% block title %}{{ title }} — Gestion{% endblock %}
+{% block content %}
+<div class="panel-head">
+  <div><h1>{{ title }}</h1></div>
+  <a href="{% url back %}" class="btn">← Volver</a>
+</div>
+
+<div class="form-card">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-row {% if field.field.widget.input_type == 'checkbox' %}row-check{% endif %}">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}<small class="help">{{ field.help_text|safe }}</small>{% endif %}
+        {% for error in field.errors %}<small class="err">{{ error }}</small>{% endfor %}
+      </div>
+    {% endfor %}
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Guardar</button>
+      <a href="{% url back %}" class="btn">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

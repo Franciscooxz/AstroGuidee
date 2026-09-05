@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Gestion — AstroGuide{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'astro/css/astro.css' %}">
+  <link rel="stylesheet" href="{% static 'astro/css/panel.css' %}">
+</head>
+<body class="panel-body">
+  {% include 'astro/_icons.svg' %}
+
+  <div class="panel-shell">
+    <aside class="panel-side">
+      <a href="{% url 'gestion:dashboard' %}" class="brand">{% include 'astro/_icon.html' with name='orbit' size=28 %} <span>Gestion</span></a>
+      <nav class="panel-nav">
+        <a href="{% url 'gestion:dashboard' %}" class="{% if active == 'inicio' %}on{% endif %}">{% include 'astro/_icon.html' with name='progress' size=20 %} Inicio</a>
+        <a href="{% url 'gestion:stats' %}" class="{% if active == 'stats' %}on{% endif %}">{% include 'astro/_icon.html' with name='galaxy' size=20 %} Estadisticas</a>
+        <a href="{% url 'gestion:units' %}" class="{% if active == 'unidades' %}on{% endif %}">{% include 'astro/_icon.html' with name='orbit' size=20 %} Unidades</a>
+        <a href="{% url 'gestion:lessons' %}" class="{% if active == 'lecciones' %}on{% endif %}">{% include 'astro/_icon.html' with name='cards' size=20 %} Lecciones</a>
+        <a href="{% url 'gestion:cards' %}" class="{% if active == 'tarjetas' %}on{% endif %}">{% include 'astro/_icon.html' with name='star' size=20 %} Tarjetas</a>
+        <a href="{% url 'gestion:questions' %}" class="{% if active == 'quizzes' %}on{% endif %}">{% include 'astro/_icon.html' with name='quiz' size=20 %} Quizzes</a>
+        <a href="{% url 'gestion:shop' %}" class="{% if active == 'tienda' %}on{% endif %}">{% include 'astro/_icon.html' with name='coin' size=20 %} Tienda</a>
+        <a href="{% url 'gestion:achievements' %}" class="{% if active == 'logros' %}on{% endif %}">{% include 'astro/_icon.html' with name='check' size=20 %} Logros</a>
+      </nav>
+      <div class="panel-side-foot">
+        <a href="{% url 'astro:home' %}" class="btn">Ver sitio</a>
+        <a href="{% url 'astro:logout' %}" class="btn">Salir</a>
+      </div>
+    </aside>
+
+    <main class="panel-main">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>
