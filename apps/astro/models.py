@@ -318,6 +318,7 @@ class Profile(models.Model):
     avatar = models.CharField('Avatar (icono)', max_length=40, blank=True, default='')
     weekly_xp = models.PositiveIntegerField('XP de la semana', default=0)
     week_key = models.CharField('Semana', max_length=10, blank=True, default='')
+    division = models.PositiveSmallIntegerField('Division de liga', default=0)
     frame = models.CharField('Marco de avatar', max_length=40, blank=True, default='')
     onboarded = models.BooleanField('Vio la bienvenida', default=False)
     daily_claimed = models.DateField('Meta diaria cobrada el', null=True, blank=True)

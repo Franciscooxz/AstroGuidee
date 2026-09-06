@@ -101,6 +101,33 @@ def _next_heart_minutes(profile):
     nxt = profile.hearts_updated + timedelta(minutes=HEART_REFILL_MIN)
     return max(0, int(round((nxt - timezone.now()).total_seconds() / 60)))
 
+# Divisiones de liga (ascendentes): (key, nombre, color, icono). Distintas de RANKS.
+DIVISIONS = [
+    ('cometa', 'Cometa', '#8ea2ff', 'rocket'),
+    ('luna', 'Luna', '#c0c8d8', 'planet'),
+    ('estrella', 'Estrella', '#f5b301', 'star'),
+    ('nebulosa', 'Nebulosa', '#b18bff', 'orbit'),
+    ('galaxia', 'Galaxia', '#4f7cff', 'galaxy'),
+    ('cosmos', 'Cosmos', '#6ee7ff', 'sun'),
+]
+LEAGUE_PROMOTE = 7   # top N ascienden de division
+LEAGUE_RELEGATE = 7  # ultimos N descienden de division
+LEAGUE_SHOW = 30     # cuantos mostrar en la tabla
+
+
+def get_division(index):
+    """Devuelve datos de una division por su indice (0 = mas baja)."""
+    i = max(0, min(index, len(DIVISIONS) - 1))
+    key, name, color, icon = DIVISIONS[i]
+    return {
+        'index': i, 'key': key, 'name': name, 'color': color, 'icon': icon,
+        'is_top': i == len(DIVISIONS) - 1,
+        'is_bottom': i == 0,
+        'next_name': DIVISIONS[i + 1][1] if i + 1 < len(DIVISIONS) else None,
+        'prev_name': DIVISIONS[i - 1][1] if i > 0 else None,
+    }
+
+
 # Rangos por XP total: (key, nombre, xp_minimo, color)
 RANKS = [
     ('bronce', 'Bronce', 0, '#cd7f32'),
@@ -609,26 +636,49 @@ def finish_quiz(request, slug):
     })
 
 
+def _weekly_of(profile, wk):
+    """XP de la semana actual del perfil (0 si su week_key no es la actual)."""
+    return profile.weekly_xp if profile.week_key == wk else 0
+
+
 @login_required(login_url=LOGIN_URL)
 def league(request):
     wk = timezone.localdate().strftime('%G-%V')
     profile = _get_profile(request.user)
-    top = list(
-        Profile.objects.filter(week_key=wk, weekly_xp__gt=0)
-        .select_related('user').order_by('-weekly_xp', 'user__username')[:50]
-    )
-    for p in top:
-        p.rank = get_rank(p.xp)  # rango (por XP total) para mostrar junto al nombre
-    my_weekly = profile.weekly_xp if profile.week_key == wk else 0
-    my_rank = None
-    for i, p in enumerate(top, start=1):
+    div = get_division(profile.division)
+
+    # Cohorte = todos los de tu division, ordenados por XP de esta semana
+    cohort = list(Profile.objects.filter(division=profile.division).select_related('user'))
+    for p in cohort:
+        p.eff = _weekly_of(p, wk)
+    cohort.sort(key=lambda p: (-p.eff, p.user.username.lower()))
+
+    total = len(cohort)
+    promote_n = 0 if div['is_top'] else LEAGUE_PROMOTE
+    relegate_n = 0 if div['is_bottom'] else LEAGUE_RELEGATE
+    # Solo tiene sentido zona de descenso si la cohorte es mayor que las dos zonas
+    relegate_cut = (total - relegate_n) if total > promote_n + relegate_n else total
+
+    rows, my_rank = [], None
+    for i, p in enumerate(cohort, start=1):
+        zone = 'up' if i <= promote_n else ('down' if i > relegate_cut else '')
         if p.user_id == request.user.id:
             my_rank = i
-            break
+        if i <= LEAGUE_SHOW or p.user_id == request.user.id:
+            rows.append({'pos': i, 'p': p, 'eff': p.eff, 'zone': zone,
+                         'me': p.user_id == request.user.id,
+                         'rank': get_rank(p.xp)})
+
+    relegate_start = relegate_cut + 1 if relegate_n and total > promote_n + relegate_n else None
     return render(request, 'astro/app/league.html', {
-        'top': top,
+        'division': div,
+        'rows': rows,
         'my_rank': my_rank,
-        'my_weekly': my_weekly,
+        'my_weekly': _weekly_of(profile, wk),
+        'total': total,
+        'promote_n': promote_n,
+        'relegate_n': relegate_n,
+        'relegate_start': relegate_start,
         'active_nav': 'league',
     })
 

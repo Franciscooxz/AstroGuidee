@@ -1,40 +1,58 @@
 {% extends 'astro/base.html' %}
-{% block title %}Liga semanal — AstroGuide{% endblock %}
+{% block title %}Liga {{ division.name }} — AstroGuide{% endblock %}
 {% block content %}
 <div class="wrap">
   <section class="section">
     <div class="section-head">
       <div><h2><span class="bar"></span>Liga semanal</h2>
-        <p>Ranking por XP ganado esta semana. Se reinicia cada lunes.</p></div>
+        <p>Compite en tu division. Se reinicia cada lunes.</p></div>
       {% if my_rank %}<div class="my-rank">Tu puesto: <b>#{{ my_rank }}</b></div>{% endif %}
     </div>
 
-    <div class="league-list">
-      {% for p in top %}
-      <div class="lg-row {% if p.user == user %}me{% endif %} {% if forloop.counter <= 3 %}top{{ forloop.counter }}{% endif %}">
-        <span class="lg-rank">{% if forloop.counter <= 3 %}<span class="medal">{{ forloop.counter }}</span>{% else %}{{ forloop.counter }}{% endif %}</span>
-        <span class="lg-av">{% if p.avatar %}{% include 'astro/_icon.html' with name=p.avatar size=22 %}{% else %}{{ p.user.username|first|upper }}{% endif %}</span>
-        <span class="lg-name">{{ p.user.username }}{% if p.user == user %} <small>(tu)</small>{% endif %}
-          <span class="rank-pill" style="--rc: {{ p.rank.color }}">{{ p.rank.name }}</span>
-        </span>
-        <span class="lg-xp">{% include 'astro/_icon.html' with name='star' size=18 %} {{ p.weekly_xp }}</span>
+    <!-- Cabecera de division -->
+    <div class="div-hero" style="--dc: {{ division.color }}">
+      <span class="div-emblem">{% include 'astro/_icon.html' with name=division.icon size=34 %}</span>
+      <div class="div-info">
+        <b>Liga {{ division.name }}</b>
+        <small>
+          {% if promote_n %}Top {{ promote_n }} asciende{% if division.next_name %} a {{ division.next_name }}{% endif %}.{% endif %}
+          {% if relegate_n %} Ultimos {{ relegate_n }} bajan{% if division.prev_name %} a {{ division.prev_name }}{% endif %}.{% endif %}
+          {% if division.is_top %}Estas en la liga mas alta.{% endif %}
+        </small>
       </div>
+      <span class="div-count">{{ total }} jugador{{ total|pluralize:"es" }}</span>
+    </div>
+
+    <div class="league-list">
+      {% for r in rows %}
+      <div class="lg-row {% if r.me %}me{% endif %} {% if r.pos <= 3 %}top{{ r.pos }}{% endif %} zone-{{ r.zone }}">
+        <span class="lg-rank">
+          {% if r.zone == 'up' %}<span class="zic up" title="Zona de ascenso">▲</span>
+          {% elif r.zone == 'down' %}<span class="zic down" title="Zona de descenso">▼</span>{% endif %}
+          {% if r.pos <= 3 %}<span class="medal">{{ r.pos }}</span>{% else %}{{ r.pos }}{% endif %}
+        </span>
+        <span class="lg-av">{% if r.p.avatar %}{% include 'astro/_icon.html' with name=r.p.avatar size=22 %}{% else %}{{ r.p.user.username|first|upper }}{% endif %}</span>
+        <span class="lg-name">{{ r.p.user.username }}{% if r.me %} <small>(tu)</small>{% endif %}
+          <span class="rank-pill" style="--rc: {{ r.rank.color }}">{{ r.rank.name }}</span>
+        </span>
+        <span class="lg-xp">{% include 'astro/_icon.html' with name='star' size=18 %} {{ r.eff }}</span>
+      </div>
+      {% if promote_n and r.pos == promote_n and total > promote_n %}
+      <div class="zone-divider up"><span>Zona de ascenso ▲</span></div>
+      {% endif %}
+      {% if relegate_start and r.pos == relegate_start|add:'-1' %}
+      <div class="zone-divider down"><span>Zona de descenso ▼</span></div>
+      {% endif %}
       {% empty %}
       <div class="league-empty">
-        <p>Aun nadie ha ganado XP esta semana. ¡Completa una leccion y ponte primero!</p>
+        <p>Aun nadie ha ganado XP esta semana en tu division. ¡Completa una leccion y ponte primero!</p>
         <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Ir a mi ruta</a>
       </div>
       {% endfor %}
     </div>
 
-    {% if top and not my_rank %}
-    <div class="lg-row me out">
-      <span class="lg-rank">–</span>
-      <span class="lg-av">{% if astro_profile.avatar %}{% include 'astro/_icon.html' with name=astro_profile.avatar size=22 %}{% else %}{{ user.username|first|upper }}{% endif %}</span>
-      <span class="lg-name">{{ user.username }} <small>(tu)</small></span>
-      <span class="lg-xp">{% include 'astro/_icon.html' with name='star' size=18 %} {{ my_weekly }}</span>
-    </div>
-    <p class="lg-hint">Gana XP esta semana para entrar en el ranking.</p>
+    {% if my_rank and my_rank > 30 %}
+    <p class="lg-hint">Apareces en el puesto #{{ my_rank }} con {{ my_weekly }} XP esta semana.</p>
     {% endif %}
   </section>
 </div>

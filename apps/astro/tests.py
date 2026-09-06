@@ -254,6 +254,38 @@ class ReportTests(AstroBaseTest):
         self.assertTrue(QuestionReport.objects.get(question=self.q1).resolved)
 
 
+class LeagueDivisionTests(AstroBaseTest):
+    def test_league_shows_division(self):
+        self.login()
+        self.complete_l1()
+        resp = self.client.get(reverse('astro:league'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Liga Cometa')  # division 0 por defecto
+
+    def test_rollover_promotes_and_relegates(self):
+        from django.core.management import call_command
+        from django.utils import timezone
+        wk = timezone.localdate().strftime('%G-%V')
+        # 16 usuarios en division 1 (Luna) con XP distinta
+        profs = []
+        for i in range(16):
+            u = User.objects.create_user(f'lg{i}', password='Cosmos2026xyz')
+            p = Profile.objects.get_or_create(user=u)[0]
+            p.division = 1
+            p.weekly_xp = 100 - i  # lg0 el mejor, lg15 el peor
+            p.week_key = wk
+            p.save()
+            profs.append(p)
+        call_command('leagues_rollover')
+        best = Profile.objects.get(user__username='lg0')
+        worst = Profile.objects.get(user__username='lg15')
+        middle = Profile.objects.get(user__username='lg8')
+        self.assertEqual(best.division, 2)    # top 7 ascienden
+        self.assertEqual(worst.division, 0)   # ultimos 7 bajan
+        self.assertEqual(middle.division, 1)  # zona media se queda
+        self.assertEqual(best.weekly_xp, 0)   # semana reiniciada
+
+
 class WeakPracticeTests(AstroBaseTest):
     def test_weak_lists_missed_questions(self):
         self.login()
