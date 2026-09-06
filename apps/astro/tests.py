@@ -7,8 +7,8 @@ from django.urls import reverse
 from django.utils import timezone
 
 from .models import (Achievement, Card, Category, Lesson, LessonProgress,
-                     Notification, Option, Profile, Question, ReviewItem,
-                     ShopItem, UserAchievement)
+                     Notification, Option, Profile, Question, QuestionStat,
+                     ReviewItem, ShopItem, UserAchievement)
 
 
 class AstroBaseTest(TestCase):
@@ -242,6 +242,36 @@ class DifficultyTests(AstroBaseTest):
         self.assertEqual(data['correct'], 3)
         self.assertEqual(data['needed'], 3)
         self.assertTrue(data['passed'])
+
+
+class StatsTests(AstroBaseTest):
+    def test_finish_quiz_records_question_stats(self):
+        self.login()
+        self.complete_l1()  # q1 correcta, q2 texto 'sol' correcta
+        s1 = QuestionStat.objects.get(user=self.user, question=self.q1)
+        self.assertEqual((s1.seen, s1.correct), (1, 1))
+        s2 = QuestionStat.objects.get(user=self.user, question=self.q2)
+        self.assertEqual((s2.seen, s2.correct), (1, 1))
+
+    def test_wrong_answer_lowers_accuracy(self):
+        self.login()
+        self.complete_l1(text_answer='mal')  # q2 falla
+        s2 = QuestionStat.objects.get(user=self.user, question=self.q2)
+        self.assertEqual((s2.seen, s2.correct), (1, 0))
+        self.assertEqual(s2.accuracy, 0)
+
+    def test_stats_page_ok(self):
+        self.login()
+        self.complete_l1()
+        resp = self.client.get(reverse('astro:stats'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Precision por unidad')
+
+    def test_stats_empty_state(self):
+        self.login()
+        resp = self.client.get(reverse('astro:stats'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Aun no hay datos')
 
 
 class ReviewTests(AstroBaseTest):

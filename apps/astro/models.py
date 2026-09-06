@@ -211,6 +211,28 @@ class ReviewItem(models.Model):
         self.last_reviewed = timezone.now()
 
 
+class QuestionStat(models.Model):
+    """Estadistica acumulada de un usuario sobre una pregunta (para analitica y repaso de flojos)."""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='question_stats',
+                             on_delete=models.CASCADE)
+    question = models.ForeignKey('Question', related_name='stats', on_delete=models.CASCADE)
+    seen = models.PositiveIntegerField('Veces respondida', default=0)
+    correct = models.PositiveIntegerField('Aciertos', default=0)
+    last_seen = models.DateTimeField('Ultima vez', null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Estadistica de pregunta'
+        verbose_name_plural = 'Estadisticas de preguntas'
+        unique_together = ('user', 'question')
+
+    def __str__(self):
+        return f'{self.user} · {self.question} · {self.correct}/{self.seen}'
+
+    @property
+    def accuracy(self):
+        return round(self.correct / self.seen * 100) if self.seen else 0
+
+
 class Question(models.Model):
     """Una pregunta del quiz de una leccion."""
     QTYPES = [

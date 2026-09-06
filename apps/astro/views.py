@@ -16,8 +16,8 @@ from django.views.decorators.http import require_POST
 
 from .forms import LoginForm, RegisterForm, StyledPasswordChangeForm
 from .models import (Achievement, Category, Lesson, LessonProgress,
-                     Notification, Profile, Purchase, ReviewItem, ShopItem,
-                     UserAchievement)
+                     Notification, Profile, Purchase, QuestionStat, ReviewItem,
+                     ShopItem, UserAchievement)
 
 LOGIN_URL = 'astro:login'
 AVATAR_ICONS = ['orbit', 'sun', 'earth', 'saturn', 'galaxy', 'blackhole',
@@ -39,6 +39,16 @@ PASS_RATIO = {1: 0.60, 2: 0.67, 3: 0.75, 4: 0.85, 5: 0.90}
 
 def _pass_ratio(difficulty):
     return PASS_RATIO.get(difficulty, 0.60)
+
+
+def _record_answer(user, question, correct):
+    """Acumula la estadistica del usuario sobre una pregunta (precision / temas flojos)."""
+    stat, _ = QuestionStat.objects.get_or_create(user=user, question=question)
+    stat.seen += 1
+    if correct:
+        stat.correct += 1
+    stat.last_seen = timezone.now()
+    stat.save(update_fields=['seen', 'correct', 'last_seen'])
 
 
 def _needed_correct(total, difficulty):
@@ -368,6 +378,75 @@ def profile(request):
 
 
 @login_required(login_url=LOGIN_URL)
+def stats(request):
+    """Estadisticas personales del usuario: precision, temas flojos, actividad, racha."""
+    from django.db.models import Sum
+    user = request.user
+    p = _get_profile(user)
+
+    # Precision por unidad (a partir de QuestionStat)
+    agg = {row['question__lesson__category']: row for row in
+           QuestionStat.objects.filter(user=user)
+           .values('question__lesson__category')
+           .annotate(seen=Sum('seen'), correct=Sum('correct'))}
+
+    # Progreso (lecciones completadas) por unidad
+    done_ids = set(LessonProgress.objects.filter(user=user, completed=True)
+                   .values_list('lesson_id', flat=True))
+
+    units = []
+    total_seen = total_correct = 0
+    for unit in Category.objects.filter(is_active=True).order_by('order'):
+        lessons = list(unit.lessons.filter(is_active=True))
+        row = agg.get(unit.id)
+        seen = row['seen'] if row else 0
+        corr = row['correct'] if row else 0
+        total_seen += seen
+        total_correct += corr
+        done = sum(1 for l in lessons if l.id in done_ids)
+        units.append({
+            'unit': unit,
+            'seen': seen,
+            'accuracy': round(corr / seen * 100) if seen else None,
+            'done': done,
+            'total': len(lessons),
+            'progress': round(done / len(lessons) * 100) if lessons else 0,
+        })
+
+    global_acc = round(total_correct / total_seen * 100) if total_seen else None
+    # Temas mas flojos: unidades con precision mas baja (con datos suficientes)
+    weak = sorted([u for u in units if u['seen'] >= 3 and u['accuracy'] is not None],
+                  key=lambda u: u['accuracy'])[:3]
+
+    # Actividad: lecciones completadas por dia en los ultimos 14 dias
+    today = timezone.localdate()
+    start = today - timedelta(days=13)
+    per_day = {}
+    for d in (LessonProgress.objects.filter(user=user, completed=True,
+                                            completed_at__date__gte=start)
+              .values_list('completed_at', flat=True)):
+        key = timezone.localtime(d).date() if timezone.is_aware(d) else d.date()
+        per_day[key] = per_day.get(key, 0) + 1
+    activity = [{'date': start + timedelta(days=i),
+                 'count': per_day.get(start + timedelta(days=i), 0)} for i in range(14)]
+    act_max = max((a['count'] for a in activity), default=0)
+
+    level = p.xp // 100 + 1
+    return render(request, 'astro/app/stats.html', {
+        'profile': p,
+        'level': level,
+        'rank': get_rank(p.xp),
+        'global_acc': global_acc,
+        'total_seen': total_seen,
+        'units': units,
+        'weak': weak,
+        'activity': activity,
+        'act_max': act_max,
+        'active_nav': 'stats',
+    })
+
+
+@login_required(login_url=LOGIN_URL)
 def lesson(request, slug):
     lesson_obj = get_object_or_404(Lesson, slug=slug, is_active=True)
     status, _ = _lesson_status(request.user)
@@ -440,12 +519,13 @@ def finish_quiz(request, slug):
         if q.qtype == 'text':
             typed = _norm_text(str(val))
             accepted = [_norm_text(o.text) for o in q.options.all() if o.is_correct]
-            if typed and typed in accepted:
-                correct += 1
+            ok = bool(typed) and typed in accepted
         else:
             chosen = str(val)
-            if any(o.is_correct and str(o.id) == chosen for o in q.options.all()):
-                correct += 1
+            ok = any(o.is_correct and str(o.id) == chosen for o in q.options.all())
+        if ok:
+            correct += 1
+        _record_answer(request.user, q, ok)
 
     difficulty = lesson_obj.category.difficulty
     needed = _needed_correct(total, difficulty)
@@ -723,6 +803,7 @@ def finish_review(request):
             ok = any(o.is_correct and str(o.id) == str(val) for o in q.options.all())
         it.schedule(ok)
         it.save()
+        _record_answer(request.user, q, ok)
         if ok:
             correct += 1
 

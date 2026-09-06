@@ -1,0 +1,78 @@
+{% extends 'astro/base.html' %}
+{% block title %}Mis estadisticas — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap">
+  <section class="section">
+    <div class="section-head">
+      <div><h2><span class="bar"></span>Mis estadisticas</h2>
+        <p>Como va tu aprendizaje: precision, actividad y puntos flojos.</p></div>
+    </div>
+
+    <!-- Metricas -->
+    <div class="st-tiles">
+      <div class="st-tile"><span class="st-ic">{% include 'astro/_icon.html' with name='star' size=26 %}</span>
+        <b>{{ profile.xp }}</b><span>XP · Nivel {{ level }}</span></div>
+      <div class="st-tile"><span class="st-ic">{% include 'astro/_icon.html' with name='flame' size=26 %}</span>
+        <b>{{ profile.streak }}</b><span>Racha (mejor: {{ profile.best_streak }})</span></div>
+      <div class="st-tile"><span class="st-ic">{% include 'astro/_icon.html' with name='check' size=26 %}</span>
+        <b>{% if global_acc is not None %}{{ global_acc }}%{% else %}—{% endif %}</b><span>Precision global</span></div>
+      <div class="st-tile" style="--rc: {{ rank.color }}"><span class="st-ic">{% include 'astro/_icon.html' with name='rocket' size=26 %}</span>
+        <b>{{ rank.name }}</b><span>Rango actual</span></div>
+    </div>
+
+    {% if total_seen %}
+    <!-- Actividad ultimos 14 dias -->
+    <div class="st-card">
+      <h3>Actividad (ultimos 14 dias)</h3>
+      <div class="st-activity" role="img" aria-label="Lecciones completadas por dia">
+        {% for a in activity %}
+        <div class="st-abar" title="{{ a.date|date:'d/m' }}: {{ a.count }} leccion{{ a.count|pluralize }}">
+          <span class="st-abar-fill" style="height: {% if act_max %}{% widthratio a.count act_max 100 %}{% else %}0{% endif %}%"></span>
+          <small>{{ a.date|date:'d' }}</small>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Precision por unidad -->
+    <div class="st-card">
+      <h3>Precision por unidad</h3>
+      <div class="ua-list">
+        {% for u in units %}{% if u.seen %}
+        <div class="ua-row" style="--acc: {{ u.unit.accent|default:'#8b5cff' }}">
+          <span class="ua-name">{{ u.unit.name }}</span>
+          <span class="ua-track"><span class="ua-fill" style="width: {{ u.accuracy }}%"></span></span>
+          <span class="ua-val">{{ u.accuracy }}%</span>
+        </div>
+        {% endif %}{% endfor %}
+      </div>
+    </div>
+
+    {% if weak %}
+    <!-- Temas mas flojos -->
+    <div class="st-card">
+      <h3>Refuerza estos temas</h3>
+      <p class="st-sub">Donde mas fallas. Un repaso te vendria bien.</p>
+      <div class="weak-list">
+        {% for u in weak %}
+        <div class="weak-item" style="--acc: {{ u.unit.accent|default:'#8b5cff' }}">
+          <span class="weak-ic">{% include 'astro/_icon.html' with name=u.unit.icon size=22 %}</span>
+          <span class="weak-body"><b>{{ u.unit.name }}</b><small>{{ u.accuracy }}% de aciertos</small></span>
+        </div>
+        {% endfor %}
+      </div>
+      <a href="{% url 'astro:review' %}" class="btn btn-primary st-cta">Ir a repasar</a>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="st-empty">
+      <span class="st-empty-ic">{% include 'astro/_icon.html' with name='progress' size=52 %}</span>
+      <h3>Aun no hay datos</h3>
+      <p>Responde algunos quizzes y aqui veras tu precision, tus temas flojos y tu actividad.</p>
+      <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Ir a mi ruta</a>
+    </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

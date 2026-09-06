@@ -36,6 +36,7 @@ urlpatterns = [
     path('app/bienvenida/', views.onboarding, name='onboarding'),
     path('app/certificado/<slug:slug>/', views.certificate, name='certificate'),
     path('app/perfil/', views.profile, name='profile'),
+    path('app/estadisticas/', views.stats, name='stats'),
     path('app/ajustes/', views.settings_view, name='settings'),
     path('app/ligas/', views.league, name='league'),
     path('app/notificaciones/', views.notifications, name='notifications'),
