@@ -7,6 +7,7 @@ app_name = 'astro'
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('c/<str:username>/<slug:slug>/', views.public_certificate, name='public_certificate'),
 
     # PWA
     path('manifest.webmanifest', views.manifest, name='manifest'),

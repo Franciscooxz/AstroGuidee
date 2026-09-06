@@ -32,6 +32,9 @@
 
   <div class="cert-actions">
     <button type="button" class="btn btn-primary" onclick="window.print()">Imprimir / Guardar PDF</button>
+    <button type="button" class="btn" onclick="shareUrl(this)"
+            data-path="{% url 'astro:public_certificate' user.username unit.slug %}"
+            data-title="Mi certificado de {{ unit.name }} en AstroGuide">Compartir</button>
     {% if not exam or not exam.passed %}
     <a href="{% url 'astro:exam' unit.slug %}" class="btn">Hacer examen final</a>
     {% else %}

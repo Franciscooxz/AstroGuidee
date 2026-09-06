@@ -704,6 +704,11 @@ a.notif:hover { border-color: var(--purple-soft); background: var(--overlay); tr
   background: rgba(110,168,255,.16); border: 1px solid rgba(110,168,255,.4); color: var(--blue-soft);
 }
 .cert-honors.gold { background: rgba(255,206,77,.18); border-color: rgba(255,206,77,.5); color: #f5b301; }
+.pubcert-badge {
+  display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 auto 16px; max-width: max-content;
+  padding: 7px 16px; border-radius: 100px; font-size: 13px; font-weight: 700;
+  background: rgba(61,220,132,.15); border: 1px solid rgba(61,220,132,.4); color: #3ddc84;
+}
 .review-switch { text-align: center; margin-top: 18px; font-size: 14px; color: var(--text-faint); }
 .review-switch a { color: var(--purple-soft); font-weight: 600; text-decoration: none; }
 .review-switch a:hover { text-decoration: underline; }

@@ -254,6 +254,26 @@ class ReportTests(AstroBaseTest):
         self.assertTrue(QuestionReport.objects.get(question=self.q1).resolved)
 
 
+class PublicCertificateTests(AstroBaseTest):
+    def _complete_unit(self):
+        LessonProgress.objects.update_or_create(
+            user=self.user, lesson=self.l1, defaults={'completed': True})
+        LessonProgress.objects.update_or_create(
+            user=self.user, lesson=self.l2, defaults={'completed': True})
+
+    def test_public_cert_visible_without_login(self):
+        self._complete_unit()
+        # sin iniciar sesion
+        resp = self.client.get(reverse('astro:public_certificate', args=['tester', 'unidad-test']))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'tester')
+        self.assertContains(resp, 'verificado')
+
+    def test_public_cert_404_if_incomplete(self):
+        resp = self.client.get(reverse('astro:public_certificate', args=['tester', 'unidad-test']))
+        self.assertEqual(resp.status_code, 404)
+
+
 class FollowTests(AstroBaseTest):
     def setUp(self):
         super().setUp()

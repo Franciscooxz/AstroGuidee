@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db.models import F, Q
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -435,6 +435,27 @@ def certificate(request, slug):
             .order_by('-completed_at').first())
     exam = UnitExam.objects.filter(user=request.user, category=unit).first()
     return render(request, 'astro/app/certificate.html', {
+        'unit': unit,
+        'date': last.completed_at if last else None,
+        'n_lessons': len(lessons),
+        'n_cards': unit.card_count,
+        'exam': exam,
+    })
+
+
+def public_certificate(request, username, slug):
+    """Certificado verificable, visible sin sesion (para compartir)."""
+    User = get_user_model()
+    owner = get_object_or_404(User, username=username, is_active=True)
+    unit = get_object_or_404(Category, slug=slug, is_active=True)
+    complete, lessons = _unit_complete(owner, unit)
+    if not complete:
+        raise Http404('Certificado no disponible')
+    last = (LessonProgress.objects.filter(user=owner, lesson__in=lessons, completed=True)
+            .order_by('-completed_at').first())
+    exam = UnitExam.objects.filter(user=owner, category=unit).first()
+    return render(request, 'astro/public_certificate.html', {
+        'owner': owner,
         'unit': unit,
         'date': last.completed_at if last else None,
         'n_lessons': len(lessons),

@@ -20,6 +20,31 @@ function getCsrf() {
   return m ? m.getAttribute('content') : '';
 }
 
+function flashToast(msg) {
+  let box = document.getElementById('toasts');
+  if (!box) { box = document.createElement('div'); box.className = 'toasts'; box.id = 'toasts'; document.body.appendChild(box); }
+  const t = document.createElement('div');
+  t.className = 'toast success';
+  t.innerHTML = '<span class="toast-dot"></span><span class="toast-msg"></span><button type="button" class="toast-x" aria-label="Cerrar">&times;</button>';
+  t.querySelector('.toast-msg').textContent = msg;
+  box.appendChild(t);
+  setTimeout(function () {
+    t.classList.add('hide');
+    setTimeout(function () { t.remove(); }, 320);
+  }, 3200);
+}
+
+async function shareUrl(btn) {
+  const url = location.origin + btn.getAttribute('data-path');
+  const title = btn.getAttribute('data-title') || 'AstroGuide';
+  if (navigator.share) {
+    try { await navigator.share({ title: title, url: url }); return; }
+    catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  try { await navigator.clipboard.writeText(url); flashToast('Enlace copiado al portapapeles'); }
+  catch (e) { window.prompt('Copia el enlace para compartir:', url); }
+}
+
 function toggleTheme() {
   const cur = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
   const next = cur === 'light' ? 'dark' : 'light';
