@@ -400,6 +400,13 @@ a.notif:hover { border-color: var(--purple-soft); background: rgba(255,255,255,.
   .ua-row { grid-template-columns: 96px 1fr 40px; }
 }
 
+/* ===== Imagen en pregunta ===== */
+.q-image {
+  display: block; margin: 4px auto 16px; max-height: 260px; width: auto; max-width: 100%;
+  border-radius: 14px; border: 1px solid var(--glass-brd);
+  box-shadow: 0 12px 30px -12px rgba(0,0,0,.6);
+}
+
 /* ===== Explicacion de la pregunta ===== */
 .q-explain {
   display: flex; align-items: flex-start; gap: 10px; margin: 14px 0 4px;

@@ -256,7 +256,7 @@ def questions(request):
 def question_edit(request, pk=None):
     obj = get_object_or_404(Question, pk=pk) if pk else None
     if request.method == 'POST':
-        form = QuestionForm(request.POST, instance=obj)
+        form = QuestionForm(request.POST, request.FILES, instance=obj)
         formset = OptionFormSet(request.POST, instance=obj)
         if form.is_valid() and formset.is_valid():
             question = form.save()

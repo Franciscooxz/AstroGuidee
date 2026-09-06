@@ -254,6 +254,27 @@ class ReportTests(AstroBaseTest):
         self.assertTrue(QuestionReport.objects.get(question=self.q1).resolved)
 
 
+class QuestionImageTests(AstroBaseTest):
+    # PNG 1x1 valido (base64) para probar el ImageField sin ficheros externos.
+    PNG = (b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01'
+           b'\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\nIDATx\x9cc\x00\x01'
+           b'\x00\x00\x05\x00\x01\r\n-\xb4\x00\x00\x00\x00IEND\xaeB`\x82')
+
+    def test_quiz_renders_image(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        self.q1.image = SimpleUploadedFile('p.png', self.PNG, content_type='image/png')
+        self.q1.save()
+        self.login()
+        resp = self.client.get(reverse('astro:quiz', args=[self.l1.slug]))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'q-image')
+
+    def test_no_image_no_tag(self):
+        self.login()
+        resp = self.client.get(reverse('astro:quiz', args=[self.l1.slug]))
+        self.assertNotContains(resp, 'q-image')
+
+
 class UnitExamTests(AstroBaseTest):
     def _complete_unit(self):
         # completar l1 y l2 de la unidad de prueba

@@ -53,7 +53,7 @@ class CardForm(StyledForm):
 class QuestionForm(StyledForm):
     class Meta:
         model = Question
-        fields = ['lesson', 'text', 'qtype', 'explanation', 'order', 'is_active']
+        fields = ['lesson', 'text', 'qtype', 'explanation', 'image', 'order', 'is_active']
 
 
 class OptionForm(StyledForm):

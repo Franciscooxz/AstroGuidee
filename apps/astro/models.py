@@ -310,6 +310,8 @@ class Question(models.Model):
     explanation = models.TextField('Explicacion', blank=True,
                                    help_text='Se muestra tras responder: el porque de la respuesta '
                                              '(convierte el fallo en aprendizaje).')
+    image = models.ImageField('Imagen', upload_to='questions/', blank=True, null=True,
+                              help_text='Opcional: p.ej. "identifica este planeta".')
     order = models.PositiveIntegerField('Orden', default=0)
     is_active = models.BooleanField('Activa', default=True)
 

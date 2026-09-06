@@ -21,6 +21,7 @@
     <div class="q-block" data-qid="{{ q.id }}" data-qtype="{{ q.qtype }}" {% if not forloop.first %}hidden{% endif %}>
       <div class="q-count">Pregunta {{ forloop.counter }} de {{ questions|length }}</div>
       <h2 class="q-text">{{ q.text }}</h2>
+      {% if q.image %}<img class="q-image" src="{{ q.image.url }}" alt="Imagen de la pregunta">{% endif %}
       {% if q.qtype == 'text' %}
         <input type="text" class="q-text-input field" placeholder="Escribe tu respuesta..." autocomplete="off">
         <div class="q-answers" hidden>{% for o in q.options.all %}{% if o.is_correct %}<span data-text="{{ o.text }}"></span>{% endif %}{% endfor %}</div>
