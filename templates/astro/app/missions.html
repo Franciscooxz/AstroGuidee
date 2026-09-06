@@ -1,0 +1,38 @@
+{% extends 'astro/base.html' %}
+{% block title %}Misiones semanales — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap">
+  <section class="section">
+    <div class="section-head">
+      <div><h2><span class="bar"></span>Misiones semanales</h2>
+        <p>Completa retos y gana Cosmos. Se renuevan cada lunes.</p></div>
+    </div>
+
+    <div class="mission-list">
+      {% for m in missions %}
+      <div class="mission {% if m.done %}done{% endif %}">
+        <span class="mission-ic">{% include 'astro/_icon.html' with name=m.icon size=26 %}</span>
+        <div class="mission-body">
+          <b>{{ m.name }}</b>
+          <small>{{ m.desc }}</small>
+          <div class="mission-bar"><span style="width: {{ m.pct }}%"></span></div>
+          <span class="mission-prog">{{ m.value }} / {{ m.target }}</span>
+        </div>
+        <div class="mission-reward">
+          <span class="mr-amount">{% include 'astro/_icon.html' with name='coin' size=16 %} {{ m.reward }}</span>
+          {% if m.claimed %}
+          <span class="mr-claimed">{% include 'astro/_icon.html' with name='check' size=16 %} Reclamada</span>
+          {% elif m.claimable %}
+          <form method="post" action="{% url 'astro:claim_mission' m.key %}">
+            {% csrf_token %}<button type="submit" class="btn btn-primary sm">Reclamar</button>
+          </form>
+          {% else %}
+          <span class="mr-locked">En progreso</span>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

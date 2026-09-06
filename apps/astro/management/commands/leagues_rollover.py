@@ -53,8 +53,9 @@ class Command(BaseCommand):
                                       icon=d['icon'], url='/app/ligas/')
                 p.division = new_div
             p.weekly_xp = 0
+            p.week_perfect = 0
             p.week_key = wk
-            p.save(update_fields=['division', 'weekly_xp', 'week_key'])
+            p.save(update_fields=['division', 'weekly_xp', 'week_perfect', 'week_key'])
 
         self.stdout.write(self.style.SUCCESS(
             f'Ligas actualizadas: {len(profiles)} perfiles, {up} ascensos, {down} descensos.'))

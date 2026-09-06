@@ -17,8 +17,9 @@ from django.views.decorators.http import require_POST
 
 from .forms import LoginForm, RegisterForm, StyledPasswordChangeForm
 from .models import (Achievement, Category, Lesson, LessonProgress,
-                     Notification, Profile, Purchase, Question, QuestionReport,
-                     QuestionStat, ReviewItem, ShopItem, UserAchievement)
+                     MissionClaim, Notification, Profile, Purchase, Question,
+                     QuestionReport, QuestionStat, ReviewItem, ShopItem,
+                     UserAchievement)
 
 LOGIN_URL = 'astro:login'
 AVATAR_ICONS = ['orbit', 'sun', 'earth', 'saturn', 'galaxy', 'blackhole',
@@ -110,6 +111,18 @@ DIVISIONS = [
     ('galaxia', 'Galaxia', '#4f7cff', 'galaxy'),
     ('cosmos', 'Cosmos', '#6ee7ff', 'sun'),
 ]
+# Misiones semanales: metric in {xp, lessons, streak, perfect}. reward = Cosmos.
+MISSIONS = [
+    {'key': 'xp150', 'name': 'Coleccionista de XP', 'desc': 'Gana 150 XP esta semana',
+     'icon': 'star', 'metric': 'xp', 'target': 150, 'reward': 20},
+    {'key': 'lessons5', 'name': 'Maraton de lecciones', 'desc': 'Completa 5 lecciones esta semana',
+     'icon': 'cards', 'metric': 'lessons', 'target': 5, 'reward': 25},
+    {'key': 'perfect3', 'name': 'Sin fallos', 'desc': 'Consigue 3 quizzes perfectos esta semana',
+     'icon': 'check', 'metric': 'perfect', 'target': 3, 'reward': 30},
+    {'key': 'streak5', 'name': 'Constancia', 'desc': 'Manten una racha de 5 dias',
+     'icon': 'flame', 'metric': 'streak', 'target': 5, 'reward': 15},
+]
+
 LEAGUE_PROMOTE = 7   # top N ascienden de division
 LEAGUE_RELEGATE = 7  # ultimos N descienden de division
 LEAGUE_SHOW = 30     # cuantos mostrar en la tabla
@@ -324,10 +337,13 @@ def ruta(request):
     profile.save(update_fields=['hearts', 'hearts_updated'])
     daily_done = _lessons_done_today(request.user)
     reviews_due = _due_reviews(request.user).count()
+    mission_items, _ = _build_missions(request.user)
+    missions_claimable = sum(1 for m in mission_items if m['claimable'])
     return render(request, 'astro/app/ruta.html', {
         'units': units,
         'current_lesson': current_lesson,
         'reviews_due': reviews_due,
+        'missions_claimable': missions_claimable,
         'all_done': total > 0 and done == total,
         'total': total,
         'done': done,
@@ -576,6 +592,7 @@ def finish_quiz(request, slug):
     if passed:
         if perfect:
             profile.perfect_quizzes += 1
+            profile.add_week_perfect()
         if not already_completed:
             xp_earned = correct * XP_PER_CORRECT + (XP_PERFECT_BONUS if perfect else 0)
             if profile.double_xp_pending:
@@ -639,6 +656,76 @@ def finish_quiz(request, slug):
 def _weekly_of(profile, wk):
     """XP de la semana actual del perfil (0 si su week_key no es la actual)."""
     return profile.weekly_xp if profile.week_key == wk else 0
+
+
+def _week_monday():
+    today = timezone.localdate()
+    return today - timedelta(days=today.isoweekday() - 1)
+
+
+def _lessons_this_week(user):
+    return LessonProgress.objects.filter(
+        user=user, completed=True, completed_at__date__gte=_week_monday()).count()
+
+
+def _mission_metric(profile, metric, wk, week_lessons):
+    if metric == 'xp':
+        return _weekly_of(profile, wk)
+    if metric == 'lessons':
+        return week_lessons
+    if metric == 'perfect':
+        return profile.week_perfect if profile.week_key == wk else 0
+    if metric == 'streak':
+        return profile.streak
+    return 0
+
+
+def _build_missions(user):
+    """Devuelve las misiones semanales con su progreso y estado de reclamo."""
+    profile = _get_profile(user)
+    wk = timezone.localdate().strftime('%G-%V')
+    week_lessons = _lessons_this_week(user)
+    claimed = set(MissionClaim.objects.filter(user=user, week_key=wk)
+                  .values_list('mission_key', flat=True))
+    out = []
+    for m in MISSIONS:
+        value = _mission_metric(profile, m['metric'], wk, week_lessons)
+        done = value >= m['target']
+        out.append({**m, 'value': min(value, m['target']), 'raw': value, 'done': done,
+                    'pct': min(100, round(value / m['target'] * 100)) if m['target'] else 0,
+                    'claimed': m['key'] in claimed,
+                    'claimable': done and m['key'] not in claimed})
+    return out, wk
+
+
+@login_required(login_url=LOGIN_URL)
+def missions(request):
+    items, _ = _build_missions(request.user)
+    return render(request, 'astro/app/missions.html', {
+        'missions': items,
+        'active_nav': 'missions',
+    })
+
+
+@login_required(login_url=LOGIN_URL)
+@require_POST
+def claim_mission(request, key):
+    items, wk = _build_missions(request.user)
+    mission = next((m for m in items if m['key'] == key), None)
+    if not mission:
+        messages.error(request, 'Mision no encontrada.')
+    elif mission['claimed']:
+        messages.info(request, 'Ya reclamaste esa mision.')
+    elif not mission['done']:
+        messages.error(request, 'Aun no completaste esa mision.')
+    else:
+        MissionClaim.objects.get_or_create(
+            user=request.user, mission_key=key, week_key=wk)
+        profile = _get_profile(request.user)
+        profile.add_coins(mission['reward'])
+        profile.save(update_fields=['coins'])
+        messages.success(request, f'Mision completada: +{mission["reward"]} Cosmos.')
+    return redirect('astro:missions')
 
 
 @login_required(login_url=LOGIN_URL)

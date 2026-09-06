@@ -254,6 +254,44 @@ class ReportTests(AstroBaseTest):
         self.assertTrue(QuestionReport.objects.get(question=self.q1).resolved)
 
 
+class MissionTests(AstroBaseTest):
+    def _set_week_xp(self, xp):
+        from django.utils import timezone
+        p = Profile.objects.get_or_create(user=self.user)[0]
+        p.weekly_xp = xp
+        p.week_key = timezone.localdate().strftime('%G-%V')
+        p.save()
+
+    def test_missions_page_ok(self):
+        self.login()
+        resp = self.client.get(reverse('astro:missions'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Coleccionista de XP')
+
+    def test_claim_grants_reward_once(self):
+        self.login()
+        self._set_week_xp(200)  # cumple mision xp150 (reward 20)
+        coins0 = Profile.objects.get(user=self.user).coins
+        self.client.post(reverse('astro:claim_mission', args=['xp150']))
+        self.assertEqual(Profile.objects.get(user=self.user).coins, coins0 + 20)
+        # segundo intento no vuelve a pagar
+        self.client.post(reverse('astro:claim_mission', args=['xp150']))
+        self.assertEqual(Profile.objects.get(user=self.user).coins, coins0 + 20)
+
+    def test_claim_blocked_if_not_done(self):
+        self.login()
+        self._set_week_xp(10)  # no cumple xp150
+        coins0 = Profile.objects.get(user=self.user).coins
+        self.client.post(reverse('astro:claim_mission', args=['xp150']))
+        self.assertEqual(Profile.objects.get(user=self.user).coins, coins0)
+
+    def test_perfect_quiz_counts_weekly(self):
+        self.login()
+        self.complete_l1()  # quiz perfecto (2/2)
+        p = Profile.objects.get(user=self.user)
+        self.assertEqual(p.week_perfect, 1)
+
+
 class LeagueDivisionTests(AstroBaseTest):
     def test_league_shows_division(self):
         self.login()

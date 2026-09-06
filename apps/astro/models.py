@@ -211,6 +211,23 @@ class ReviewItem(models.Model):
         self.last_reviewed = timezone.now()
 
 
+class MissionClaim(models.Model):
+    """Registro de una mision semanal cuya recompensa ya reclamo el usuario."""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='mission_claims',
+                             on_delete=models.CASCADE)
+    mission_key = models.CharField('Mision', max_length=40)
+    week_key = models.CharField('Semana', max_length=10)
+    claimed_at = models.DateTimeField('Reclamada', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Mision reclamada'
+        verbose_name_plural = 'Misiones reclamadas'
+        unique_together = ('user', 'mission_key', 'week_key')
+
+    def __str__(self):
+        return f'{self.user} · {self.mission_key} · {self.week_key}'
+
+
 class QuestionReport(models.Model):
     """Reporte de un usuario sobre una pregunta con posible error."""
     REASONS = [
@@ -318,6 +335,7 @@ class Profile(models.Model):
     avatar = models.CharField('Avatar (icono)', max_length=40, blank=True, default='')
     weekly_xp = models.PositiveIntegerField('XP de la semana', default=0)
     week_key = models.CharField('Semana', max_length=10, blank=True, default='')
+    week_perfect = models.PositiveIntegerField('Quizzes perfectos de la semana', default=0)
     division = models.PositiveSmallIntegerField('Division de liga', default=0)
     frame = models.CharField('Marco de avatar', max_length=40, blank=True, default='')
     onboarded = models.BooleanField('Vio la bienvenida', default=False)
@@ -353,12 +371,20 @@ class Profile(models.Model):
     def add_coins(self, amount):
         self.coins += max(0, amount)
 
-    def add_weekly_xp(self, amount):
-        wk = timezone.localdate().strftime('%G-%V')
+    def _ensure_week(self, wk):
+        """Reinicia los contadores semanales si cambio la semana ISO."""
         if self.week_key != wk:
             self.week_key = wk
             self.weekly_xp = 0
+            self.week_perfect = 0
+
+    def add_weekly_xp(self, amount):
+        self._ensure_week(timezone.localdate().strftime('%G-%V'))
         self.weekly_xp += max(0, amount)
+
+    def add_week_perfect(self):
+        self._ensure_week(timezone.localdate().strftime('%G-%V'))
+        self.week_perfect += 1
 
 
 class ShopItem(models.Model):

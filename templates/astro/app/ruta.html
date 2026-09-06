@@ -32,6 +32,15 @@
       <div class="dg-state">{% if daily_met %}{% include 'astro/_icon.html' with name='check' size=20 %}{% else %}{{ daily_done }}/{{ daily_goal }}{% endif %}</div>
     </div>
 
+    <a href="{% url 'astro:missions' %}" class="review-banner mission-banner">
+      <span class="review-banner-ic">{% include 'astro/_icon.html' with name='rocket' size=26 %}</span>
+      <span class="review-banner-body">
+        <b>Misiones semanales</b>
+        <span>{% if missions_claimable %}Tienes {{ missions_claimable }} recompensa{{ missions_claimable|pluralize }} lista{{ missions_claimable|pluralize }} para reclamar.{% else %}Completa retos esta semana y gana Cosmos.{% endif %}</span>
+      </span>
+      <span class="review-banner-go">{% if missions_claimable %}Reclamar{% else %}Ver{% endif %} →</span>
+    </a>
+
     {% if reviews_due %}
     <a href="{% url 'astro:review' %}" class="review-banner">
       <span class="review-banner-ic">{% include 'astro/_icon.html' with name='progress' size=26 %}</span>
