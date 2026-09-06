@@ -17,8 +17,8 @@ from django.views.decorators.http import require_POST
 
 from .forms import LoginForm, RegisterForm, StyledPasswordChangeForm
 from .models import (Achievement, Category, Lesson, LessonProgress,
-                     Notification, Profile, Purchase, Question, QuestionStat,
-                     ReviewItem, ShopItem, UserAchievement)
+                     Notification, Profile, Purchase, Question, QuestionReport,
+                     QuestionStat, ReviewItem, ShopItem, UserAchievement)
 
 LOGIN_URL = 'astro:login'
 AVATAR_ICONS = ['orbit', 'sun', 'earth', 'saturn', 'galaxy', 'blackhole',
@@ -753,6 +753,24 @@ def notifications(request):
         'items': items,
         'active_nav': 'notifications',
     })
+
+
+@login_required(login_url=LOGIN_URL)
+@require_POST
+def report_question(request, qid):
+    """Registra un reporte del usuario sobre una pregunta (posible error)."""
+    question = get_object_or_404(Question, id=qid)
+    try:
+        reason = json.loads(request.body or '{}').get('reason', 'otro')
+    except (ValueError, AttributeError):
+        reason = 'otro'
+    valid = {k for k, _ in QuestionReport.REASONS}
+    if reason not in valid:
+        reason = 'otro'
+    QuestionReport.objects.update_or_create(
+        user=request.user, question=question,
+        defaults={'reason': reason, 'resolved': False})
+    return JsonResponse({'ok': True})
 
 
 @login_required(login_url=LOGIN_URL)

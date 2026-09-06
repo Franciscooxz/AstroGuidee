@@ -44,6 +44,7 @@ urlpatterns = [
     path('app/repaso/', views.review, name='review'),
     path('app/repaso/flojos/', views.review_weak, name='review_weak'),
     path('app/repaso/finalizar/', views.finish_review, name='finish_review'),
+    path('app/reportar/<int:qid>/', views.report_question, name='report_question'),
     path('app/tienda/', views.store, name='store'),
     path('app/tienda/comprar/<slug:key>/', views.buy_item, name='buy_item'),
     path('app/tienda/equipar/<slug:key>/', views.equip_frame, name='equip_frame'),

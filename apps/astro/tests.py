@@ -7,8 +7,8 @@ from django.urls import reverse
 from django.utils import timezone
 
 from .models import (Achievement, Card, Category, Lesson, LessonProgress,
-                     Notification, Option, Profile, Question, QuestionStat,
-                     ReviewItem, ShopItem, UserAchievement)
+                     Notification, Option, Profile, Question, QuestionReport,
+                     QuestionStat, ReviewItem, ShopItem, UserAchievement)
 
 
 class AstroBaseTest(TestCase):
@@ -197,6 +197,48 @@ class ExplanationTests(AstroBaseTest):
         self.login()
         resp = self.client.get(reverse('astro:quiz', args=[self.l1.slug]))
         self.assertNotContains(resp, 'q-explain')
+
+
+class ReportTests(AstroBaseTest):
+    def test_report_creates_record(self):
+        self.login()
+        resp = self.client.post(reverse('astro:report_question', args=[self.q1.id]),
+                                data=json.dumps({'reason': 'datos'}),
+                                content_type='application/json')
+        self.assertEqual(resp.status_code, 200)
+        r = QuestionReport.objects.get(user=self.user, question=self.q1)
+        self.assertEqual(r.reason, 'datos')
+        self.assertFalse(r.resolved)
+
+    def test_report_is_idempotent_per_user(self):
+        self.login()
+        for reason in ('confusa', 'opcion'):
+            self.client.post(reverse('astro:report_question', args=[self.q1.id]),
+                             data=json.dumps({'reason': reason}),
+                             content_type='application/json')
+        self.assertEqual(QuestionReport.objects.filter(
+            user=self.user, question=self.q1).count(), 1)
+        self.assertEqual(QuestionReport.objects.get(
+            user=self.user, question=self.q1).reason, 'opcion')
+
+    def test_invalid_reason_falls_back(self):
+        self.login()
+        self.client.post(reverse('astro:report_question', args=[self.q1.id]),
+                         data=json.dumps({'reason': 'hackeo'}),
+                         content_type='application/json')
+        self.assertEqual(QuestionReport.objects.get(
+            user=self.user, question=self.q1).reason, 'otro')
+
+    def test_panel_quality_and_resolve(self):
+        QuestionReport.objects.create(user=self.user, question=self.q1, reason='datos')
+        self.user.is_staff = True
+        self.user.save()
+        self.login()
+        resp = self.client.get(reverse('gestion:quality'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, self.q1.text)
+        self.client.post(reverse('gestion:resolve_reports', args=[self.q1.id]))
+        self.assertTrue(QuestionReport.objects.get(question=self.q1).resolved)
 
 
 class WeakPracticeTests(AstroBaseTest):

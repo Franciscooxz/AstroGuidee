@@ -34,6 +34,16 @@
       {% endif %}
       {% if q.explanation %}<div class="q-explain" hidden><span class="q-explain-ic">{% include 'astro/_icon.html' with name='atom' size=18 %}</span><span>{{ q.explanation }}</span></div>{% endif %}
       <button type="button" class="btn btn-primary q-next" disabled>Continuar</button>
+      <div class="q-report-wrap" data-url="{% url 'astro:report_question' q.id %}">
+        <button type="button" class="q-report">Reportar problema</button>
+        <div class="q-report-panel" hidden>
+          <span>¿Que falla?</span>
+          <button type="button" data-reason="opcion">Respuesta mal</button>
+          <button type="button" data-reason="confusa">Confusa</button>
+          <button type="button" data-reason="datos">Error de datos</button>
+          <button type="button" data-reason="otro">Otro</button>
+        </div>
+      </div>
     </div>
     {% endfor %}
   </div>

@@ -1,0 +1,39 @@
+{% extends 'astro/panel/base.html' %}
+{% block title %}Calidad — Gestion{% endblock %}
+{% block content %}
+<div class="panel-head">
+  <div><h1>Calidad</h1><p>Preguntas reportadas por los usuarios como posibles errores.</p></div>
+</div>
+
+{% if reported %}
+<div class="stats-card">
+  <h3>Reportadas ({{ n_reports }} reporte{{ n_reports|pluralize }})</h3>
+  <table class="p-table">
+    <thead><tr><th>Pregunta</th><th>Leccion</th><th>Motivos</th><th></th></tr></thead>
+    <tbody>
+      {% for r in reported %}
+      <tr>
+        <td>{{ r.question.text }}</td>
+        <td>{{ r.question.lesson.title }}</td>
+        <td>
+          <span class="q-badge">{{ r.count }}</span>
+          {% for label, n in r.reasons.items %}<small class="q-reason">{{ label }} ({{ n }})</small>{% endfor %}
+        </td>
+        <td class="p-actions">
+          <a href="{% url 'gestion:question_edit' r.question.id %}" class="btn sm">Editar</a>
+          <form method="post" action="{% url 'gestion:resolve_reports' r.question.id %}" style="display:inline">
+            {% csrf_token %}<button type="submit" class="btn sm">Resolver</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="stats-card">
+  <h3>Reportadas</h3>
+  <p class="p-empty">No hay preguntas reportadas pendientes. Todo en orden.</p>
+</div>
+{% endif %}
+{% endblock %}

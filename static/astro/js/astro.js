@@ -70,3 +70,33 @@ document.addEventListener('keydown', function (e) {
     document.activeElement.classList.toggle('is-flipped');
   }
 });
+
+// Reportar pregunta (en quiz y repaso)
+document.addEventListener('click', function (e) {
+  const toggle = e.target.closest('.q-report');
+  if (toggle) {
+    const panel = toggle.parentElement.querySelector('.q-report-panel');
+    if (panel) panel.hidden = !panel.hidden;
+    return;
+  }
+  const reason = e.target.closest('.q-report-panel [data-reason]');
+  if (reason) {
+    const wrap = reason.closest('.q-report-wrap');
+    sendReport(wrap, reason.getAttribute('data-reason'));
+  }
+});
+
+async function sendReport(wrap, reason) {
+  if (!wrap || wrap.dataset.sent) return;
+  wrap.dataset.sent = '1';
+  try {
+    await fetch(wrap.dataset.url, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': getCsrf(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reason: reason }),
+    });
+  } catch (e) {
+    console.error('No se pudo enviar el reporte:', e);
+  }
+  wrap.innerHTML = '<span class="q-report-done">Gracias, lo revisaremos.</span>';
+}

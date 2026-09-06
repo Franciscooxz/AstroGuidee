@@ -24,6 +24,7 @@
         <a href="{% url 'gestion:questions' %}" class="{% if active == 'quizzes' %}on{% endif %}">{% include 'astro/_icon.html' with name='quiz' size=20 %} Quizzes</a>
         <a href="{% url 'gestion:shop' %}" class="{% if active == 'tienda' %}on{% endif %}">{% include 'astro/_icon.html' with name='coin' size=20 %} Tienda</a>
         <a href="{% url 'gestion:achievements' %}" class="{% if active == 'logros' %}on{% endif %}">{% include 'astro/_icon.html' with name='check' size=20 %} Logros</a>
+        <a href="{% url 'gestion:quality' %}" class="{% if active == 'calidad' %}on{% endif %}">{% include 'astro/_icon.html' with name='check' size=20 %} Calidad</a>
         <a href="{% url 'gestion:announcements' %}" class="{% if active == 'anuncios' %}on{% endif %}">{% include 'astro/_icon.html' with name='bell' size=20 %} Anuncios</a>
       </nav>
       <div class="panel-side-foot">

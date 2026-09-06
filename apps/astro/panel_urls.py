@@ -7,6 +7,8 @@ urlpatterns = [
     path('', views.dashboard, name='dashboard'),
     path('estadisticas/', views.stats, name='stats'),
     path('anuncios/', views.announcements, name='announcements'),
+    path('calidad/', views.quality, name='quality'),
+    path('calidad/<int:qid>/resolver/', views.resolve_reports, name='resolve_reports'),
 
     path('unidades/', views.units, name='units'),
     path('unidades/nueva/', views.unit_edit, name='unit_new'),

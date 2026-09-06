@@ -10,7 +10,8 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 
 from .models import (Achievement, Card, Category, Lesson, LessonProgress,
-                     Notification, Profile, Question, ShopItem, UserAchievement)
+                     Notification, Profile, Question, QuestionReport, ShopItem,
+                     UserAchievement)
 from .panel_forms import (AchievementForm, CardForm, LessonForm, OptionFormSet,
                           QuestionForm, ShopItemForm, UnitForm)
 
@@ -58,6 +59,38 @@ def stats(request):
         'hardest': hardest,
         'active': 'stats',
     })
+
+
+# ---------- Calidad (reportes) ----------
+
+@staff_member_required(login_url=LOGIN)
+def quality(request):
+    """Preguntas reportadas por los usuarios (posibles errores)."""
+    reports = (QuestionReport.objects.filter(resolved=False)
+               .select_related('question', 'question__lesson', 'user')
+               .order_by('-created_at'))
+    grouped = {}
+    for r in reports:
+        g = grouped.setdefault(r.question_id, {
+            'question': r.question, 'count': 0, 'reasons': {}, 'last': r.created_at})
+        g['count'] += 1
+        label = r.get_reason_display()
+        g['reasons'][label] = g['reasons'].get(label, 0) + 1
+    reported = sorted(grouped.values(), key=lambda g: g['count'], reverse=True)
+    return render(request, 'astro/panel/quality.html', {
+        'reported': reported,
+        'n_reports': reports.count(),
+        'active': 'calidad',
+    })
+
+
+@staff_member_required(login_url=LOGIN)
+@require_POST
+def resolve_reports(request, qid):
+    """Marca como resueltos todos los reportes de una pregunta."""
+    QuestionReport.objects.filter(question_id=qid).update(resolved=True)
+    messages.success(request, 'Reportes marcados como resueltos.')
+    return redirect('gestion:quality')
 
 
 # ---------- Anuncios ----------

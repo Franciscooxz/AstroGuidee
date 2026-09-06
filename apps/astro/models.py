@@ -211,6 +211,31 @@ class ReviewItem(models.Model):
         self.last_reviewed = timezone.now()
 
 
+class QuestionReport(models.Model):
+    """Reporte de un usuario sobre una pregunta con posible error."""
+    REASONS = [
+        ('opcion', 'La respuesta correcta esta mal'),
+        ('confusa', 'La pregunta es confusa'),
+        ('datos', 'Error en los datos'),
+        ('otro', 'Otro'),
+    ]
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='question_reports',
+                             on_delete=models.CASCADE)
+    question = models.ForeignKey('Question', related_name='reports', on_delete=models.CASCADE)
+    reason = models.CharField('Motivo', max_length=20, choices=REASONS, default='otro')
+    resolved = models.BooleanField('Resuelto', default=False)
+    created_at = models.DateTimeField('Reportado', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Reporte de pregunta'
+        verbose_name_plural = 'Reportes de preguntas'
+        unique_together = ('user', 'question')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.question} · {self.get_reason_display()}'
+
+
 class QuestionStat(models.Model):
     """Estadistica acumulada de un usuario sobre una pregunta (para analitica y repaso de flojos)."""
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='question_stats',
