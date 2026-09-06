@@ -6,6 +6,7 @@
     <div class="section-head">
       <div><h2><span class="bar"></span>Amigos</h2>
         <p>{{ n_following }} siguiendo · {{ n_followers }} seguidores</p></div>
+      <a href="{% url 'astro:duels' %}" class="btn">{% include 'astro/_icon.html' with name='flame' size=16 %} Duelos</a>
     </div>
 
     {% if board|length > 1 %}

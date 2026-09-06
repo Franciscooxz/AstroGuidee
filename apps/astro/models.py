@@ -211,6 +211,41 @@ class ReviewItem(models.Model):
         self.last_reviewed = timezone.now()
 
 
+class Duel(models.Model):
+    """Duelo 1v1 asincrono: ambos responden el mismo set de preguntas."""
+    challenger = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='duels_sent',
+                                   on_delete=models.CASCADE)
+    opponent = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='duels_received',
+                                 on_delete=models.CASCADE)
+    question_ids = models.JSONField('Preguntas', default=list)
+    challenger_score = models.PositiveSmallIntegerField(default=0)
+    opponent_score = models.PositiveSmallIntegerField(default=0)
+    challenger_done = models.BooleanField(default=False)
+    opponent_done = models.BooleanField(default=False)
+    status = models.CharField(max_length=10, default='pending',
+                              choices=[('pending', 'Pendiente'), ('complete', 'Terminado')])
+    created_at = models.DateTimeField(auto_now_add=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Duelo'
+        verbose_name_plural = 'Duelos'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.challenger} vs {self.opponent}'
+
+    @property
+    def winner_id(self):
+        if self.status != 'complete':
+            return None
+        if self.challenger_score > self.opponent_score:
+            return self.challenger_id
+        if self.opponent_score > self.challenger_score:
+            return self.opponent_id
+        return None  # empate
+
+
 class Follow(models.Model):
     """Relacion social: un usuario sigue a otro."""
     follower = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='following_set',

@@ -254,6 +254,50 @@ class ReportTests(AstroBaseTest):
         self.assertTrue(QuestionReport.objects.get(question=self.q1).resolved)
 
 
+class DuelTests(AstroBaseTest):
+    def setUp(self):
+        super().setUp()
+        self.rival = User.objects.create_user('rival', password='Cosmos2026xyz')
+        Profile.objects.get_or_create(user=self.rival)
+
+    def test_create_duel_redirects_and_sets_questions(self):
+        from apps.astro.models import Duel
+        self.login()
+        resp = self.client.post(reverse('astro:create_duel', args=['rival']))
+        self.assertEqual(resp.status_code, 302)  # a jugar
+        duel = Duel.objects.get(challenger=self.user, opponent=self.rival)
+        self.assertEqual(len(duel.question_ids), 5)  # DUEL_QUESTIONS
+        self.assertEqual(duel.status, 'pending')
+        self.assertFalse(duel.challenger_done)
+
+    def test_cannot_duel_self(self):
+        from apps.astro.models import Duel
+        self.login()
+        self.client.post(reverse('astro:create_duel', args=['tester']))
+        self.assertFalse(Duel.objects.filter(challenger=self.user, opponent=self.user).exists())
+
+    def test_duel_completes_and_declares_winner(self):
+        from apps.astro.models import Duel
+        duel = Duel.objects.create(challenger=self.user, opponent=self.rival,
+                                   question_ids=[self.q1.id, self.q2.id])
+        # retador (tester) acierta 2
+        self.login()
+        self.client.post(reverse('astro:finish_duel', args=[duel.id]),
+                         data=json.dumps({'answers': {str(self.q1.id): self.o_ok.id, str(self.q2.id): 'sol'}}),
+                         content_type='application/json')
+        # rival acierta 1
+        self.client.logout()
+        self.client.login(username='rival', password='Cosmos2026xyz')
+        data = self.client.post(reverse('astro:finish_duel', args=[duel.id]),
+                                data=json.dumps({'answers': {str(self.q1.id): self.o_ok.id, str(self.q2.id): 'mal'}}),
+                                content_type='application/json').json()
+        self.assertTrue(data['both_done'])
+        self.assertEqual(data['outcome'], 'lose')  # el rival pierde (1 < 2)
+        duel.refresh_from_db()
+        self.assertEqual(duel.status, 'complete')
+        self.assertEqual(duel.winner_id, self.user.id)
+
+
 class PublicCertificateTests(AstroBaseTest):
     def _complete_unit(self):
         LessonProgress.objects.update_or_create(

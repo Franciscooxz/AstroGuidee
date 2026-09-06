@@ -1,0 +1,61 @@
+{% extends 'astro/base.html' %}
+{% block title %}Duelos — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap">
+  <section class="section">
+    <div class="section-head">
+      <div><h2><span class="bar"></span>Duelos</h2>
+        <p>Reta a otros a un duelo de preguntas rapidas. Gana quien mas acierte.</p></div>
+    </div>
+
+    {% if to_play %}
+    <h3 class="friends-h">Te toca jugar</h3>
+    <div class="duel-list">
+      {% for info in to_play %}
+      <div class="duel-row play">
+        <span class="duel-av">{{ info.rival.username|first|upper }}</span>
+        <div class="duel-info"><b>vs {{ info.rival.username }}</b><small>{{ info.d.question_ids|length }} preguntas · te retan</small></div>
+        <a href="{% url 'astro:play_duel' info.d.id %}" class="btn btn-primary sm">Jugar</a>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if pending %}
+    <h3 class="friends-h">Esperando al rival</h3>
+    <div class="duel-list">
+      {% for info in pending %}
+      <div class="duel-row">
+        <span class="duel-av">{{ info.rival.username|first|upper }}</span>
+        <div class="duel-info"><b>vs {{ info.rival.username }}</b><small>Tu {{ info.my_score }}/{{ info.d.question_ids|length }} · esperando su respuesta</small></div>
+        <span class="duel-state wait">Pendiente</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if done %}
+    <h3 class="friends-h">Terminados</h3>
+    <div class="duel-list">
+      {% for info in done %}
+      <div class="duel-row {% if info.won %}won{% elif info.tie %}tie{% else %}lost{% endif %}">
+        <span class="duel-av">{{ info.rival.username|first|upper }}</span>
+        <div class="duel-info"><b>vs {{ info.rival.username }}</b><small>Tu {{ info.my_score }} · rival {{ info.rival_score }}</small></div>
+        <span class="duel-state {% if info.won %}win{% elif info.tie %}tie{% else %}lose{% endif %}">
+          {% if info.won %}Ganaste{% elif info.tie %}Empate{% else %}Perdiste{% endif %}
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if not to_play and not pending and not done %}
+    <div class="friends-empty">
+      <span class="friends-empty-ic">{% include 'astro/_icon.html' with name='flame' size=48 %}</span>
+      <p>Aun no tienes duelos. Entra al perfil de alguien (desde las ligas o tus amigos) y toca “Retar a un duelo”.</p>
+      <a href="{% url 'astro:league' %}" class="btn btn-primary">Ir a las ligas</a>
+    </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

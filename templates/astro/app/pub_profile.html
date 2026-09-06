@@ -32,14 +32,20 @@
         <span><b>{{ following }}</b> siguiendo</span>
       </div>
 
-      <form method="post" action="{% url 'astro:follow_toggle' user.username %}">
-        {% csrf_token %}
-        {% if is_following %}
-        <button type="submit" class="btn">Dejar de seguir</button>
-        {% else %}
-        <button type="submit" class="btn btn-primary">{% include 'astro/_icon.html' with name='user' size=16 %} Seguir</button>
-        {% endif %}
-      </form>
+      <div class="pub-actions">
+        <form method="post" action="{% url 'astro:follow_toggle' user.username %}">
+          {% csrf_token %}
+          {% if is_following %}
+          <button type="submit" class="btn">Dejar de seguir</button>
+          {% else %}
+          <button type="submit" class="btn btn-primary">{% include 'astro/_icon.html' with name='user' size=16 %} Seguir</button>
+          {% endif %}
+        </form>
+        <form method="post" action="{% url 'astro:create_duel' user.username %}">
+          {% csrf_token %}
+          <button type="submit" class="btn">{% include 'astro/_icon.html' with name='flame' size=16 %} Retar a un duelo</button>
+        </form>
+      </div>
     </div>
   </section>
 </div>

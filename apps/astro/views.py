@@ -1,5 +1,6 @@
 import json
 import math
+import random
 import unicodedata
 from datetime import timedelta
 
@@ -16,7 +17,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from .forms import LoginForm, RegisterForm, StyledPasswordChangeForm
-from .models import (Achievement, Card, Category, Follow, Lesson,
+from .models import (Achievement, Card, Category, Duel, Follow, Lesson,
                      LessonProgress, MissionClaim, Notification, Profile,
                      Purchase, Question, QuestionReport, QuestionStat,
                      ReviewItem, ShopItem, UnitExam, UserAchievement)
@@ -777,6 +778,142 @@ def friends(request):
         'n_followers': Follow.objects.filter(following=request.user).count(),
         'active_nav': 'friends',
     })
+
+
+DUEL_QUESTIONS = 5  # preguntas por duelo
+
+
+def _duel_role(duel, user):
+    if duel.challenger_id == user.id:
+        return 'challenger'
+    if duel.opponent_id == user.id:
+        return 'opponent'
+    return None
+
+
+@login_required(login_url=LOGIN_URL)
+def duels(request):
+    """Lista de duelos: por jugar, pendientes y terminados."""
+    mine = list(Duel.objects.filter(Q(challenger=request.user) | Q(opponent=request.user))
+                .select_related('challenger', 'opponent')[:40])
+    to_play, pending, done = [], [], []
+    for d in mine:
+        role = _duel_role(d, request.user)
+        my_done = d.challenger_done if role == 'challenger' else d.opponent_done
+        rival = d.opponent if role == 'challenger' else d.challenger
+        my_score = d.challenger_score if role == 'challenger' else d.opponent_score
+        rival_score = d.opponent_score if role == 'challenger' else d.challenger_score
+        info = {'d': d, 'rival': rival, 'my_score': my_score, 'rival_score': rival_score,
+                'won': d.winner_id == request.user.id,
+                'tie': d.status == 'complete' and d.winner_id is None}
+        if not my_done:
+            to_play.append(info)
+        elif d.status != 'complete':
+            pending.append(info)
+        else:
+            done.append(info)
+    return render(request, 'astro/app/duels.html', {
+        'to_play': to_play, 'pending': pending, 'done': done, 'active_nav': 'duels',
+    })
+
+
+@login_required(login_url=LOGIN_URL)
+@require_POST
+def create_duel(request, username):
+    """Reta a otro usuario: crea el duelo y lleva al retador a jugar."""
+    User = get_user_model()
+    target = get_object_or_404(User, username=username, is_active=True)
+    if target == request.user:
+        return redirect('astro:duels')
+    ids = list(Question.objects.filter(is_active=True).values_list('id', flat=True))
+    if len(ids) < DUEL_QUESTIONS:
+        messages.error(request, 'No hay suficientes preguntas para un duelo.')
+        return redirect('astro:pub_profile', username=username)
+    chosen = random.sample(ids, DUEL_QUESTIONS)
+    duel = Duel.objects.create(challenger=request.user, opponent=target, question_ids=chosen)
+    Notification.push(target, f'{request.user.username} te reto a un duelo!',
+                      icon='flame', url=reverse('astro:duels'))
+    return redirect('astro:play_duel', pk=duel.id)
+
+
+def _duel_questions(duel):
+    qmap = Question.objects.filter(id__in=duel.question_ids).prefetch_related('options').in_bulk()
+    return [qmap[i] for i in duel.question_ids if i in qmap]
+
+
+@login_required(login_url=LOGIN_URL)
+def play_duel(request, pk):
+    duel = get_object_or_404(Duel, pk=pk)
+    role = _duel_role(duel, request.user)
+    if not role:
+        return redirect('astro:duels')
+    my_done = duel.challenger_done if role == 'challenger' else duel.opponent_done
+    if my_done:
+        return redirect('astro:duels')
+    rival = duel.opponent if role == 'challenger' else duel.challenger
+    return render(request, 'astro/app/duel_play.html', {
+        'duel': duel, 'rival': rival, 'questions': _duel_questions(duel),
+    })
+
+
+@login_required(login_url=LOGIN_URL)
+@require_POST
+def finish_duel(request, pk):
+    duel = get_object_or_404(Duel, pk=pk)
+    role = _duel_role(duel, request.user)
+    if not role:
+        return JsonResponse({'error': 'forbidden'}, status=403)
+    my_done = duel.challenger_done if role == 'challenger' else duel.opponent_done
+    if my_done:
+        return JsonResponse({'error': 'done'}, status=400)
+
+    try:
+        answers = json.loads(request.body or '{}').get('answers', {})
+    except (ValueError, AttributeError):
+        answers = {}
+
+    correct = 0
+    for q in _duel_questions(duel):
+        val = answers.get(str(q.id), '')
+        if q.qtype == 'text':
+            typed = _norm_text(str(val))
+            accepted = [_norm_text(o.text) for o in q.options.all() if o.is_correct]
+            ok = bool(typed) and typed in accepted
+        else:
+            ok = any(o.is_correct and str(o.id) == str(val) for o in q.options.all())
+        if ok:
+            correct += 1
+        _record_answer(request.user, q, ok)
+
+    if role == 'challenger':
+        duel.challenger_score = correct
+        duel.challenger_done = True
+    else:
+        duel.opponent_score = correct
+        duel.opponent_done = True
+
+    both = duel.challenger_done and duel.opponent_done
+    if both and duel.status != 'complete':
+        duel.status = 'complete'
+        duel.completed_at = timezone.now()
+    duel.save()
+
+    result = {'my_score': correct, 'total': len(duel.question_ids), 'both_done': both}
+    if both:
+        winner = duel.winner_id
+        result['outcome'] = 'tie' if winner is None else ('win' if winner == request.user.id else 'lose')
+        result['rival_score'] = duel.opponent_score if role == 'challenger' else duel.challenger_score
+        # Notificar a ambos
+        c, o = duel.challenger, duel.opponent
+        if winner is None:
+            Notification.push(c, f'Empate en tu duelo con {o.username}.', icon='flame', url=reverse('astro:duels'))
+            Notification.push(o, f'Empate en tu duelo con {c.username}.', icon='flame', url=reverse('astro:duels'))
+        else:
+            win_u = c if winner == c.id else o
+            lose_u = o if winner == c.id else c
+            Notification.push(win_u, f'Ganaste el duelo contra {lose_u.username}!', icon='trophy', url=reverse('astro:duels'))
+            Notification.push(lose_u, f'Perdiste el duelo contra {win_u.username}. Revancha?', icon='flame', url=reverse('astro:duels'))
+    return JsonResponse(result)
 
 
 @login_required(login_url=LOGIN_URL)
