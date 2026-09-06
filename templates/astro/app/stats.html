@@ -26,7 +26,7 @@
       <h3>Actividad (ultimos 14 dias)</h3>
       <div class="st-activity" role="img" aria-label="Lecciones completadas por dia">
         {% for a in activity %}
-        <div class="st-abar" title="{{ a.date|date:'d/m' }}: {{ a.count }} leccion{{ a.count|pluralize }}">
+        <div class="st-abar" title="{{ a.date|date:'d/m' }}: {{ a.count }} leccion{{ a.count|pluralize:"es" }}">
           <span class="st-abar-fill" style="height: {% if act_max %}{% widthratio a.count act_max 100 %}{% else %}0{% endif %}%"></span>
           <small>{{ a.date|date:'d' }}</small>
         </div>

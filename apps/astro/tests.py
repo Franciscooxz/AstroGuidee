@@ -254,6 +254,21 @@ class ReportTests(AstroBaseTest):
         self.assertTrue(QuestionReport.objects.get(question=self.q1).resolved)
 
 
+class DailyGoalTests(AstroBaseTest):
+    def test_change_daily_goal(self):
+        self.login()
+        self.client.post(reverse('astro:settings'), {'save_goal': '1', 'daily_goal': '3'})
+        self.assertEqual(Profile.objects.get(user=self.user).daily_goal, 3)
+
+    def test_invalid_goal_ignored(self):
+        self.login()
+        p = Profile.objects.get_or_create(user=self.user)[0]
+        p.daily_goal = 2
+        p.save()
+        self.client.post(reverse('astro:settings'), {'save_goal': '1', 'daily_goal': '99'})
+        self.assertEqual(Profile.objects.get(user=self.user).daily_goal, 2)
+
+
 class StreakChestTests(AstroBaseTest):
     def test_milestone_leaves_pending_chest(self):
         from apps.astro.views import _check_streak_chest

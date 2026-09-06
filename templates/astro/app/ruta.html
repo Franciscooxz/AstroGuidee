@@ -27,7 +27,7 @@
       <span class="dg-ic">{% include 'astro/_icon.html' with name='flame' size=24 %}</span>
       <div class="dg-txt">
         <b>Meta diaria</b>
-        <small>{% if daily_met %}¡Cumplida! Vuelve manana para mantener tu racha.{% else %}Completa {{ daily_goal }} leccion{{ daily_goal|pluralize }} hoy y gana Cosmos.{% endif %}</small>
+        <small>{% if daily_met %}¡Cumplida! Vuelve manana para mantener tu racha.{% else %}Completa {{ daily_goal }} leccion{{ daily_goal|pluralize:"es" }} hoy y gana Cosmos.{% endif %}</small>
       </div>
       <div class="dg-state">{% if daily_met %}{% include 'astro/_icon.html' with name='check' size=20 %}{% else %}{{ daily_done }}/{{ daily_goal }}{% endif %}</div>
     </div>

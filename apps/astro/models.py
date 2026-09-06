@@ -339,6 +339,7 @@ class Profile(models.Model):
     division = models.PositiveSmallIntegerField('Division de liga', default=0)
     streak_reward_max = models.PositiveIntegerField('Ultimo hito de racha premiado', default=0)
     pending_chest = models.PositiveIntegerField('Cofre de racha por abrir', default=0)
+    daily_goal = models.PositiveSmallIntegerField('Meta diaria (lecciones)', default=1)
     frame = models.CharField('Marco de avatar', max_length=40, blank=True, default='')
     onboarded = models.BooleanField('Vio la bienvenida', default=False)
     daily_claimed = models.DateField('Meta diaria cobrada el', null=True, blank=True)

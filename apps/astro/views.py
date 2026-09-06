@@ -28,7 +28,10 @@ XP_PER_CORRECT = 10
 XP_PERFECT_BONUS = 20
 COINS_PER_LESSON = 5
 COINS_PERFECT_BONUS = 5
-DAILY_GOAL = 1          # lecciones por dia para cumplir la meta
+DAILY_GOAL = 1          # meta diaria por defecto (lecciones)
+DAILY_GOALS = [         # opciones configurables: (lecciones, etiqueta)
+    (1, 'Casual'), (2, 'Constante'), (3, 'En serio'), (5, 'Intenso'),
+]
 DAILY_BONUS = 15        # Cosmos de recompensa al cumplirla
 HEARTS_MAX = 5          # vidas maximas
 HEART_REFILL_MIN = 30   # minutos para recuperar 1 vida
@@ -374,9 +377,9 @@ def ruta(request):
         'hearts': profile.hearts,
         'hearts_max': HEARTS_MAX,
         'next_heart': _next_heart_minutes(profile),
-        'daily_done': min(daily_done, DAILY_GOAL),
-        'daily_goal': DAILY_GOAL,
-        'daily_met': daily_done >= DAILY_GOAL,
+        'daily_done': min(daily_done, profile.daily_goal),
+        'daily_goal': profile.daily_goal,
+        'daily_met': daily_done >= profile.daily_goal,
         'active_nav': 'ruta',
     })
 
@@ -645,7 +648,7 @@ def finish_quiz(request, slug):
     daily_bonus = 0
     today = timezone.localdate()
     done_today = _lessons_done_today(request.user)
-    if passed and done_today >= DAILY_GOAL and profile.daily_claimed != today:
+    if passed and done_today >= profile.daily_goal and profile.daily_claimed != today:
         profile.daily_claimed = today
         profile.add_coins(DAILY_BONUS)
         daily_bonus = DAILY_BONUS
@@ -834,6 +837,16 @@ def settings_view(request):
                 profile.save(update_fields=['avatar'])
                 messages.success(request, 'Perfil actualizado.')
                 return redirect('astro:settings')
+        elif 'save_goal' in request.POST:
+            try:
+                goal = int(request.POST.get('daily_goal', 1))
+            except (TypeError, ValueError):
+                goal = 1
+            if goal in [g for g, _ in DAILY_GOALS]:
+                profile.daily_goal = goal
+                profile.save(update_fields=['daily_goal'])
+                messages.success(request, 'Meta diaria actualizada.')
+                return redirect('astro:settings')
         elif 'change_password' in request.POST:
             pw_form = StyledPasswordChangeForm(request.user, request.POST)
             if pw_form.is_valid():
@@ -846,6 +859,7 @@ def settings_view(request):
         'profile': profile,
         'pw_form': pw_form,
         'avatar_icons': AVATAR_ICONS,
+        'daily_goals': DAILY_GOALS,
         'active_nav': 'profile',
     })
 

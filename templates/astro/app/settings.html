@@ -32,6 +32,23 @@
       <button type="submit" name="save_profile" class="btn btn-primary">Guardar perfil</button>
     </form>
 
+    <!-- Meta diaria -->
+    <form method="post" class="form-card" style="margin-top: 20px;">
+      {% csrf_token %}
+      <h3 class="fs-title">Meta diaria</h3>
+      <p class="fs-sub">¿Cuantas lecciones quieres completar al dia?</p>
+      <div class="goal-picker">
+        {% for value, label in daily_goals %}
+        <label class="goal-tile {% if profile.daily_goal == value %}on{% endif %}">
+          <input type="radio" name="daily_goal" value="{{ value }}" {% if profile.daily_goal == value %}checked{% endif %}>
+          <b>{{ label }}</b>
+          <small>{{ value }} leccion{{ value|pluralize:"es" }}/dia</small>
+        </label>
+        {% endfor %}
+      </div>
+      <button type="submit" name="save_goal" class="btn btn-primary">Guardar meta</button>
+    </form>
+
     <!-- Contraseña -->
     <form method="post" class="form-card" style="margin-top: 20px;">
       {% csrf_token %}

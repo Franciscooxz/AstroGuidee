@@ -435,6 +435,20 @@ a.notif:hover { border-color: var(--purple-soft); background: rgba(255,255,255,.
 .q-report-panel button:hover { border-color: var(--purple-soft); color: var(--text); }
 .q-report-done { font-size: 13px; color: var(--blue-soft); }
 
+/* ===== Meta diaria configurable ===== */
+.fs-sub { font-size: 13px; color: var(--text-faint); margin: -6px 0 12px; }
+.goal-picker { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+.goal-tile {
+  position: relative; cursor: pointer; text-align: center; padding: 14px 8px; border-radius: 14px;
+  background: var(--glass-bg); border: 1px solid var(--glass-brd); transition: all .15s;
+}
+.goal-tile input { position: absolute; opacity: 0; pointer-events: none; }
+.goal-tile b { display: block; font-size: 14px; }
+.goal-tile small { font-size: 11px; color: var(--text-faint); }
+.goal-tile:hover { border-color: var(--purple-soft); }
+.goal-tile.on, .goal-tile:has(input:checked) { border-color: var(--purple); background: radial-gradient(120% 140% at 50% 0%, rgba(139,92,255,.25), transparent 60%), var(--glass-bg); }
+@media (max-width: 560px) { .goal-picker { grid-template-columns: repeat(2, 1fr); } }
+
 /* ===== Cofre de racha ===== */
 .chest-card {
   display: flex; align-items: center; gap: 16px; margin: 0 0 18px; padding: 16px 20px;

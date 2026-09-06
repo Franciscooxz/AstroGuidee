@@ -14,7 +14,7 @@
     <h1 class="cert-name">{{ user.username }}</h1>
     <p class="cert-body">por completar con exito la unidad</p>
     <h2 class="cert-unit">{{ unit.name }}</h2>
-    <p class="cert-meta">{{ n_lessons }} leccion{{ n_lessons|pluralize }} · {{ n_cards }} tarjetas dominadas</p>
+    <p class="cert-meta">{{ n_lessons }} leccion{{ n_lessons|pluralize:"es" }} · {{ n_cards }} tarjetas dominadas</p>
 
     <div class="cert-foot">
       <div><b>{{ date|date:"d/m/Y" }}</b><span>Fecha</span></div>
