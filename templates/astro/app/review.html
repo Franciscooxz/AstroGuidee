@@ -1,0 +1,58 @@
+{% extends 'astro/base.html' %}
+{% load static %}
+{% block title %}Repaso inteligente — AstroGuide{% endblock %}
+{% block extrahead %}<meta name="csrf-token" content="{{ csrf_token }}">{% endblock %}
+{% block content %}
+<div class="wrap quiz-wrap">
+  {% if items %}
+  <div class="quiz-top">
+    <a href="{% url 'astro:ruta' %}" class="quiz-close" title="Salir">✕</a>
+    <div class="quiz-bar"><span id="quizBar"></span></div>
+    <div class="review-tag">{% include 'astro/_icon.html' with name='progress' size=18 %} Repaso</div>
+  </div>
+
+  <div id="quizStage"
+       data-finish="{% url 'astro:finish_review' %}"
+       data-ruta="{% url 'astro:ruta' %}">
+    {% for q in questions %}
+    <div class="q-block" data-qid="{{ q.id }}" data-qtype="{{ q.qtype }}" {% if not forloop.first %}hidden{% endif %}>
+      <div class="q-count">Repaso {{ forloop.counter }} de {{ questions|length }} · <span class="q-from">{{ q.lesson.title }}</span></div>
+      <h2 class="q-text">{{ q.text }}</h2>
+      {% if q.qtype == 'text' %}
+        <input type="text" class="q-text-input field" placeholder="Escribe tu respuesta..." autocomplete="off">
+        <div class="q-answers" hidden>{% for o in q.options.all %}{% if o.is_correct %}<span data-text="{{ o.text }}"></span>{% endif %}{% endfor %}</div>
+        <button type="button" class="btn q-check">Comprobar</button>
+      {% else %}
+        <div class="q-options {% if q.qtype == 'truefalse' %}tf{% endif %}">
+          {% for o in q.options.all %}
+          <button type="button" class="q-opt" data-oid="{{ o.id }}" data-correct="{{ o.is_correct|yesno:'1,0' }}">{{ o.text }}</button>
+          {% endfor %}
+        </div>
+      {% endif %}
+      <button type="button" class="btn btn-primary q-next" disabled>Continuar</button>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div id="quizResult" hidden></div>
+
+  {% else %}
+  <section class="section">
+    <div class="review-empty">
+      <span class="review-empty-ic">{% include 'astro/_icon.html' with name='progress' size=56 %}</span>
+      {% if total_items %}
+      <h2>¡Estas al dia!</h2>
+      <p>No tienes repasos pendientes por ahora. La repeticion espaciada te avisara cuando toque reforzar.</p>
+      {% if next_due %}<p class="muted">Tu proximo repaso sera el {{ next_due|date:"d/m/Y" }}.</p>{% endif %}
+      {% else %}
+      <h2>Aun no hay nada que repasar</h2>
+      <p>Completa lecciones para empezar. Sus preguntas volveran aqui, espaciadas en el tiempo, para que no las olvides.</p>
+      {% endif %}
+      <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Ir a mi ruta</a>
+    </div>
+  </section>
+  {% endif %}
+</div>
+
+{% if items %}<script src="{% static 'astro/js/review.js' %}?v={{ ASSET_VERSION }}"></script>{% endif %}
+{% endblock %}

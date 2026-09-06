@@ -1,12 +1,14 @@
 import json
+from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
 from .models import (Achievement, Card, Category, Lesson, LessonProgress,
-                     Notification, Option, Profile, Question, ShopItem,
-                     UserAchievement)
+                     Notification, Option, Profile, Question, ReviewItem,
+                     ShopItem, UserAchievement)
 
 
 class AstroBaseTest(TestCase):
@@ -178,6 +180,55 @@ class NotificationTests(AstroBaseTest):
         Notification.push(self.user, 'B')
         self.client.post(reverse('astro:clear_notifications'))
         self.assertEqual(Notification.objects.filter(user=self.user).count(), 0)
+
+
+class ReviewTests(AstroBaseTest):
+    def test_completion_seeds_reviews(self):
+        self.login()
+        self.complete_l1()
+        # l1 tiene 2 preguntas -> se crean 2 items de repaso, vencen manana
+        items = ReviewItem.objects.filter(user=self.user)
+        self.assertEqual(items.count(), 2)
+        tomorrow = timezone.localdate() + timedelta(days=1)
+        self.assertTrue(all(it.due == tomorrow for it in items))
+
+    def test_review_page_shows_due(self):
+        self.login()
+        self.complete_l1()
+        # forzar vencimiento a hoy
+        ReviewItem.objects.filter(user=self.user).update(due=timezone.localdate())
+        resp = self.client.get(reverse('astro:review'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'quizStage')
+
+    def test_correct_review_pushes_due_and_awards_xp(self):
+        self.login()
+        self.complete_l1()
+        ReviewItem.objects.filter(user=self.user).update(due=timezone.localdate())
+        xp_before = Profile.objects.get(user=self.user).xp
+        answers = {str(self.q1.id): self.o_ok.id, str(self.q2.id): 'sol'}
+        data = self.client.post(
+            reverse('astro:finish_review'),
+            data=json.dumps({'answers': answers}), content_type='application/json').json()
+        self.assertEqual(data['correct'], 2)
+        self.assertGreater(data['xp_earned'], 0)
+        self.assertGreater(Profile.objects.get(user=self.user).xp, xp_before)
+        # acertadas: due pasa a futuro (>= hoy+1)
+        for it in ReviewItem.objects.filter(user=self.user):
+            self.assertGreater(it.due, timezone.localdate())
+            self.assertEqual(it.reps, 1)
+
+    def test_wrong_review_keeps_due_soon(self):
+        self.login()
+        self.complete_l1()
+        ReviewItem.objects.filter(user=self.user).update(due=timezone.localdate(), reps=3, interval=20)
+        answers = {str(self.q1.id): 'x', str(self.q2.id): 'mal'}
+        self.client.post(reverse('astro:finish_review'),
+                         data=json.dumps({'answers': answers}), content_type='application/json')
+        for it in ReviewItem.objects.filter(user=self.user):
+            self.assertEqual(it.reps, 0)
+            self.assertEqual(it.interval, 1)
+            self.assertEqual(it.lapses, 1)
 
 
 class PanelTests(AstroBaseTest):

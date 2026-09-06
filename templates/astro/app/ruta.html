@@ -32,6 +32,17 @@
       <div class="dg-state">{% if daily_met %}{% include 'astro/_icon.html' with name='check' size=20 %}{% else %}{{ daily_done }}/{{ daily_goal }}{% endif %}</div>
     </div>
 
+    {% if reviews_due %}
+    <a href="{% url 'astro:review' %}" class="review-banner">
+      <span class="review-banner-ic">{% include 'astro/_icon.html' with name='progress' size=26 %}</span>
+      <span class="review-banner-body">
+        <b>Repaso inteligente</b>
+        <span>Tienes {{ reviews_due }} pregunta{{ reviews_due|pluralize }} lista{{ reviews_due|pluralize }} para reforzar y no olvidar.</span>
+      </span>
+      <span class="review-banner-go">Repasar →</span>
+    </a>
+    {% endif %}
+
     <!-- Continuar / Todo completado -->
     {% if current_lesson %}
     <a href="{% url 'astro:lesson' current_lesson.slug %}" class="continue-card" style="--acc: {{ current_lesson.category.accent|default:'#8b5cff' }}">

@@ -346,6 +346,45 @@ a.notif:hover { border-color: var(--purple-soft); background: rgba(255,255,255,.
 .notif-empty-ico { display: inline-grid; place-items: center; opacity: .6; margin-bottom: 8px; }
 .notif-empty .muted { font-size: 13px; margin: 4px 0 18px; }
 
+/* ===== Repaso inteligente ===== */
+.review-tag {
+  display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
+  padding: 6px 12px; border-radius: 100px; font-size: 13px; font-weight: 600;
+  background: rgba(139,92,255,.18); border: 1px solid rgba(139,92,255,.4); color: var(--purple-soft);
+}
+.q-from { color: var(--purple-soft); font-weight: 600; }
+.res-srs { font-size: 13px; color: var(--text-faint); margin-top: 4px; }
+.review-empty { text-align: center; padding: 60px 24px; color: var(--text-dim); }
+.review-empty-ic { display: inline-grid; place-items: center; opacity: .55; margin-bottom: 10px; }
+.review-empty h2 { font-size: 26px; margin-bottom: 8px; }
+.review-empty p { max-width: 440px; margin: 0 auto 8px; }
+.review-empty .muted { font-size: 13px; color: var(--text-faint); }
+.review-empty .btn { margin-top: 18px; }
+
+/* Banner de repaso en la ruta */
+.review-banner {
+  display: flex; align-items: center; gap: 16px; margin: 0 0 18px;
+  padding: 16px 20px; border-radius: 18px; text-decoration: none; color: var(--text);
+  background: radial-gradient(120% 160% at 0% 50%, rgba(139,92,255,.28), transparent 60%), var(--glass-bg);
+  border: 1px solid rgba(139,92,255,.4); transition: all .2s;
+}
+.review-banner:hover { transform: translateY(-2px); border-color: var(--purple-soft); }
+.review-banner-ic {
+  flex-shrink: 0; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center;
+  background: linear-gradient(150deg, var(--blue), var(--purple));
+}
+.review-banner-body { flex: 1; min-width: 0; }
+.review-banner-body b { display: block; font-size: 16px; }
+.review-banner-body span { font-size: 13px; color: var(--text-dim); }
+.review-banner-go {
+  flex-shrink: 0; padding: 9px 18px; border-radius: 100px; font-weight: 600; font-size: 14px;
+  background: linear-gradient(150deg, var(--blue), var(--purple)); color: #fff;
+}
+.review-count-pill {
+  display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px;
+  border-radius: 100px; background: #ff5470; color: #fff; font-size: 12px; font-weight: 700; margin-left: 6px;
+}
+
 /* ===== Auth ===== */
 .auth-wrap { display: flex; justify-content: center; padding: 60px 24px; }
 .auth-card {

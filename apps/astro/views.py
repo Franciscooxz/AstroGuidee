@@ -16,7 +16,8 @@ from django.views.decorators.http import require_POST
 
 from .forms import LoginForm, RegisterForm, StyledPasswordChangeForm
 from .models import (Achievement, Category, Lesson, LessonProgress,
-                     Notification, Profile, Purchase, ShopItem, UserAchievement)
+                     Notification, Profile, Purchase, ReviewItem, ShopItem,
+                     UserAchievement)
 
 LOGIN_URL = 'astro:login'
 AVATAR_ICONS = ['orbit', 'sun', 'earth', 'saturn', 'galaxy', 'blackhole',
@@ -29,6 +30,27 @@ DAILY_GOAL = 1          # lecciones por dia para cumplir la meta
 DAILY_BONUS = 15        # Cosmos de recompensa al cumplirla
 HEARTS_MAX = 5          # vidas maximas
 HEART_REFILL_MIN = 30   # minutos para recuperar 1 vida
+XP_PER_REVIEW = 3       # XP por cada repaso acertado
+REVIEW_BATCH = 15       # preguntas maximas por sesion de repaso
+
+
+def _seed_reviews(user, lesson):
+    """Crea items de repaso para las preguntas de una leccion recien completada."""
+    qs = lesson.questions.filter(is_active=True)
+    existing = set(ReviewItem.objects.filter(user=user, question__in=qs)
+                   .values_list('question_id', flat=True))
+    nuevos = [ReviewItem(user=user, question=q, due=timezone.localdate() + timedelta(days=1))
+              for q in qs if q.id not in existing]
+    if nuevos:
+        ReviewItem.objects.bulk_create(nuevos)
+
+
+def _due_reviews(user):
+    """Items de repaso vencidos (hoy o antes) del usuario, con la pregunta y opciones."""
+    return (ReviewItem.objects.filter(user=user, due__lte=timezone.localdate(),
+                                      question__is_active=True)
+            .select_related('question', 'question__lesson')
+            .prefetch_related('question__options'))
 
 
 def _refill_hearts(profile):
@@ -251,9 +273,11 @@ def ruta(request):
     _refill_hearts(profile)
     profile.save(update_fields=['hearts', 'hearts_updated'])
     daily_done = _lessons_done_today(request.user)
+    reviews_due = _due_reviews(request.user).count()
     return render(request, 'astro/app/ruta.html', {
         'units': units,
         'current_lesson': current_lesson,
+        'reviews_due': reviews_due,
         'all_done': total > 0 and done == total,
         'total': total,
         'done': done,
@@ -444,6 +468,7 @@ def finish_quiz(request, slug):
             prog.completed = True
             prog.completed_at = timezone.now()
             prog.save()
+        _seed_reviews(request.user, lesson_obj)
 
         level_after = profile.xp // 100 + 1
         if level_after > level_before:
@@ -640,6 +665,68 @@ def clear_notifications(request):
 
 
 @login_required(login_url=LOGIN_URL)
+def review(request):
+    """Repaso inteligente: presenta las preguntas vencidas (repeticion espaciada)."""
+    due = list(_due_reviews(request.user)[:REVIEW_BATCH])
+    total_due = _due_reviews(request.user).count()
+    next_item = (ReviewItem.objects.filter(user=request.user, due__gt=timezone.localdate())
+                 .order_by('due').first())
+    total_items = ReviewItem.objects.filter(user=request.user).count()
+    return render(request, 'astro/app/review.html', {
+        'items': due,
+        'questions': [it.question for it in due],
+        'total_due': total_due,
+        'next_due': next_item.due if next_item else None,
+        'total_items': total_items,
+        'active_nav': 'review',
+    })
+
+
+@login_required(login_url=LOGIN_URL)
+@require_POST
+def finish_review(request):
+    """Corrige la sesion de repaso y reprograma cada item segun SM-2."""
+    try:
+        answers = json.loads(request.body or '{}').get('answers', {})
+    except (ValueError, AttributeError):
+        answers = {}
+
+    items = {str(it.question_id): it for it in _due_reviews(request.user)[:REVIEW_BATCH]}
+    correct = 0
+    for qid, it in items.items():
+        q = it.question
+        val = answers.get(qid, '')
+        if q.qtype == 'text':
+            typed = _norm_text(str(val))
+            accepted = [_norm_text(o.text) for o in q.options.all() if o.is_correct]
+            ok = bool(typed) and typed in accepted
+        else:
+            ok = any(o.is_correct and str(o.id) == str(val) for o in q.options.all())
+        it.schedule(ok)
+        it.save()
+        if ok:
+            correct += 1
+
+    total = len(items)
+    xp_earned = correct * XP_PER_REVIEW
+    profile = _get_profile(request.user)
+    if xp_earned:
+        profile.add_xp(xp_earned)
+        profile.add_weekly_xp(xp_earned)
+    if total:
+        profile.register_activity()
+    profile.save()
+
+    return JsonResponse({
+        'correct': correct,
+        'total': total,
+        'xp_earned': xp_earned,
+        'total_xp': profile.xp,
+        'streak': profile.streak,
+    })
+
+
+@login_required(login_url=LOGIN_URL)
 @require_POST
 def complete_lesson(request, slug):
     lesson_obj = get_object_or_404(Lesson, slug=slug, is_active=True)
@@ -655,5 +742,6 @@ def complete_lesson(request, slug):
         profile = _get_profile(request.user)
         profile.register_activity()
         profile.save()
+        _seed_reviews(request.user, lesson_obj)
         _award_achievements(request.user)
     return redirect('astro:ruta')
