@@ -211,6 +211,25 @@ class ReviewItem(models.Model):
         self.last_reviewed = timezone.now()
 
 
+class UnitExam(models.Model):
+    """Resultado del examen final de una unidad para un usuario."""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='unit_exams',
+                             on_delete=models.CASCADE)
+    category = models.ForeignKey('Category', related_name='exams', on_delete=models.CASCADE)
+    passed = models.BooleanField('Aprobado', default=False)
+    best_score = models.PositiveSmallIntegerField('Mejor nota (%)', default=0)
+    attempts = models.PositiveIntegerField('Intentos', default=0)
+    passed_at = models.DateTimeField('Aprobado el', null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Examen de unidad'
+        verbose_name_plural = 'Examenes de unidad'
+        unique_together = ('user', 'category')
+
+    def __str__(self):
+        return f'{self.user} · {self.category} · {self.best_score}%'
+
+
 class MissionClaim(models.Model):
     """Registro de una mision semanal cuya recompensa ya reclamo el usuario."""
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='mission_claims',

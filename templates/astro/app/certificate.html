@@ -16,6 +16,13 @@
     <h2 class="cert-unit">{{ unit.name }}</h2>
     <p class="cert-meta">{{ n_lessons }} leccion{{ n_lessons|pluralize:"es" }} · {{ n_cards }} tarjetas dominadas</p>
 
+    {% if exam and exam.passed %}
+    <div class="cert-honors {% if exam.best_score >= 100 %}gold{% endif %}">
+      {% include 'astro/_icon.html' with name='trophy' size=18 %}
+      Examen final superado{% if exam.best_score >= 100 %} con honores{% endif %} · {{ exam.best_score }}%
+    </div>
+    {% endif %}
+
     <div class="cert-foot">
       <div><b>{{ date|date:"d/m/Y" }}</b><span>Fecha</span></div>
       <div class="cert-seal">{% include 'astro/_icon.html' with name='check' size=30 %}</div>
@@ -25,6 +32,11 @@
 
   <div class="cert-actions">
     <button type="button" class="btn btn-primary" onclick="window.print()">Imprimir / Guardar PDF</button>
+    {% if not exam or not exam.passed %}
+    <a href="{% url 'astro:exam' unit.slug %}" class="btn">Hacer examen final</a>
+    {% else %}
+    <a href="{% url 'astro:exam' unit.slug %}" class="btn">Repetir examen</a>
+    {% endif %}
     <a href="{% url 'astro:profile' %}" class="btn">← Mi perfil</a>
   </div>
 </div>

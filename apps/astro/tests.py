@@ -254,6 +254,54 @@ class ReportTests(AstroBaseTest):
         self.assertTrue(QuestionReport.objects.get(question=self.q1).resolved)
 
 
+class UnitExamTests(AstroBaseTest):
+    def _complete_unit(self):
+        # completar l1 y l2 de la unidad de prueba
+        LessonProgress.objects.update_or_create(
+            user=self.user, lesson=self.l1, defaults={'completed': True})
+        LessonProgress.objects.update_or_create(
+            user=self.user, lesson=self.l2, defaults={'completed': True})
+
+    def test_exam_locked_until_unit_complete(self):
+        self.login()
+        self.assertEqual(self.client.get(reverse('astro:exam', args=['unidad-test'])).status_code, 302)
+
+    def test_exam_available_when_complete(self):
+        self._complete_unit()
+        self.login()
+        resp = self.client.get(reverse('astro:exam', args=['unidad-test']))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Examen final')
+
+    def test_pass_exam_records_and_rewards(self):
+        from apps.astro.models import UnitExam
+        self._complete_unit()
+        self.login()
+        coins0 = Profile.objects.get_or_create(user=self.user)[0].coins
+        answers = {str(self.q1.id): self.o_ok.id, str(self.q2.id): 'sol'}  # 2/2 = 100%
+        data = self.client.post(
+            reverse('astro:finish_exam', args=['unidad-test']),
+            data=json.dumps({'answers': answers}), content_type='application/json').json()
+        self.assertTrue(data['passed'])
+        self.assertTrue(data['honors'])
+        self.assertEqual(data['pct'], 100)
+        ex = UnitExam.objects.get(user=self.user, category=self.cat)
+        self.assertTrue(ex.passed)
+        self.assertEqual(ex.best_score, 100)
+        self.assertEqual(Profile.objects.get(user=self.user).coins, coins0 + 50)
+
+    def test_fail_exam_no_reward(self):
+        from apps.astro.models import UnitExam
+        self._complete_unit()
+        self.login()
+        answers = {str(self.q1.id): 0, str(self.q2.id): 'mal'}  # 0/2
+        data = self.client.post(
+            reverse('astro:finish_exam', args=['unidad-test']),
+            data=json.dumps({'answers': answers}), content_type='application/json').json()
+        self.assertFalse(data['passed'])
+        self.assertFalse(UnitExam.objects.get(user=self.user, category=self.cat).passed)
+
+
 class DailyGoalTests(AstroBaseTest):
     def test_change_daily_goal(self):
         self.login()

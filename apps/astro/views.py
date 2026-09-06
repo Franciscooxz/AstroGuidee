@@ -19,7 +19,7 @@ from .forms import LoginForm, RegisterForm, StyledPasswordChangeForm
 from .models import (Achievement, Category, Lesson, LessonProgress,
                      MissionClaim, Notification, Profile, Purchase, Question,
                      QuestionReport, QuestionStat, ReviewItem, ShopItem,
-                     UserAchievement)
+                     UnitExam, UserAchievement)
 
 LOGIN_URL = 'astro:login'
 AVATAR_ICONS = ['orbit', 'sun', 'earth', 'saturn', 'galaxy', 'blackhole',
@@ -384,21 +384,115 @@ def ruta(request):
     })
 
 
+def _unit_complete(user, unit):
+    """True si el usuario completo todas las lecciones activas de la unidad."""
+    lessons = list(unit.lessons.filter(is_active=True))
+    if not lessons:
+        return False, []
+    done = set(LessonProgress.objects.filter(user=user, lesson__in=lessons, completed=True)
+               .values_list('lesson_id', flat=True))
+    return all(l.id in done for l in lessons), lessons
+
+
 @login_required(login_url=LOGIN_URL)
 def certificate(request, slug):
     unit = get_object_or_404(Category, slug=slug, is_active=True)
-    lessons = list(unit.lessons.filter(is_active=True))
-    done = set(LessonProgress.objects.filter(user=request.user, lesson__in=lessons, completed=True)
-               .values_list('lesson_id', flat=True))
-    if not lessons or not all(l.id in done for l in lessons):
+    complete, lessons = _unit_complete(request.user, unit)
+    if not complete:
         return redirect('astro:ruta')
     last = (LessonProgress.objects.filter(user=request.user, lesson__in=lessons, completed=True)
             .order_by('-completed_at').first())
+    exam = UnitExam.objects.filter(user=request.user, category=unit).first()
     return render(request, 'astro/app/certificate.html', {
         'unit': unit,
         'date': last.completed_at if last else None,
         'n_lessons': len(lessons),
         'n_cards': unit.card_count,
+        'exam': exam,
+    })
+
+
+EXAM_PASS = 0.8    # % para aprobar el examen final
+EXAM_HONORS = 100  # % para "con honores"
+EXAM_BONUS = 50    # Cosmos la primera vez que se aprueba
+
+
+@login_required(login_url=LOGIN_URL)
+def exam(request, slug):
+    """Examen final de una unidad: todas sus preguntas, disponible al completarla."""
+    unit = get_object_or_404(Category, slug=slug, is_active=True)
+    complete, lessons = _unit_complete(request.user, unit)
+    if not complete:
+        return redirect('astro:ruta')
+    questions = list(Question.objects.filter(
+        lesson__in=lessons, is_active=True).prefetch_related('options'))
+    if not questions:
+        return redirect('astro:certificate', slug=unit.slug)
+    return render(request, 'astro/app/exam.html', {
+        'unit': unit,
+        'questions': questions,
+        'needed': math.ceil(EXAM_PASS * len(questions)),
+        'active_nav': 'ruta',
+    })
+
+
+@login_required(login_url=LOGIN_URL)
+@require_POST
+def finish_exam(request, slug):
+    unit = get_object_or_404(Category, slug=slug, is_active=True)
+    complete, lessons = _unit_complete(request.user, unit)
+    if not complete:
+        return JsonResponse({'error': 'locked'}, status=403)
+
+    try:
+        answers = json.loads(request.body or '{}').get('answers', {})
+    except (ValueError, AttributeError):
+        answers = {}
+
+    questions = list(Question.objects.filter(
+        lesson__in=lessons, is_active=True).prefetch_related('options'))
+    total = len(questions)
+    correct = 0
+    for q in questions:
+        val = answers.get(str(q.id), '')
+        if q.qtype == 'text':
+            typed = _norm_text(str(val))
+            accepted = [_norm_text(o.text) for o in q.options.all() if o.is_correct]
+            ok = bool(typed) and typed in accepted
+        else:
+            ok = any(o.is_correct and str(o.id) == str(val) for o in q.options.all())
+        if ok:
+            correct += 1
+        _record_answer(request.user, q, ok)
+
+    pct = round(correct / total * 100) if total else 0
+    passed = pct >= round(EXAM_PASS * 100)
+    honors = pct >= EXAM_HONORS
+
+    ex, _ = UnitExam.objects.get_or_create(user=request.user, category=unit)
+    ex.attempts += 1
+    ex.best_score = max(ex.best_score, pct)
+    newly_passed = passed and not ex.passed
+    bonus = 0
+    if passed:
+        ex.passed = True
+        if not ex.passed_at:
+            ex.passed_at = timezone.now()
+    ex.save()
+
+    if newly_passed:
+        profile = _get_profile(request.user)
+        bonus = EXAM_BONUS
+        profile.add_coins(bonus)
+        profile.save(update_fields=['coins'])
+        Notification.push(request.user, f'Examen final de {unit.name} superado! +{bonus} Cosmos.',
+                          icon='trophy', url=reverse('astro:certificate', args=[unit.slug]))
+
+    return JsonResponse({
+        'correct': correct, 'total': total, 'pct': pct,
+        'passed': passed, 'honors': honors, 'bonus': bonus,
+        'best_score': ex.best_score,
+        'cert_url': reverse('astro:certificate', args=[unit.slug]),
     })
 
 
