@@ -46,6 +46,10 @@
       <div class="nav-actions">
         {% if user.is_authenticated %}
           {% if user.is_staff %}<a href="{% url 'gestion:dashboard' %}" class="btn">Gestion</a>{% endif %}
+          <a href="{% url 'astro:notifications' %}" class="nav-bell {% if active_nav == 'notifications' %}active{% endif %}" title="Notificaciones" aria-label="Notificaciones">
+            {% include 'astro/_icon.html' with name='bell' size=20 %}
+            {% if unread_notifications %}<span class="bell-badge">{{ unread_notifications }}</span>{% endif %}
+          </a>
           <a href="{% url 'astro:profile' %}" class="nav-user {% if active_nav == 'profile' %}active{% endif %}" title="Ver mi perfil">
             <span class="nav-avatar {% if astro_profile.frame %}av-{{ astro_profile.frame }}{% endif %}">{% if astro_profile.avatar %}{% include 'astro/_icon.html' with name=astro_profile.avatar size=18 %}{% else %}{{ user.username|first|upper }}{% endif %}</span>
             <span class="nav-uname">{{ user.username }}</span>
@@ -66,6 +70,7 @@
     <a href="{% url 'astro:ruta' %}" class="{% if active_nav == 'ruta' %}on{% endif %}">{% include 'astro/_icon.html' with name='orbit' size=24 %}<span>Ruta</span></a>
     <a href="{% url 'astro:league' %}" class="{% if active_nav == 'league' %}on{% endif %}">{% include 'astro/_icon.html' with name='star' size=24 %}<span>Ligas</span></a>
     <a href="{% url 'astro:store' %}" class="{% if active_nav == 'store' %}on{% endif %}">{% include 'astro/_icon.html' with name='coin' size=24 %}<span>Tienda</span></a>
+    <a href="{% url 'astro:notifications' %}" class="tab-bell {% if active_nav == 'notifications' %}on{% endif %}">{% include 'astro/_icon.html' with name='bell' size=24 %}{% if unread_notifications %}<span class="bell-badge">{{ unread_notifications }}</span>{% endif %}<span>Avisos</span></a>
     <a href="{% url 'astro:profile' %}" class="{% if active_nav == 'profile' %}on{% endif %}">{% include 'astro/_icon.html' with name='user' size=24 %}<span>Perfil</span></a>
   </nav>
   {% endif %}

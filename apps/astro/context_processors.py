@@ -2,7 +2,7 @@ import time
 
 from django.conf import settings
 
-from .models import Profile
+from .models import Notification, Profile
 
 # Version de assets para cache-busting: en desarrollo cambia en cada arranque
 # del servidor (para no ver CSS/JS cacheado); en produccion es estable.
@@ -15,4 +15,6 @@ def astro_profile(request):
     if request.user.is_authenticated:
         profile, _ = Profile.objects.get_or_create(user=request.user)
         ctx['astro_profile'] = profile
+        ctx['unread_notifications'] = Notification.objects.filter(
+            user=request.user, is_read=False).count()
     return ctx

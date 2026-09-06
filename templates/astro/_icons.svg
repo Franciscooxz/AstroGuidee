@@ -1,5 +1,15 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
+    <symbol id="i-bell" viewBox="0 0 64 64">
+      <path d="M32 8a4 4 0 0 1 4 4v2.3A16 16 0 0 1 48 30v9l4 6v3H12v-3l4-6v-9a16 16 0 0 1 12-15.7V12a4 4 0 0 1 4-4z" fill="#ffd76a"/>
+      <path d="M26 52a6 6 0 0 0 12 0z" fill="#ffb238"/>
+    </symbol>
+    <symbol id="i-trophy" viewBox="0 0 64 64">
+      <path d="M20 10h24v10a12 12 0 0 1-24 0z" fill="#ffd23f"/>
+      <path d="M20 12h-6a8 8 0 0 0 8 10zM44 12h6a8 8 0 0 1-8 10z" fill="#e0a010"/>
+      <rect x="28" y="30" width="8" height="12" fill="#e0a010"/>
+      <rect x="20" y="46" width="24" height="8" rx="2" fill="#ffd23f"/>
+    </symbol>
     <radialGradient id="g-sun" cx="42%" cy="35%" r="72%">
       <stop offset="0%" stop-color="#fff6c2"/><stop offset="45%" stop-color="#ffcf33"/><stop offset="100%" stop-color="#ff7a00"/>
     </radialGradient>

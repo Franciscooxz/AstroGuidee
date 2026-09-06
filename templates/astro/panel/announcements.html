@@ -1,0 +1,42 @@
+{% extends 'astro/panel/base.html' %}
+{% block title %}Anuncios — Gestion{% endblock %}
+{% block content %}
+<div class="panel-head">
+  <div><h1>Anuncios</h1><p>Envia una notificacion a todos los usuarios.</p></div>
+</div>
+
+<div class="form-card">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <div class="form-row">
+      <label for="ann-text">Mensaje</label>
+      <textarea id="ann-text" name="text" rows="3" maxlength="250" required class="field"
+                placeholder="Ej: Nueva unidad disponible: Exoplanetas. ¡Ve a explorarla!"></textarea>
+      <small class="help">Maximo 250 caracteres. Llegara al centro de notificaciones de cada usuario.</small>
+    </div>
+    <div class="form-row">
+      <label for="ann-icon">Icono</label>
+      <select id="ann-icon" name="icon" class="field">
+        {% for ic in icons %}<option value="{{ ic }}">{{ ic }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Enviar a todos</button>
+    </div>
+  </form>
+</div>
+
+{% if recent %}
+<div class="stats-card" style="margin-top:22px">
+  <h3>Anuncios recientes</h3>
+  <div class="notif-list">
+    {% for n in recent %}
+    <div class="notif">
+      <span class="notif-ico">{% include 'astro/_icon.html' with name=n.icon size=22 %}</span>
+      <span class="notif-body"><span class="notif-text">{{ n.text }}</span></span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

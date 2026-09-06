@@ -5,7 +5,8 @@ from django.test import TestCase
 from django.urls import reverse
 
 from .models import (Achievement, Card, Category, Lesson, LessonProgress,
-                     Option, Profile, Question, ShopItem, UserAchievement)
+                     Notification, Option, Profile, Question, ShopItem,
+                     UserAchievement)
 
 
 class AstroBaseTest(TestCase):
@@ -150,6 +151,33 @@ class LeagueAndProfileTests(AstroBaseTest):
         self.client.post(reverse('astro:settings'),
                          {'save_profile': '1', 'email': 'new@x.com', 'avatar': 'malicioso'})
         self.assertEqual(Profile.objects.get(user=self.user).avatar, '')
+
+
+class NotificationTests(AstroBaseTest):
+    def test_achievement_creates_notification(self):
+        Achievement.objects.create(key='n-test', name='Primero',
+                                   condition_type='lessons_completed', threshold=1)
+        self.login()
+        self.complete_l1()
+        self.assertTrue(Notification.objects.filter(
+            user=self.user, text__icontains='Logro desbloqueado').exists())
+
+    def test_center_lists_and_marks_read(self):
+        self.login()
+        Notification.push(self.user, 'Hola cosmos', icon='star')
+        self.assertEqual(Notification.objects.filter(user=self.user, is_read=False).count(), 1)
+        resp = self.client.get(reverse('astro:notifications'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Hola cosmos')
+        # abrir el centro marca todo como leido
+        self.assertEqual(Notification.objects.filter(user=self.user, is_read=False).count(), 0)
+
+    def test_clear_deletes_history(self):
+        self.login()
+        Notification.push(self.user, 'A')
+        Notification.push(self.user, 'B')
+        self.client.post(reverse('astro:clear_notifications'))
+        self.assertEqual(Notification.objects.filter(user=self.user).count(), 0)
 
 
 class PanelTests(AstroBaseTest):

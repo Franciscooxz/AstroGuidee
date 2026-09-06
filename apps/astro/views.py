@@ -10,12 +10,13 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from .forms import LoginForm, RegisterForm, StyledPasswordChangeForm
-from .models import (Achievement, Category, Lesson, LessonProgress, Profile,
-                     Purchase, ShopItem, UserAchievement)
+from .models import (Achievement, Category, Lesson, LessonProgress,
+                     Notification, Profile, Purchase, ShopItem, UserAchievement)
 
 LOGIN_URL = 'astro:login'
 AVATAR_ICONS = ['orbit', 'sun', 'earth', 'saturn', 'galaxy', 'blackhole',
@@ -42,6 +43,9 @@ def _refill_hearts(profile):
         profile.hearts = min(HEARTS_MAX, profile.hearts + gained)
         profile.hearts_updated = (now if profile.hearts >= HEARTS_MAX
                                   else last + timedelta(minutes=gained * HEART_REFILL_MIN))
+        if profile.hearts >= HEARTS_MAX:
+            Notification.push(profile.user, 'Tus vidas se recargaron al maximo. A seguir aprendiendo!',
+                              icon='heart', url=reverse('astro:ruta'))
     return profile
 
 
@@ -129,8 +133,11 @@ def _award_achievements(user):
         if ach.key in earned_keys:
             continue
         if stats.get(ach.condition_type, 0) >= ach.threshold:
-            UserAchievement.objects.get_or_create(user=user, achievement=ach)
-            newly.append(ach)
+            _, created = UserAchievement.objects.get_or_create(user=user, achievement=ach)
+            if created:
+                Notification.push(user, f'Logro desbloqueado: {ach.name}',
+                                  icon=ach.icon or 'trophy', url=reverse('astro:profile'))
+                newly.append(ach)
     return newly
 
 
@@ -415,6 +422,7 @@ def finish_quiz(request, slug):
     coins_earned = 0
     doubled = False
     newly = []
+    level_before = profile.xp // 100 + 1
     if passed:
         if perfect:
             profile.perfect_quizzes += 1
@@ -437,6 +445,11 @@ def finish_quiz(request, slug):
             prog.completed_at = timezone.now()
             prog.save()
 
+        level_after = profile.xp // 100 + 1
+        if level_after > level_before:
+            Notification.push(request.user, f'Subiste al nivel {level_after}! Sigue asi.',
+                              icon='star', url=reverse('astro:profile'))
+
         newly = _award_achievements(request.user)
 
     # Meta diaria: si cumpliste la meta de hoy y no la habias cobrado, bono de Cosmos
@@ -447,6 +460,8 @@ def finish_quiz(request, slug):
         profile.daily_claimed = today
         profile.add_coins(DAILY_BONUS)
         daily_bonus = DAILY_BONUS
+        Notification.push(request.user, f'Meta diaria cumplida! +{DAILY_BONUS} Cosmos.',
+                          icon='coin', url=reverse('astro:store'))
 
     profile.save()  # persiste vidas, meta diaria y demas
 
@@ -601,6 +616,27 @@ def equip_frame(request, key):
     profile.save()
     messages.success(request, f'Marco "{item.name}" equipado.')
     return redirect('astro:store')
+
+
+@login_required(login_url=LOGIN_URL)
+def notifications(request):
+    """Centro de notificaciones: lista el historial y marca todo como leido."""
+    qs = Notification.objects.filter(user=request.user)
+    items = list(qs[:100])
+    qs.filter(is_read=False).update(is_read=True)
+    return render(request, 'astro/app/notifications.html', {
+        'items': items,
+        'active_nav': 'notifications',
+    })
+
+
+@login_required(login_url=LOGIN_URL)
+@require_POST
+def clear_notifications(request):
+    """Borra todo el historial de notificaciones del usuario."""
+    Notification.objects.filter(user=request.user).delete()
+    messages.success(request, 'Notificaciones borradas.')
+    return redirect('astro:notifications')
 
 
 @login_required(login_url=LOGIN_URL)

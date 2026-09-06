@@ -1,11 +1,6 @@
 {
   "version": "0.0.1",
   "configurations": [
-    {
-      "name": "astro-dev",
-      "runtimeExecutable": "python",
-      "runtimeArgs": ["manage.py", "runserver", "127.0.0.1:8000"],
-      "port": 8000
-    }
+    { "name": "astro", "runtimeExecutable": "python", "runtimeArgs": ["manage.py", "runserver", "8000"], "port": 8000 }
   ]
 }

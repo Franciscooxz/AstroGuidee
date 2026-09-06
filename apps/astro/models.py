@@ -297,6 +297,30 @@ class Purchase(models.Model):
         return f'{self.user} · {self.item.name}'
 
 
+class Notification(models.Model):
+    """Notificacion para el centro de notificaciones (campana)."""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='notifications',
+                             on_delete=models.CASCADE)
+    text = models.CharField('Texto', max_length=250)
+    icon = models.CharField('Icono', max_length=40, blank=True, default='rocket')
+    url = models.CharField('Enlace', max_length=200, blank=True)
+    is_read = models.BooleanField('Leida', default=False)
+    created_at = models.DateTimeField('Creada', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Notificacion'
+        verbose_name_plural = 'Notificaciones'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.user} · {self.text[:40]}'
+
+    @classmethod
+    def push(cls, user, text, icon='rocket', url=''):
+        """Crea una notificacion para el usuario (helper central)."""
+        return cls.objects.create(user=user, text=text[:250], icon=icon, url=url)
+
+
 class Achievement(models.Model):
     """Un logro/insignia que se desbloquea al cumplir un hito."""
     CONDITIONS = [

@@ -7,8 +7,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
+from django.contrib import messages
+
 from .models import (Achievement, Card, Category, Lesson, LessonProgress,
-                     Profile, Question, ShopItem, UserAchievement)
+                     Notification, Profile, Question, ShopItem, UserAchievement)
 from .panel_forms import (AchievementForm, CardForm, LessonForm, OptionFormSet,
                           QuestionForm, ShopItemForm, UnitForm)
 
@@ -55,6 +57,39 @@ def stats(request):
         'top_lessons': top_lessons,
         'hardest': hardest,
         'active': 'stats',
+    })
+
+
+# ---------- Anuncios ----------
+
+@staff_member_required(login_url=LOGIN)
+def announcements(request):
+    """Envia una notificacion (anuncio) a todos los usuarios activos."""
+    if request.method == 'POST':
+        text = (request.POST.get('text') or '').strip()
+        icon = (request.POST.get('icon') or 'rocket').strip()
+        if not text:
+            messages.error(request, 'Escribe el texto del anuncio.')
+        else:
+            users = User.objects.filter(is_active=True)
+            Notification.objects.bulk_create([
+                Notification(user=u, text=text[:250], icon=icon) for u in users
+            ])
+            messages.success(request, f'Anuncio enviado a {users.count()} usuarios.')
+            return redirect('gestion:announcements')
+
+    recent = Notification.objects.filter(url='').values(
+        'text', 'icon').order_by('-created_at')[:20]
+    # Anuncios recientes (agrupados por texto): mostramos los ultimos distintos
+    seen, distinct = set(), []
+    for n in recent:
+        if n['text'] not in seen:
+            seen.add(n['text'])
+            distinct.append(n)
+    return render(request, 'astro/panel/announcements.html', {
+        'recent': distinct,
+        'icons': ['rocket', 'star', 'trophy', 'coin', 'heart', 'galaxy', 'orbit'],
+        'active': 'anuncios',
     })
 
 

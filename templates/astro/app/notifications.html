@@ -1,0 +1,37 @@
+{% extends 'astro/base.html' %}
+{% block title %}Notificaciones — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap">
+  <section class="section">
+    <div class="section-head">
+      <div><h2><span class="bar"></span>Notificaciones</h2>
+        <p>Tu historial de avisos: logros, niveles, vidas y metas.</p></div>
+      {% if items %}
+      <form method="post" action="{% url 'astro:clear_notifications' %}" onsubmit="return confirm('¿Borrar todas las notificaciones?');">
+        {% csrf_token %}
+        <button type="submit" class="btn">Borrar todo</button>
+      </form>
+      {% endif %}
+    </div>
+
+    <div class="notif-list">
+      {% for n in items %}
+      {% if n.url %}<a href="{{ n.url }}" class="notif {% if not n.is_read %}unread{% endif %}">{% else %}<div class="notif {% if not n.is_read %}unread{% endif %}">{% endif %}
+        <span class="notif-ico">{% include 'astro/_icon.html' with name=n.icon size=24 %}</span>
+        <span class="notif-body">
+          <span class="notif-text">{{ n.text }}</span>
+          <span class="notif-time">{{ n.created_at|timesince }}</span>
+        </span>
+      {% if n.url %}</a>{% else %}</div>{% endif %}
+      {% empty %}
+      <div class="notif-empty">
+        <span class="notif-empty-ico">{% include 'astro/_icon.html' with name='bell' size=48 %}</span>
+        <p>Aun no tienes notificaciones.</p>
+        <p class="muted">Cuando ganes logros, subas de nivel o cumplas tu meta, apareceran aqui.</p>
+        <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Ir a mi ruta</a>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}
