@@ -12,6 +12,10 @@
       <div class="hint">Toca para saber mas ↺</div>
     </div>
     <div class="flip-face flip-back">
+      <button type="button" class="tts-btn" aria-label="Escuchar tarjeta" title="Escuchar"
+              data-tts="{{ card.title }}. {{ card.summary }} {% if card.fun_fact %}Dato curioso: {{ card.fun_fact }}{% endif %}">
+        {% include 'astro/_icon.html' with name='sound' size=18 %}
+      </button>
       <h4>{{ card.title }}</h4>
       <p>{{ card.summary }}</p>
       {% if card.fun_fact %}<div class="fact"><b>Dato curioso:</b> {{ card.fun_fact }}</div>{% endif %}

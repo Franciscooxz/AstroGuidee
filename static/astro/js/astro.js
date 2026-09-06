@@ -60,8 +60,28 @@ async function toggleKnown(btn) {
   }
 }
 
-// Click: el boton de "dominar" tiene prioridad; el resto de la tarjeta la gira
+function speakCard(btn) {
+  if (!('speechSynthesis' in window)) return;
+  const speaking = btn.classList.contains('on');
+  window.speechSynthesis.cancel();
+  document.querySelectorAll('.tts-btn.on').forEach(function (b) { b.classList.remove('on'); });
+  if (speaking) return;  // segundo clic: detiene
+  const u = new SpeechSynthesisUtterance(btn.getAttribute('data-tts') || '');
+  u.lang = 'es-ES';
+  u.onend = function () { btn.classList.remove('on'); };
+  u.onerror = function () { btn.classList.remove('on'); };
+  btn.classList.add('on');
+  window.speechSynthesis.speak(u);
+}
+
+// Click: botones de tarjeta (escuchar / dominar) tienen prioridad; el resto la gira
 document.addEventListener('click', function (e) {
+  const tts = e.target.closest('.tts-btn');
+  if (tts) {
+    e.stopPropagation();
+    speakCard(tts);
+    return;
+  }
   const btn = e.target.closest('.know-btn');
   if (btn) {
     e.stopPropagation();
@@ -71,6 +91,8 @@ document.addEventListener('click', function (e) {
   const flip = e.target.closest('.flip');
   if (flip) flip.classList.toggle('is-flipped');
 });
+
+if (!('speechSynthesis' in window)) document.documentElement.classList.add('no-tts');
 
 // Accesibilidad: girar con Enter / Espacio
 document.addEventListener('keydown', function (e) {

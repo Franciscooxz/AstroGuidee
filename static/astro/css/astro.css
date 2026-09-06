@@ -478,6 +478,21 @@ a.notif:hover { border-color: var(--purple-soft); background: var(--overlay); tr
 .glo-empty { grid-column: 1/-1; text-align: center; padding: 48px 20px; color: var(--text-faint); }
 .glo-empty-ic { display: inline-grid; place-items: center; opacity: .5; margin-bottom: 8px; }
 
+/* ===== Escuchar tarjeta (TTS) ===== */
+.tts-btn {
+  position: absolute; top: 12px; right: 12px; z-index: 2;
+  width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
+  display: grid; place-items: center;
+  background: var(--glass-bg); border: 1px solid var(--glass-brd); color: var(--purple-soft);
+  transition: all .15s;
+}
+.tts-btn:hover { border-color: var(--purple-soft); background: var(--overlay-hi); }
+.tts-btn.on { background: var(--purple); color: #fff; border-color: var(--purple);
+  animation: ttsPulse 1s ease-in-out infinite; }
+@keyframes ttsPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(139,92,255,.5); } 50% { box-shadow: 0 0 0 6px rgba(139,92,255,0); } }
+@media (prefers-reduced-motion: reduce) { .tts-btn.on { animation: none; } }
+.no-tts .tts-btn { display: none; }
+
 /* ===== Imagen en pregunta ===== */
 .q-image {
   display: block; margin: 4px auto 16px; max-height: 260px; width: auto; max-width: 100%;
