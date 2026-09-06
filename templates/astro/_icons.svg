@@ -1,5 +1,8 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
+    <symbol id="i-moon" viewBox="0 0 64 64">
+      <path d="M40 8a24 24 0 1 0 16 40A20 20 0 0 1 40 8z" fill="#cdd7ff"/>
+    </symbol>
     <symbol id="i-bell" viewBox="0 0 64 64">
       <path d="M32 8a4 4 0 0 1 4 4v2.3A16 16 0 0 1 48 30v9l4 6v3H12v-3l4-6v-9a16 16 0 0 1 12-15.7V12a4 4 0 0 1 4-4z" fill="#ffd76a"/>
       <path d="M26 52a6 6 0 0 0 12 0z" fill="#ffb238"/>

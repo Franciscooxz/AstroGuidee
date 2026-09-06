@@ -19,6 +19,26 @@
   --font: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
+/* Tema claro: redefine los tokens; el resto del CSS los usa */
+:root[data-theme="light"] {
+  --bg-0: #eceef7;
+  --bg-1: #f7f8fd;
+  --bg-2: #e4e7f5;
+  --text: #171a2e;
+  --text-dim: #40455f;
+  --text-faint: #5c6284;
+  --glass-bg: rgba(24, 28, 66, 0.05);
+  --glass-brd: rgba(24, 28, 66, 0.13);
+  --glass-hi: rgba(24, 28, 66, 0.20);
+  --shadow: 0 20px 45px -22px rgba(30, 40, 90, 0.30);
+  --overlay: rgba(24, 28, 66, 0.06);
+  --overlay-hi: rgba(24, 28, 66, 0.10);
+}
+:root {
+  --overlay: var(--overlay);
+  --overlay-hi: rgba(255, 255, 255, 0.14);
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 [hidden] { display: none !important; }
 
@@ -72,6 +92,27 @@ body::after {
   animation: twinkle 6s ease-in-out infinite alternate;
 }
 @keyframes twinkle { from { opacity: 0.35; } to { opacity: 0.7; } }
+
+/* Fondo en tema claro: suave, sin estrellas */
+:root[data-theme="light"] body::before {
+  background:
+    radial-gradient(60% 55% at 15% 10%, rgba(79, 124, 255, 0.12), transparent 60%),
+    radial-gradient(55% 50% at 88% 8%, rgba(139, 92, 255, 0.12), transparent 62%),
+    radial-gradient(70% 60% at 80% 95%, rgba(209, 107, 255, 0.09), transparent 60%),
+    linear-gradient(180deg, var(--bg-1), var(--bg-0) 70%);
+}
+:root[data-theme="light"] body::after { opacity: 0; animation: none; }
+
+/* Boton de tema (sol/luna) */
+.theme-toggle {
+  display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
+  background: var(--glass-bg); border: 1px solid var(--glass-brd); color: var(--text);
+  cursor: pointer; transition: all .2s;
+}
+.theme-toggle:hover { border-color: var(--purple-soft); background: var(--overlay-hi); }
+.theme-toggle .tt-moon { display: none; }
+:root[data-theme="light"] .theme-toggle .tt-sun { display: none; }
+:root[data-theme="light"] .theme-toggle .tt-moon { display: inline-flex; }
 
 /* Accesibilidad: foco visible con teclado */
 a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible,
@@ -330,7 +371,7 @@ textarea:focus-visible, [tabindex]:focus-visible, .flip:focus-visible {
   background: var(--glass-bg); border: 1px solid var(--glass-brd);
   transition: all .2s;
 }
-a.notif:hover { border-color: var(--purple-soft); background: rgba(255,255,255,.08); transform: translateY(-1px); }
+a.notif:hover { border-color: var(--purple-soft); background: var(--overlay); transform: translateY(-1px); }
 .notif.unread {
   background: radial-gradient(120% 140% at 0% 50%, rgba(139,92,255,.16), transparent 55%), var(--glass-bg);
   border-color: rgba(139,92,255,.4);
@@ -378,7 +419,7 @@ a.notif:hover { border-color: var(--purple-soft); background: rgba(255,255,255,.
 .ua-list { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
 .ua-row { display: grid; grid-template-columns: 140px 1fr 44px; align-items: center; gap: 12px; }
 .ua-name { font-size: 13px; font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ua-track { height: 10px; border-radius: 100px; background: rgba(255,255,255,.08); overflow: hidden; }
+.ua-track { height: 10px; border-radius: 100px; background: var(--overlay); overflow: hidden; }
 .ua-fill { display: block; height: 100%; border-radius: 100px;
   background: linear-gradient(90deg, var(--acc, var(--purple)), var(--blue-soft)); transition: width .5s ease; }
 .ua-val { font-size: 13px; font-weight: 700; text-align: right; }
@@ -534,7 +575,7 @@ a.notif:hover { border-color: var(--purple-soft); background: rgba(255,255,255,.
 .mission-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .mission-body b { font-size: 15px; }
 .mission-body small { font-size: 12.5px; color: var(--text-faint); }
-.mission-bar { height: 8px; border-radius: 100px; background: rgba(255,255,255,.08); overflow: hidden; margin-top: 4px; }
+.mission-bar { height: 8px; border-radius: 100px; background: var(--overlay); overflow: hidden; margin-top: 4px; }
 .mission-bar span { display: block; height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--purple), var(--blue-soft)); transition: width .5s ease; }
 .mission.done .mission-bar span { background: linear-gradient(90deg, #3ddc84, #6ee7ff); }
 .mission-prog { font-size: 11px; color: var(--text-faint); }
@@ -663,7 +704,7 @@ a.notif:hover { border-color: var(--purple-soft); background: rgba(255,255,255,.
   color: var(--text); font-family: var(--font); font-size: 15px; outline: none;
   transition: border-color .2s, background .2s;
 }
-.field:focus { border-color: var(--purple-soft); background: rgba(255,255,255,.08); }
+.field:focus { border-color: var(--purple-soft); background: var(--overlay); }
 .field::placeholder { color: var(--text-faint); }
 /* Inputs de formularios de auth de Django (recuperar contraseña) sin clase .field */
 .auth-card input:not([type="hidden"]) {
@@ -671,7 +712,7 @@ a.notif:hover { border-color: var(--purple-soft); background: rgba(255,255,255,.
   background: rgba(255,255,255,.05); border: 1px solid var(--glass-brd);
   color: var(--text); font-family: var(--font); font-size: 15px; outline: none; transition: border-color .2s;
 }
-.auth-card input:not([type="hidden"]):focus { border-color: var(--purple-soft); background: rgba(255,255,255,.08); }
+.auth-card input:not([type="hidden"]):focus { border-color: var(--purple-soft); background: var(--overlay); }
 .help { display: block; color: var(--text-faint); font-size: 11.5px; margin-top: 5px; line-height: 1.45; }
 .err { display: block; color: #ff8fa3; font-size: 12.5px; margin-top: 5px; }
 .err.block { background: rgba(255,80,110,.12); border: 1px solid rgba(255,80,110,.35); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; }
@@ -710,7 +751,7 @@ a.notif:hover { border-color: var(--purple-soft); background: rgba(255,255,255,.
 .prog-top b { display: block; font-size: 16px; }
 .prog-top small { color: var(--text-faint); font-size: 12.5px; }
 .prog-pct { margin-left: auto; font-size: 18px; font-weight: 700; color: var(--purple-soft); }
-.prog-bar, .deck-bar { height: 9px; border-radius: 100px; background: rgba(255,255,255,.08); overflow: hidden; }
+.prog-bar, .deck-bar { height: 9px; border-radius: 100px; background: var(--overlay); overflow: hidden; }
 .prog-bar span, .deck-bar span { display: block; height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--blue), var(--purple)); transition: width .5s ease; }
 
 /* ===== Deck ===== */
@@ -955,7 +996,7 @@ a.nav-user:hover, a.nav-user.active { color: var(--purple-soft); }
 .pi-since { color: var(--text-faint); font-size: 13px; margin-top: 4px; }
 .level-box { min-width: 200px; text-align: right; }
 .level-num { font-size: 18px; font-weight: 700; color: var(--purple-soft); margin-bottom: 8px; }
-.level-bar { height: 10px; border-radius: 100px; background: rgba(255,255,255,.08); overflow: hidden; }
+.level-bar { height: 10px; border-radius: 100px; background: var(--overlay); overflow: hidden; }
 .level-bar span { display: block; height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--blue), var(--purple)); transition: width .5s; }
 .level-box small { display: block; color: var(--text-faint); font-size: 12px; margin-top: 6px; }
 
@@ -997,7 +1038,7 @@ a.sbadge.link:hover { border-color: var(--purple-soft); transform: translateY(-2
 .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
 .frame-preview { width: 62px; height: 62px; border-radius: 50%; margin: 4px auto 12px; display: grid; place-items: center;
   font-size: 24px; font-weight: 700; color: #fff; background: linear-gradient(150deg, var(--blue), var(--purple)); }
-.buy-btn.on { background: rgba(255,255,255,.08); border-color: var(--glass-hi); }
+.buy-btn.on { background: var(--overlay); border-color: var(--glass-hi); }
 
 /* Marcos de avatar (cosmeticos) */
 .av-frame-gold { box-shadow: 0 0 0 3px #f5b301, 0 0 14px 2px rgba(245,179,1,.6); }
@@ -1044,7 +1085,7 @@ a.sbadge.link:hover { border-color: var(--purple-soft); transform: translateY(-2
 .rank-gem { width: 12px; height: 12px; border-radius: 3px; transform: rotate(45deg);
   background: var(--rc, var(--purple)); box-shadow: 0 0 8px var(--rc, var(--purple)); }
 .rank-prog { margin-top: 10px; max-width: 260px; }
-.rank-bar { height: 8px; border-radius: 100px; background: rgba(255,255,255,.08); overflow: hidden; }
+.rank-bar { height: 8px; border-radius: 100px; background: var(--overlay); overflow: hidden; }
 .rank-bar span { display: block; height: 100%; border-radius: 100px; background: var(--rc, var(--purple)); }
 .rank-prog small { display: block; color: var(--text-faint); font-size: 12px; margin-top: 5px; }
 .rank-pill { display: inline-block; margin-left: 8px; padding: 2px 9px; border-radius: 100px;
@@ -1180,7 +1221,7 @@ a.sbadge.link:hover { border-color: var(--purple-soft); transform: translateY(-2
 .quiz-top { display: flex; align-items: center; gap: 16px; margin-bottom: 34px; }
 .quiz-close { color: var(--text-faint); text-decoration: none; font-size: 20px; line-height: 1; }
 .quiz-close:hover { color: var(--text); }
-.quiz-bar { flex: 1; height: 12px; border-radius: 100px; background: rgba(255,255,255,.08); overflow: hidden; }
+.quiz-bar { flex: 1; height: 12px; border-radius: 100px; background: var(--overlay); overflow: hidden; }
 .quiz-bar span { display: block; height: 100%; width: 0; border-radius: 100px; background: linear-gradient(90deg, var(--blue), var(--purple)); transition: width .4s ease; }
 
 .quiz-hearts { display: inline-flex; gap: 3px; align-items: center; flex-shrink: 0; }
@@ -1225,7 +1266,7 @@ a.sbadge.link:hover { border-color: var(--purple-soft); transform: translateY(-2
 .res-score { color: var(--text-dim); font-size: 16px; }
 .res-xp { margin: 16px auto 4px; display: inline-block; padding: 8px 20px; border-radius: 100px; font-size: 20px; font-weight: 700;
   background: linear-gradient(135deg, var(--blue), var(--purple)); }
-.res-xp.muted { background: rgba(255,255,255,.08); color: var(--text-dim); font-size: 14px; font-weight: 500; }
+.res-xp.muted { background: var(--overlay); color: var(--text-dim); font-size: 14px; font-weight: 500; }
 .res-stats { display: flex; justify-content: center; gap: 26px; margin: 20px 0 6px; color: var(--text-dim); font-size: 14px; }
 .res-stats b { color: var(--text); }
 .res-actions { display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }

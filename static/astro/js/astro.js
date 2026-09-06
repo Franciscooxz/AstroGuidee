@@ -20,6 +20,15 @@ function getCsrf() {
   return m ? m.getAttribute('content') : '';
 }
 
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+  const next = cur === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('astro-theme', next); } catch (e) {}
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', next === 'light' ? '#f7f8fd' : '#0a0b1e');
+}
+
 async function toggleKnown(btn) {
   const id = btn.getAttribute('data-card');
   btn.disabled = true;
