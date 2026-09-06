@@ -254,6 +254,21 @@ class ReportTests(AstroBaseTest):
         self.assertTrue(QuestionReport.objects.get(question=self.q1).resolved)
 
 
+class PWATests(AstroBaseTest):
+    def test_manifest(self):
+        resp = self.client.get(reverse('astro:manifest'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('application/manifest+json', resp['Content-Type'])
+        self.assertContains(resp, 'AstroGuide')
+
+    def test_service_worker(self):
+        resp = self.client.get(reverse('astro:service_worker'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('javascript', resp['Content-Type'])
+        self.assertEqual(resp['Service-Worker-Allowed'], '/')
+        self.assertContains(resp, 'astroguide-')
+
+
 class GlossaryTests(AstroBaseTest):
     def test_glossary_lists_and_searches(self):
         self.login()

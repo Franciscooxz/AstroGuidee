@@ -6,6 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}AstroGuide — Entiende el Universo{% endblock %}</title>
   <meta name="description" content="AstroGuide: aprende astronomia y astrofisica con tarjetas y quizzes. Entiende el universo, no solo lo memorices.">
+  <link rel="manifest" href="{% url 'astro:manifest' %}">
+  <meta name="theme-color" content="#0a0b1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="AstroGuide">
+  <link rel="apple-touch-icon" href="{% static 'astro/img/apple-touch-icon.png' %}">
+  <link rel="icon" type="image/png" href="{% static 'astro/img/icon-192.png' %}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -82,5 +88,12 @@
   </footer>
 
   <script src="{% static 'astro/js/astro.js' %}?v={{ ASSET_VERSION }}"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('{% url "astro:service_worker" %}').catch(function () {});
+      });
+    }
+  </script>
 </body>
 </html>

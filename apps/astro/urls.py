@@ -8,6 +8,10 @@ app_name = 'astro'
 urlpatterns = [
     path('', views.home, name='home'),
 
+    # PWA
+    path('manifest.webmanifest', views.manifest, name='manifest'),
+    path('sw.js', views.service_worker, name='service_worker'),
+
     # Autenticacion
     path('registro/', views.register, name='register'),
     path('entrar/', views.login_view, name='login'),
