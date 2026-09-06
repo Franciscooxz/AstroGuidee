@@ -862,10 +862,15 @@ a.sbadge.link:hover { border-color: var(--purple-soft); transform: translateY(-2
 .app-tabs { display: none; }
 body.has-tabs { }
 .app-tabs {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 60;
-  justify-content: space-around; align-items: center; gap: 4px; padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
-  background: rgba(10, 11, 30, 0.92); border-top: 1px solid var(--glass-brd);
-  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  /* Barra flotante de vidrio esmerilado, esquinas suaves (estilo MagicOS) */
+  position: fixed; z-index: 60;
+  left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom));
+  justify-content: space-around; align-items: center; gap: 4px; padding: 9px 8px;
+  border-radius: 24px;
+  background: rgba(18, 20, 42, 0.66);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(26px) saturate(150%); -webkit-backdrop-filter: blur(26px) saturate(150%);
+  box-shadow: 0 14px 36px -14px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 .app-tabs a {
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
@@ -877,13 +882,21 @@ body.has-tabs { }
 .app-tabs a { min-width: 0; }
 
 @media (max-width: 760px) {
-  .app-tabs { display: flex; padding: 7px 6px calc(7px + env(safe-area-inset-bottom)); }
-  body.has-tabs { padding-bottom: 72px; }
+  .app-tabs { display: flex; padding: 9px 6px; }
+  body.has-tabs { padding-bottom: 96px; }
   body.has-tabs .foot { padding-bottom: 20px; }
 
-  /* Nav compacto en movil: avatar sin nombre, botones mas pequeños */
-  .nav { top: 10px; margin-top: 10px; }
-  .nav-inner { padding: 10px 14px; gap: 10px; }
+  /* Nav superior: rectangulo redondeado (menos pildora), glass refinado */
+  .nav { top: 8px; margin: 8px 12px 0; }
+  .nav-inner {
+    padding: 10px 14px; gap: 10px; border-radius: 20px;
+    background: rgba(18, 20, 42, 0.62);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%);
+    box-shadow: 0 12px 30px -14px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+  /* Botones y chip del nav tambien menos redondos, mas "cuadrado suave" */
+  .nav-actions .btn, .nav-user { border-radius: 14px; }
   .brand { font-size: 18px; }
   .nav-uname { display: none; }
   .nav-user { padding: 4px; gap: 0; }
