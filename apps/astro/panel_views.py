@@ -10,8 +10,8 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 
 from .models import (Achievement, Card, Category, Lesson, LessonProgress,
-                     Notification, Profile, Question, QuestionReport, ShopItem,
-                     UserAchievement)
+                     Notification, Profile, Question, QuestionReport,
+                     QuestionStat, ShopItem, UserAchievement)
 from .panel_forms import (AchievementForm, CardForm, LessonForm, OptionFormSet,
                           QuestionForm, ShopItemForm, UnitForm)
 
@@ -77,9 +77,24 @@ def quality(request):
         label = r.get_reason_display()
         g['reasons'][label] = g['reasons'].get(label, 0) + 1
     reported = sorted(grouped.values(), key=lambda g: g['count'], reverse=True)
+
+    # Preguntas mas falladas (precision agregada de todos los usuarios)
+    MIN_SEEN = 5
+    agg = list(QuestionStat.objects.values('question')
+               .annotate(seen=Sum('seen'), correct=Sum('correct'))
+               .filter(seen__gte=MIN_SEEN))
+    for a in agg:
+        a['acc'] = round(a['correct'] / a['seen'] * 100) if a['seen'] else 0
+    lowest = sorted(agg, key=lambda a: a['acc'])[:15]
+    qmap = Question.objects.select_related('lesson').in_bulk([a['question'] for a in lowest])
+    hardest = [{'question': qmap[a['question']], 'acc': a['acc'], 'seen': a['seen']}
+               for a in lowest if a['question'] in qmap]
+
     return render(request, 'astro/panel/quality.html', {
         'reported': reported,
         'n_reports': reports.count(),
+        'hardest': hardest,
+        'min_seen': MIN_SEEN,
         'active': 'calidad',
     })
 

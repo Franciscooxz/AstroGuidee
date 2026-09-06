@@ -36,4 +36,27 @@
   <p class="p-empty">No hay preguntas reportadas pendientes. Todo en orden.</p>
 </div>
 {% endif %}
+
+<div class="stats-card" style="margin-top:16px">
+  <h3>Preguntas mas falladas</h3>
+  <p class="p-sub">Precision de todos los usuarios (min. {{ min_seen }} respuestas). Una precision muy baja puede indicar un error o una pregunta demasiado dificil.</p>
+  {% if hardest %}
+  <table class="p-table">
+    <thead><tr><th>Pregunta</th><th>Leccion</th><th>Respuestas</th><th>Aciertos</th><th></th></tr></thead>
+    <tbody>
+      {% for h in hardest %}
+      <tr>
+        <td>{{ h.question.text }}</td>
+        <td>{{ h.question.lesson.title }}</td>
+        <td>{{ h.seen }}</td>
+        <td><span class="acc-pill {% if h.acc < 40 %}bad{% elif h.acc < 70 %}mid{% endif %}">{{ h.acc }}%</span></td>
+        <td class="p-actions"><a href="{% url 'gestion:question_edit' h.question.id %}" class="btn sm">Editar</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="p-empty">Aun no hay suficientes respuestas para calcular precision.</p>
+  {% endif %}
+</div>
 {% endblock %}

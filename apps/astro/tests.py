@@ -229,6 +229,19 @@ class ReportTests(AstroBaseTest):
         self.assertEqual(QuestionReport.objects.get(
             user=self.user, question=self.q1).reason, 'otro')
 
+    def test_panel_shows_hardest_questions(self):
+        # q1 muy fallada por varios usuarios -> aparece en "mas falladas"
+        for i in range(6):
+            u = User.objects.create_user(f'u{i}', password='Cosmos2026xyz')
+            QuestionStat.objects.create(user=u, question=self.q1, seen=1, correct=0)
+        self.user.is_staff = True
+        self.user.save()
+        self.login()
+        resp = self.client.get(reverse('gestion:quality'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Preguntas mas falladas')
+        self.assertContains(resp, self.q1.text)
+
     def test_panel_quality_and_resolve(self):
         QuestionReport.objects.create(user=self.user, question=self.q1, reason='datos')
         self.user.is_staff = True
