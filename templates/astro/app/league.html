@@ -32,7 +32,7 @@
           {% if r.pos <= 3 %}<span class="medal">{{ r.pos }}</span>{% else %}{{ r.pos }}{% endif %}
         </span>
         <span class="lg-av">{% if r.p.avatar %}{% include 'astro/_icon.html' with name=r.p.avatar size=22 %}{% else %}{{ r.p.user.username|first|upper }}{% endif %}</span>
-        <span class="lg-name">{{ r.p.user.username }}{% if r.me %} <small>(tu)</small>{% endif %}
+        <span class="lg-name">{% if r.me %}{{ r.p.user.username }} <small>(tu)</small>{% else %}<a href="{% url 'astro:pub_profile' r.p.user.username %}">{{ r.p.user.username }}</a>{% endif %}
           <span class="rank-pill" style="--rc: {{ r.rank.color }}">{{ r.rank.name }}</span>
         </span>
         <span class="lg-xp">{% include 'astro/_icon.html' with name='star' size=18 %} {{ r.eff }}</span>

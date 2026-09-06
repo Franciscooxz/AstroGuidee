@@ -211,6 +211,23 @@ class ReviewItem(models.Model):
         self.last_reviewed = timezone.now()
 
 
+class Follow(models.Model):
+    """Relacion social: un usuario sigue a otro."""
+    follower = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='following_set',
+                                 on_delete=models.CASCADE)
+    following = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='followers_set',
+                                  on_delete=models.CASCADE)
+    created_at = models.DateTimeField('Desde', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Seguimiento'
+        verbose_name_plural = 'Seguimientos'
+        unique_together = ('follower', 'following')
+
+    def __str__(self):
+        return f'{self.follower} -> {self.following}'
+
+
 class UnitExam(models.Model):
     """Resultado del examen final de una unidad para un usuario."""
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='unit_exams',

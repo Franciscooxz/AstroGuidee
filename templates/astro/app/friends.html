@@ -1,0 +1,52 @@
+{% extends 'astro/base.html' %}
+{% block title %}Amigos — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap">
+  <section class="section">
+    <div class="section-head">
+      <div><h2><span class="bar"></span>Amigos</h2>
+        <p>{{ n_following }} siguiendo · {{ n_followers }} seguidores</p></div>
+    </div>
+
+    {% if board|length > 1 %}
+    <div class="st-card">
+      <h3>Clasificacion semanal entre amigos</h3>
+      <div class="league-list" style="margin-top:10px">
+        {% for r in board %}
+        <div class="lg-row {% if r.me %}me{% endif %} {% if r.pos <= 3 %}top{{ r.pos }}{% endif %}">
+          <span class="lg-rank">{% if r.pos <= 3 %}<span class="medal">{{ r.pos }}</span>{% else %}{{ r.pos }}{% endif %}</span>
+          <span class="lg-av">{% if r.p.avatar %}{% include 'astro/_icon.html' with name=r.p.avatar size=22 %}{% else %}{{ r.p.user.username|first|upper }}{% endif %}</span>
+          <span class="lg-name">{% if r.me %}{{ r.p.user.username }} <small>(tu)</small>{% else %}<a href="{% url 'astro:pub_profile' r.p.user.username %}">{{ r.p.user.username }}</a>{% endif %}
+            <span class="rank-pill" style="--rc: {{ r.rank.color }}">{{ r.rank.name }}</span>
+          </span>
+          <span class="lg-xp">{% include 'astro/_icon.html' with name='star' size=18 %} {{ r.p.eff }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <h3 class="friends-h">A quienes sigues</h3>
+    <div class="friends-grid">
+      {% for f in following %}
+      <a href="{% url 'astro:pub_profile' f.user.username %}" class="friend-card" style="--acc: {{ f.rank.color }}">
+        <span class="friend-av {% if f.profile.frame %}av-{{ f.profile.frame }}{% endif %}">
+          {% if f.profile.avatar %}{% include 'astro/_icon.html' with name=f.profile.avatar size=22 %}{% else %}{{ f.user.username|first|upper }}{% endif %}
+        </span>
+        <div class="friend-info">
+          <b>{{ f.user.username }}</b>
+          <small>Nivel {{ f.level }} · {{ f.rank.name }}</small>
+        </div>
+        <span class="friend-xp">{% include 'astro/_icon.html' with name='star' size=16 %} {{ f.profile.xp }}</span>
+      </a>
+      {% empty %}
+      <div class="friends-empty">
+        <span class="friends-empty-ic">{% include 'astro/_icon.html' with name='user' size=48 %}</span>
+        <p>Aun no sigues a nadie. Encuentra gente en las ligas y toca su nombre para ver su perfil y seguirla.</p>
+        <a href="{% url 'astro:league' %}" class="btn btn-primary">Ir a las ligas</a>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

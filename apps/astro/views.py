@@ -4,7 +4,7 @@ import unicodedata
 from datetime import timedelta
 
 from django.contrib import messages
-from django.contrib.auth import login, logout, update_session_auth_hash
+from django.contrib.auth import get_user_model, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -16,10 +16,10 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from .forms import LoginForm, RegisterForm, StyledPasswordChangeForm
-from .models import (Achievement, Card, Category, Lesson, LessonProgress,
-                     MissionClaim, Notification, Profile, Purchase, Question,
-                     QuestionReport, QuestionStat, ReviewItem, ShopItem,
-                     UnitExam, UserAchievement)
+from .models import (Achievement, Card, Category, Follow, Lesson,
+                     LessonProgress, MissionClaim, Notification, Profile,
+                     Purchase, Question, QuestionReport, QuestionStat,
+                     ReviewItem, ShopItem, UnitExam, UserAchievement)
 
 LOGIN_URL = 'astro:login'
 AVATAR_ICONS = ['orbit', 'sun', 'earth', 'saturn', 'galaxy', 'blackhole',
@@ -685,6 +685,76 @@ def stats(request):
         'activity': activity,
         'act_max': act_max,
         'active_nav': 'stats',
+    })
+
+
+def _user_public_stats(user):
+    """Datos publicos de un usuario para su perfil/tarjeta social."""
+    p = _get_profile(user)
+    done = LessonProgress.objects.filter(user=user, completed=True, lesson__is_active=True).count()
+    achievements = UserAchievement.objects.filter(user=user).count()
+    return {
+        'user': user, 'profile': p, 'level': p.xp // 100 + 1, 'rank': get_rank(p.xp),
+        'division': get_division(p.division), 'done_lessons': done,
+        'achievements': achievements, 'certificates': len(_user_certificates(user)),
+    }
+
+
+@login_required(login_url=LOGIN_URL)
+def pub_profile(request, username):
+    """Perfil publico de otro usuario, con boton de seguir."""
+    User = get_user_model()
+    target = get_object_or_404(User, username=username, is_active=True)
+    if target == request.user:
+        return redirect('astro:profile')
+    stats = _user_public_stats(target)
+    stats['is_following'] = Follow.objects.filter(follower=request.user, following=target).exists()
+    stats['followers'] = Follow.objects.filter(following=target).count()
+    stats['following'] = Follow.objects.filter(follower=target).count()
+    stats['active_nav'] = 'friends'
+    return render(request, 'astro/app/pub_profile.html', stats)
+
+
+@login_required(login_url=LOGIN_URL)
+@require_POST
+def follow_toggle(request, username):
+    User = get_user_model()
+    target = get_object_or_404(User, username=username, is_active=True)
+    if target != request.user:
+        obj, created = Follow.objects.get_or_create(follower=request.user, following=target)
+        if created:
+            Notification.push(target, f'{request.user.username} te empezo a seguir.',
+                              icon='user', url=reverse('astro:pub_profile', args=[request.user.username]))
+        else:
+            obj.delete()
+    return redirect('astro:pub_profile', username=username)
+
+
+@login_required(login_url=LOGIN_URL)
+def friends(request):
+    """Amigos: a quienes sigues + clasificacion semanal entre amigos."""
+    wk = timezone.localdate().strftime('%G-%V')
+    following_ids = list(Follow.objects.filter(follower=request.user)
+                         .values_list('following_id', flat=True))
+    following = [_user_public_stats(p.user) for p in
+                 Profile.objects.filter(user_id__in=following_ids).select_related('user')]
+    following.sort(key=lambda s: -s['profile'].xp)
+
+    # Clasificacion semanal: amigos + tu, por XP de la semana
+    board_profiles = list(Profile.objects.filter(user_id__in=following_ids + [request.user.id])
+                          .select_related('user'))
+    for p in board_profiles:
+        p.eff = _weekly_of(p, wk)
+    board_profiles.sort(key=lambda p: (-p.eff, p.user.username.lower()))
+    board = [{'pos': i, 'p': p, 'me': p.user_id == request.user.id,
+              'rank': get_rank(p.xp)} for i, p in enumerate(board_profiles, start=1)]
+
+    return render(request, 'astro/app/friends.html', {
+        'following': following,
+        'board': board,
+        'n_following': len(following_ids),
+        'n_followers': Follow.objects.filter(following=request.user).count(),
+        'active_nav': 'friends',
     })
 
 

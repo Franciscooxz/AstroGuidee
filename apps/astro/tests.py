@@ -254,6 +254,42 @@ class ReportTests(AstroBaseTest):
         self.assertTrue(QuestionReport.objects.get(question=self.q1).resolved)
 
 
+class FollowTests(AstroBaseTest):
+    def setUp(self):
+        super().setUp()
+        self.other = User.objects.create_user('otro', password='Cosmos2026xyz')
+        Profile.objects.get_or_create(user=self.other)
+
+    def test_pub_profile_and_follow(self):
+        from apps.astro.models import Follow
+        self.login()
+        resp = self.client.get(reverse('astro:pub_profile', args=['otro']))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Seguir')
+        # seguir
+        self.client.post(reverse('astro:follow_toggle', args=['otro']))
+        self.assertTrue(Follow.objects.filter(follower=self.user, following=self.other).exists())
+        # dejar de seguir (toggle)
+        self.client.post(reverse('astro:follow_toggle', args=['otro']))
+        self.assertFalse(Follow.objects.filter(follower=self.user, following=self.other).exists())
+
+    def test_cannot_follow_self(self):
+        from apps.astro.models import Follow
+        self.login()
+        self.client.post(reverse('astro:follow_toggle', args=['tester']))
+        self.assertFalse(Follow.objects.filter(follower=self.user, following=self.user).exists())
+        # el perfil propio redirige a /perfil/
+        self.assertEqual(self.client.get(reverse('astro:pub_profile', args=['tester'])).status_code, 302)
+
+    def test_friends_page_lists_following(self):
+        from apps.astro.models import Follow
+        Follow.objects.create(follower=self.user, following=self.other)
+        self.login()
+        resp = self.client.get(reverse('astro:friends'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'otro')
+
+
 class PWATests(AstroBaseTest):
     def test_manifest(self):
         resp = self.client.get(reverse('astro:manifest'))
