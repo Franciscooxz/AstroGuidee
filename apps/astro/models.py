@@ -337,6 +337,8 @@ class Profile(models.Model):
     week_key = models.CharField('Semana', max_length=10, blank=True, default='')
     week_perfect = models.PositiveIntegerField('Quizzes perfectos de la semana', default=0)
     division = models.PositiveSmallIntegerField('Division de liga', default=0)
+    streak_reward_max = models.PositiveIntegerField('Ultimo hito de racha premiado', default=0)
+    pending_chest = models.PositiveIntegerField('Cofre de racha por abrir', default=0)
     frame = models.CharField('Marco de avatar', max_length=40, blank=True, default='')
     onboarded = models.BooleanField('Vio la bienvenida', default=False)
     daily_claimed = models.DateField('Meta diaria cobrada el', null=True, blank=True)

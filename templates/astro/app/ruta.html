@@ -32,6 +32,18 @@
       <div class="dg-state">{% if daily_met %}{% include 'astro/_icon.html' with name='check' size=20 %}{% else %}{{ daily_done }}/{{ daily_goal }}{% endif %}</div>
     </div>
 
+    {% if pending_chest %}
+    <form method="post" action="{% url 'astro:open_chest' %}" class="chest-card">
+      {% csrf_token %}
+      <span class="chest-ic">{% include 'astro/_icon.html' with name='trophy' size=30 %}</span>
+      <div class="chest-body">
+        <b>¡Cofre de racha de {{ pending_chest }} dias!</b>
+        <span>Abrelo para reclamar tu recompensa.</span>
+      </div>
+      <button type="submit" class="chest-btn">Abrir cofre →</button>
+    </form>
+    {% endif %}
+
     <a href="{% url 'astro:missions' %}" class="review-banner mission-banner">
       <span class="review-banner-ic">{% include 'astro/_icon.html' with name='rocket' size=26 %}</span>
       <span class="review-banner-body">

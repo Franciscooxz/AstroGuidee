@@ -41,6 +41,7 @@ urlpatterns = [
     path('app/ligas/', views.league, name='league'),
     path('app/misiones/', views.missions, name='missions'),
     path('app/misiones/reclamar/<slug:key>/', views.claim_mission, name='claim_mission'),
+    path('app/cofre/abrir/', views.open_chest, name='open_chest'),
     path('app/notificaciones/', views.notifications, name='notifications'),
     path('app/notificaciones/borrar/', views.clear_notifications, name='clear_notifications'),
     path('app/repaso/', views.review, name='review'),

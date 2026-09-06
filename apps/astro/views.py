@@ -123,6 +123,24 @@ MISSIONS = [
      'icon': 'flame', 'metric': 'streak', 'target': 5, 'reward': 15},
 ]
 
+# Cofres por hitos de racha: dias -> recompensa en Cosmos. >=7 dan tambien un congelador.
+STREAK_REWARDS = [(3, 15), (7, 30), (14, 50), (30, 100), (60, 150), (100, 300)]
+
+
+def _check_streak_chest(profile):
+    """Si la racha alcanza un nuevo hito, deja un cofre pendiente por abrir."""
+    changed = False
+    for day, _reward in STREAK_REWARDS:
+        if profile.streak >= day > profile.streak_reward_max:
+            profile.streak_reward_max = day
+            profile.pending_chest = day  # se guarda el hito mas alto alcanzado
+            changed = True
+    if changed:
+        Notification.push(profile.user, 'Cofre de racha desbloqueado! Abrelo en tu ruta.',
+                          icon='trophy', url=reverse('astro:ruta'))
+    return changed
+
+
 LEAGUE_PROMOTE = 7   # top N ascienden de division
 LEAGUE_RELEGATE = 7  # ultimos N descienden de division
 LEAGUE_SHOW = 30     # cuantos mostrar en la tabla
@@ -344,6 +362,8 @@ def ruta(request):
         'current_lesson': current_lesson,
         'reviews_due': reviews_due,
         'missions_claimable': missions_claimable,
+        'pending_chest': profile.pending_chest,
+        'chest_reward': dict(STREAK_REWARDS).get(profile.pending_chest, 0),
         'all_done': total > 0 and done == total,
         'total': total,
         'done': done,
@@ -604,6 +624,7 @@ def finish_quiz(request, slug):
             coins_earned = COINS_PER_LESSON + (COINS_PERFECT_BONUS if perfect else 0)
             profile.add_coins(coins_earned)
         profile.register_activity()
+        _check_streak_chest(profile)
         profile.save()
 
         prog, _ = LessonProgress.objects.get_or_create(user=request.user, lesson=lesson_obj)
@@ -705,6 +726,26 @@ def missions(request):
         'missions': items,
         'active_nav': 'missions',
     })
+
+
+@login_required(login_url=LOGIN_URL)
+@require_POST
+def open_chest(request):
+    """Abre el cofre de racha pendiente y otorga su recompensa."""
+    profile = _get_profile(request.user)
+    if profile.pending_chest <= 0:
+        messages.info(request, 'No tienes cofres por abrir.')
+        return redirect('astro:ruta')
+    day = profile.pending_chest
+    reward = dict(STREAK_REWARDS).get(day, 15)
+    profile.add_coins(reward)
+    freeze = 1 if day >= 7 else 0
+    profile.streak_freezes += freeze
+    profile.pending_chest = 0
+    profile.save()
+    extra = ' y 1 congelador de racha' if freeze else ''
+    messages.success(request, f'Cofre de {day} dias abierto: +{reward} Cosmos{extra}!')
+    return redirect('astro:ruta')
 
 
 @login_required(login_url=LOGIN_URL)
@@ -1004,6 +1045,7 @@ def finish_review(request):
         profile.add_weekly_xp(xp_earned)
     if total:
         profile.register_activity()
+        _check_streak_chest(profile)
     profile.save()
 
     return JsonResponse({
@@ -1030,6 +1072,7 @@ def complete_lesson(request, slug):
         prog.save()
         profile = _get_profile(request.user)
         profile.register_activity()
+        _check_streak_chest(profile)
         profile.save()
         _seed_reviews(request.user, lesson_obj)
         _award_achievements(request.user)

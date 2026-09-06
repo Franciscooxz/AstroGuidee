@@ -435,6 +435,31 @@ a.notif:hover { border-color: var(--purple-soft); background: rgba(255,255,255,.
 .q-report-panel button:hover { border-color: var(--purple-soft); color: var(--text); }
 .q-report-done { font-size: 13px; color: var(--blue-soft); }
 
+/* ===== Cofre de racha ===== */
+.chest-card {
+  display: flex; align-items: center; gap: 16px; margin: 0 0 18px; padding: 16px 20px;
+  border-radius: 18px; color: var(--text);
+  background: radial-gradient(120% 160% at 0% 50%, rgba(255,206,77,.28), rgba(255,107,129,.14) 60%, transparent 75%), var(--glass-bg);
+  border: 1px solid rgba(255,206,77,.5);
+  box-shadow: 0 0 24px rgba(255,206,77,.15);
+  animation: chestPulse 2.4s ease-in-out infinite;
+}
+@keyframes chestPulse { 0%,100% { box-shadow: 0 0 22px rgba(255,206,77,.14); } 50% { box-shadow: 0 0 32px rgba(255,206,77,.28); } }
+@media (prefers-reduced-motion: reduce) { .chest-card { animation: none; } }
+.chest-ic {
+  flex-shrink: 0; width: 50px; height: 50px; border-radius: 15px; display: grid; place-items: center;
+  background: linear-gradient(150deg, #ffce4d, #ff9d3c); color: #2a1c00;
+}
+.chest-body { flex: 1; min-width: 0; }
+.chest-body b { display: block; font-size: 16px; }
+.chest-body span { font-size: 13px; color: var(--text-dim); }
+.chest-btn {
+  flex-shrink: 0; padding: 10px 20px; border-radius: 100px; border: none; cursor: pointer;
+  font-family: inherit; font-weight: 700; font-size: 14px; color: #2a1c00;
+  background: linear-gradient(150deg, #ffce4d, #ff9d3c);
+}
+.chest-btn:hover { filter: brightness(1.05); }
+
 /* ===== Misiones semanales ===== */
 .mission-banner { background: radial-gradient(120% 160% at 0% 50%, rgba(255,206,77,.22), transparent 60%), var(--glass-bg); border-color: rgba(255,206,77,.4); }
 .mission-banner .review-banner-ic { background: linear-gradient(150deg, #ffce4d, #ff9d3c); }

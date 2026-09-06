@@ -254,6 +254,39 @@ class ReportTests(AstroBaseTest):
         self.assertTrue(QuestionReport.objects.get(question=self.q1).resolved)
 
 
+class StreakChestTests(AstroBaseTest):
+    def test_milestone_leaves_pending_chest(self):
+        from apps.astro.views import _check_streak_chest
+        p = Profile.objects.get_or_create(user=self.user)[0]
+        p.streak = 7
+        _check_streak_chest(p)
+        p.save()
+        self.assertEqual(p.pending_chest, 7)
+        self.assertEqual(p.streak_reward_max, 7)
+
+    def test_open_chest_grants_reward(self):
+        self.login()
+        p = Profile.objects.get_or_create(user=self.user)[0]
+        p.pending_chest = 7
+        p.streak_reward_max = 7
+        coins0, freezes0 = p.coins, p.streak_freezes
+        p.save()
+        self.client.post(reverse('astro:open_chest'))
+        p.refresh_from_db()
+        self.assertEqual(p.coins, coins0 + 30)       # recompensa de 7 dias
+        self.assertEqual(p.streak_freezes, freezes0 + 1)  # >=7 da congelador
+        self.assertEqual(p.pending_chest, 0)
+
+    def test_no_double_reward_same_milestone(self):
+        from apps.astro.views import _check_streak_chest
+        p = Profile.objects.get_or_create(user=self.user)[0]
+        p.streak = 5
+        _check_streak_chest(p)  # hito 3 alcanzado
+        p.pending_chest = 0     # simula que ya lo abrio
+        _check_streak_chest(p)  # no debe volver a dar el hito 3
+        self.assertEqual(p.pending_chest, 0)
+
+
 class MissionTests(AstroBaseTest):
     def _set_week_xp(self, xp):
         from django.utils import timezone
