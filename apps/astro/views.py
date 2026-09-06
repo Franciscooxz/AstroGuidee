@@ -44,6 +44,14 @@ def _refill_hearts(profile):
                                   else last + timedelta(minutes=gained * HEART_REFILL_MIN))
     return profile
 
+
+def _next_heart_minutes(profile):
+    """Minutos aproximados hasta recuperar la proxima vida (0 si estan al maximo)."""
+    if profile.hearts >= HEARTS_MAX or not profile.hearts_updated:
+        return 0
+    nxt = profile.hearts_updated + timedelta(minutes=HEART_REFILL_MIN)
+    return max(0, int(round((nxt - timezone.now()).total_seconds() / 60)))
+
 # Rangos por XP total: (key, nombre, xp_minimo, color)
 RANKS = [
     ('bronce', 'Bronce', 0, '#cd7f32'),
@@ -233,6 +241,8 @@ def ruta(request):
     total = len(lessons)
     done = len(completed)
     profile = _get_profile(request.user)
+    _refill_hearts(profile)
+    profile.save(update_fields=['hearts', 'hearts_updated'])
     daily_done = _lessons_done_today(request.user)
     return render(request, 'astro/app/ruta.html', {
         'units': units,
@@ -244,6 +254,9 @@ def ruta(request):
         'xp': profile.xp,
         'streak': profile.streak,
         'coins': profile.coins,
+        'hearts': profile.hearts,
+        'hearts_max': HEARTS_MAX,
+        'next_heart': _next_heart_minutes(profile),
         'daily_done': min(daily_done, DAILY_GOAL),
         'daily_goal': DAILY_GOAL,
         'daily_met': daily_done >= DAILY_GOAL,
@@ -345,8 +358,11 @@ def quiz(request, slug):
     _refill_hearts(profile)
     profile.save(update_fields=['hearts', 'hearts_updated'])
     if profile.hearts < 1:
-        messages.error(request, 'Te quedaste sin vidas. Se recargan con el tiempo o puedes recargarlas en la tienda.')
-        return redirect('astro:lesson', slug=lesson_obj.slug)
+        return render(request, 'astro/app/no_hearts.html', {
+            'lesson': lesson_obj,
+            'next_heart': _next_heart_minutes(profile),
+            'coins': profile.coins,
+        })
 
     return render(request, 'astro/app/quiz.html', {
         'lesson': lesson_obj,

@@ -9,6 +9,7 @@
         <p>Sigue tu ruta. Completa cada leccion para desbloquear la siguiente.</p>
       </div>
       <div class="stat-badges">
+        <a href="{% url 'astro:store' %}" class="sbadge link" title="{% if next_heart %}Proxima vida en ~{{ next_heart }} min{% else %}Vidas al maximo{% endif %}">{% include 'astro/_icon.html' with name='heart' size=22 %} <b>{{ hearts }}</b><span>/{{ hearts_max }} vidas</span></a>
         <div class="sbadge">{% include 'astro/_icon.html' with name='flame' size=22 %} <b>{{ streak }}</b><span>racha</span></div>
         <div class="sbadge">{% include 'astro/_icon.html' with name='star' size=22 %} <b>{{ xp }}</b><span>XP</span></div>
         <a href="{% url 'astro:store' %}" class="sbadge link">{% include 'astro/_icon.html' with name='coin' size=22 %} <b>{{ coins }}</b><span>Cosmos</span></a>

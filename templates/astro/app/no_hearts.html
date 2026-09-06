@@ -1,0 +1,19 @@
+{% extends 'astro/base.html' %}
+{% block title %}Sin vidas — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap auth-wrap">
+  <div class="auth-card">
+    <div class="ico-wrap">{% include 'astro/_icon.html' with name='heart-empty' size=58 %}</div>
+    <h1>Te quedaste sin vidas</h1>
+    <p class="auth-sub">
+      Fallar en los quizzes gasta vidas. Se recuperan solas con el tiempo,
+      {% if next_heart %}<br>tu proxima vida llega en <b>~{{ next_heart }} min</b>.{% else %}vuelve en un rato.{% endif %}
+    </p>
+    <div class="foot-actions" style="flex-direction:column; gap:10px; margin-top:8px;">
+      <a href="{% url 'astro:store' %}" class="btn btn-primary btn-block">{% include 'astro/_icon.html' with name='heart' size=18 %} Recargar vidas en la tienda</a>
+      <a href="{% url 'astro:lesson' lesson.slug %}" class="btn btn-block">Repasar las tarjetas mientras tanto</a>
+      <a href="{% url 'astro:ruta' %}" class="btn btn-block">← Volver a la ruta</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
