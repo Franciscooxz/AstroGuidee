@@ -9,11 +9,23 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'astro/css/astro.css' %}">
+  <link rel="stylesheet" href="{% static 'astro/css/astro.css' %}?v={{ ASSET_VERSION }}">
   {% block extrahead %}{% endblock %}
 </head>
 <body class="{% if user.is_authenticated %}has-tabs{% endif %}">
   {% include 'astro/_icons.svg' %}
+
+  {% if messages %}
+  <div class="toasts" id="toasts">
+    {% for m in messages %}
+    <div class="toast {{ m.tags }}" role="status">
+      <span class="toast-dot"></span>
+      <span class="toast-msg">{{ m }}</span>
+      <button type="button" class="toast-x" aria-label="Cerrar">&times;</button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
 
   <nav class="nav">
     <div class="nav-inner">
@@ -62,6 +74,6 @@
     <p>AstroGuide · Entiende el universo, una tarjeta a la vez · {% now "Y" %}</p>
   </footer>
 
-  <script src="{% static 'astro/js/astro.js' %}"></script>
+  <script src="{% static 'astro/js/astro.js' %}?v={{ ASSET_VERSION }}"></script>
 </body>
 </html>

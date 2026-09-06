@@ -1,5 +1,20 @@
 // AstroGuide — interaccion de tarjetas y progreso
 
+// Toasts / notificaciones
+(function () {
+  function dismiss(toast) {
+    toast.classList.add('hide');
+    setTimeout(function () { toast.remove(); }, 320);
+  }
+  document.addEventListener('click', function (e) {
+    const x = e.target.closest('.toast-x');
+    if (x) dismiss(x.closest('.toast'));
+  });
+  document.querySelectorAll('.toast').forEach(function (toast, i) {
+    setTimeout(function () { if (toast.isConnected) dismiss(toast); }, 4200 + i * 400);
+  });
+})();
+
 function getCsrf() {
   const m = document.querySelector('meta[name="csrf-token"]');
   return m ? m.getAttribute('content') : '';

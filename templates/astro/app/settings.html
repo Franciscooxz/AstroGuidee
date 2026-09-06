@@ -8,10 +8,6 @@
       <a href="{% url 'astro:profile' %}" class="btn">← Mi perfil</a>
     </div>
 
-    {% if messages %}
-    <div class="msgs">{% for m in messages %}<div class="msg {{ m.tags }}">{{ m }}</div>{% endfor %}</div>
-    {% endif %}
-
     <!-- Perfil -->
     <form method="post" class="form-card">
       {% csrf_token %}
