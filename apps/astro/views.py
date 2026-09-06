@@ -8,6 +8,7 @@ from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django.db.models import F
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -16,8 +17,8 @@ from django.views.decorators.http import require_POST
 
 from .forms import LoginForm, RegisterForm, StyledPasswordChangeForm
 from .models import (Achievement, Category, Lesson, LessonProgress,
-                     Notification, Profile, Purchase, QuestionStat, ReviewItem,
-                     ShopItem, UserAchievement)
+                     Notification, Profile, Purchase, Question, QuestionStat,
+                     ReviewItem, ShopItem, UserAchievement)
 
 LOGIN_URL = 'astro:login'
 AVATAR_ICONS = ['orbit', 'sun', 'earth', 'saturn', 'galaxy', 'blackhole',
@@ -771,12 +772,38 @@ def review(request):
     next_item = (ReviewItem.objects.filter(user=request.user, due__gt=timezone.localdate())
                  .order_by('due').first())
     total_items = ReviewItem.objects.filter(user=request.user).count()
+    weak_available = QuestionStat.objects.filter(
+        user=request.user, seen__gt=0, correct__lt=F('seen')).exists()
     return render(request, 'astro/app/review.html', {
         'items': due,
         'questions': [it.question for it in due],
         'total_due': total_due,
         'next_due': next_item.due if next_item else None,
         'total_items': total_items,
+        'weak_available': weak_available,
+        'active_nav': 'review',
+    })
+
+
+def _weak_questions(user):
+    """Preguntas donde el usuario mas falla (menor precision), peor primero."""
+    stats = list(
+        QuestionStat.objects.filter(user=user, seen__gt=0, correct__lt=F('seen'))
+        .select_related('question', 'question__lesson')
+        .prefetch_related('question__options')
+    )
+    stats.sort(key=lambda s: (s.correct / s.seen, -s.seen))
+    return [s.question for s in stats[:REVIEW_BATCH]]
+
+
+@login_required(login_url=LOGIN_URL)
+def review_weak(request):
+    """Practica dirigida: prioriza las preguntas donde mas fallas."""
+    questions = _weak_questions(request.user)
+    return render(request, 'astro/app/review.html', {
+        'items': questions,
+        'questions': questions,
+        'weak': True,
         'active_nav': 'review',
     })
 
@@ -784,30 +811,37 @@ def review(request):
 @login_required(login_url=LOGIN_URL)
 @require_POST
 def finish_review(request):
-    """Corrige la sesion de repaso y reprograma cada item segun SM-2."""
+    """Corrige una sesion de repaso: reprograma (SM-2) y acumula estadisticas.
+
+    Califica las preguntas realmente enviadas, asi sirve tanto al repaso por
+    vencimiento como al modo 'practicar temas flojos'.
+    """
     try:
         answers = json.loads(request.body or '{}').get('answers', {})
     except (ValueError, AttributeError):
         answers = {}
 
-    items = {str(it.question_id): it for it in _due_reviews(request.user)[:REVIEW_BATCH]}
+    qids = [k for k in answers.keys()][:REVIEW_BATCH]
+    questions = (Question.objects.filter(id__in=qids, is_active=True)
+                 .prefetch_related('options'))
     correct = 0
-    for qid, it in items.items():
-        q = it.question
-        val = answers.get(qid, '')
+    total = 0
+    for q in questions:
+        val = answers.get(str(q.id), '')
         if q.qtype == 'text':
             typed = _norm_text(str(val))
             accepted = [_norm_text(o.text) for o in q.options.all() if o.is_correct]
             ok = bool(typed) and typed in accepted
         else:
             ok = any(o.is_correct and str(o.id) == str(val) for o in q.options.all())
-        it.schedule(ok)
-        it.save()
+        item, _ = ReviewItem.objects.get_or_create(user=request.user, question=q)
+        item.schedule(ok)
+        item.save()
         _record_answer(request.user, q, ok)
+        total += 1
         if ok:
             correct += 1
 
-    total = len(items)
     xp_earned = correct * XP_PER_REVIEW
     profile = _get_profile(request.user)
     if xp_earned:

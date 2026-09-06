@@ -42,6 +42,7 @@ urlpatterns = [
     path('app/notificaciones/', views.notifications, name='notifications'),
     path('app/notificaciones/borrar/', views.clear_notifications, name='clear_notifications'),
     path('app/repaso/', views.review, name='review'),
+    path('app/repaso/flojos/', views.review_weak, name='review_weak'),
     path('app/repaso/finalizar/', views.finish_review, name='finish_review'),
     path('app/tienda/', views.store, name='store'),
     path('app/tienda/comprar/<slug:key>/', views.buy_item, name='buy_item'),

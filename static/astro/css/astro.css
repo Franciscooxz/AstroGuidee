@@ -438,6 +438,10 @@ a.notif:hover { border-color: var(--purple-soft); background: rgba(255,255,255,.
   background: rgba(139,92,255,.18); border: 1px solid rgba(139,92,255,.4); color: var(--purple-soft);
 }
 .q-from { color: var(--purple-soft); font-weight: 600; }
+.review-tag.weak { background: rgba(255,110,64,.18); border-color: rgba(255,110,64,.45); color: #ff9d6b; }
+.review-switch { text-align: center; margin-top: 18px; font-size: 14px; color: var(--text-faint); }
+.review-switch a { color: var(--purple-soft); font-weight: 600; text-decoration: none; }
+.review-switch a:hover { text-decoration: underline; }
 .res-srs { font-size: 13px; color: var(--text-faint); margin-top: 4px; }
 .review-empty { text-align: center; padding: 60px 24px; color: var(--text-dim); }
 .review-empty-ic { display: inline-grid; place-items: center; opacity: .55; margin-bottom: 10px; }

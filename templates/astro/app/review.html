@@ -1,6 +1,6 @@
 {% extends 'astro/base.html' %}
 {% load static %}
-{% block title %}Repaso inteligente — AstroGuide{% endblock %}
+{% block title %}{% if weak %}Practicar temas flojos{% else %}Repaso inteligente{% endif %} — AstroGuide{% endblock %}
 {% block extrahead %}<meta name="csrf-token" content="{{ csrf_token }}">{% endblock %}
 {% block content %}
 <div class="wrap quiz-wrap">
@@ -8,7 +8,8 @@
   <div class="quiz-top">
     <a href="{% url 'astro:ruta' %}" class="quiz-close" title="Salir">✕</a>
     <div class="quiz-bar"><span id="quizBar"></span></div>
-    <div class="review-tag">{% include 'astro/_icon.html' with name='progress' size=18 %} Repaso</div>
+    {% if weak %}<div class="review-tag weak">{% include 'astro/_icon.html' with name='flame' size=18 %} Temas flojos</div>
+    {% else %}<div class="review-tag">{% include 'astro/_icon.html' with name='progress' size=18 %} Repaso</div>{% endif %}
   </div>
 
   <div id="quizStage"
@@ -37,19 +38,28 @@
 
   <div id="quizResult" hidden></div>
 
+  {% if not weak and weak_available %}
+  <p class="review-switch">¿Prefieres reforzar donde mas fallas? <a href="{% url 'astro:review_weak' %}">Practicar temas flojos →</a></p>
+  {% endif %}
+
   {% else %}
   <section class="section">
     <div class="review-empty">
       <span class="review-empty-ic">{% include 'astro/_icon.html' with name='progress' size=56 %}</span>
-      {% if total_items %}
+      {% if weak %}
+      <h2>¡Sin temas flojos!</h2>
+      <p>Ahora mismo no tienes preguntas falladas pendientes. Sigue practicando para mantenerlo asi.</p>
+      <a href="{% url 'astro:review' %}" class="btn btn-primary">Ir al repaso</a>
+      {% elif total_items %}
       <h2>¡Estas al dia!</h2>
       <p>No tienes repasos pendientes por ahora. La repeticion espaciada te avisara cuando toque reforzar.</p>
       {% if next_due %}<p class="muted">Tu proximo repaso sera el {{ next_due|date:"d/m/Y" }}.</p>{% endif %}
+      {% if weak_available %}<a href="{% url 'astro:review_weak' %}" class="btn btn-primary">Practicar temas flojos</a>{% else %}<a href="{% url 'astro:ruta' %}" class="btn btn-primary">Ir a mi ruta</a>{% endif %}
       {% else %}
       <h2>Aun no hay nada que repasar</h2>
       <p>Completa lecciones para empezar. Sus preguntas volveran aqui, espaciadas en el tiempo, para que no las olvides.</p>
-      {% endif %}
       <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Ir a mi ruta</a>
+      {% endif %}
     </div>
   </section>
   {% endif %}

@@ -199,6 +199,38 @@ class ExplanationTests(AstroBaseTest):
         self.assertNotContains(resp, 'q-explain')
 
 
+class WeakPracticeTests(AstroBaseTest):
+    def test_weak_lists_missed_questions(self):
+        self.login()
+        self.complete_l1(text_answer='mal')  # q2 falla -> queda como floja
+        resp = self.client.get(reverse('astro:review_weak'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'quizStage')
+        self.assertContains(resp, 'Temas flojos')
+        self.assertContains(resp, self.q2.text)   # la fallada aparece
+        self.assertNotContains(resp, self.q1.text)  # la acertada no
+
+    def test_weak_empty_when_all_correct(self):
+        self.login()
+        self.complete_l1()  # todo correcto
+        resp = self.client.get(reverse('astro:review_weak'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Sin temas flojos')
+
+    def test_finish_review_grades_and_schedules_submitted(self):
+        self.login()
+        self.complete_l1(text_answer='mal')
+        # practicar la floja q2 y ahora acertarla
+        data = self.client.post(reverse('astro:finish_review'),
+                                data=json.dumps({'answers': {str(self.q2.id): 'sol'}}),
+                                content_type='application/json').json()
+        self.assertEqual(data['correct'], 1)
+        self.assertEqual(data['total'], 1)
+        st = QuestionStat.objects.get(user=self.user, question=self.q2)
+        self.assertEqual((st.seen, st.correct), (2, 1))  # 1 del quiz + 1 del repaso
+        self.assertTrue(ReviewItem.objects.filter(user=self.user, question=self.q2).exists())
+
+
 class DifficultyTests(AstroBaseTest):
     def _add_singles(self, n):
         """Agrega n preguntas single (1 correcta) a l1 y devuelve el mapa de respuestas correctas."""
