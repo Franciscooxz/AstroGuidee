@@ -224,6 +224,9 @@ class Question(models.Model):
     qtype = models.CharField('Tipo', max_length=20, choices=QTYPES, default='single',
                              help_text='En "Escribir respuesta", las opciones marcadas como correctas '
                                        'son las respuestas aceptadas.')
+    explanation = models.TextField('Explicacion', blank=True,
+                                   help_text='Se muestra tras responder: el porque de la respuesta '
+                                             '(convierte el fallo en aprendizaje).')
     order = models.PositiveIntegerField('Orden', default=0)
     is_active = models.BooleanField('Activa', default=True)
 

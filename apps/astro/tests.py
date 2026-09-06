@@ -182,6 +182,23 @@ class NotificationTests(AstroBaseTest):
         self.assertEqual(Notification.objects.filter(user=self.user).count(), 0)
 
 
+class ExplanationTests(AstroBaseTest):
+    def test_explanation_rendered_in_quiz(self):
+        self.q1.explanation = 'Porque el Sol fusiona hidrogeno.'
+        self.q1.save()
+        self.login()
+        resp = self.client.get(reverse('astro:quiz', args=[self.l1.slug]))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'q-explain')
+        self.assertContains(resp, 'Porque el Sol fusiona hidrogeno.')
+
+    def test_no_explanation_no_block(self):
+        # q1 y q2 sin explicacion -> no aparece el bloque
+        self.login()
+        resp = self.client.get(reverse('astro:quiz', args=[self.l1.slug]))
+        self.assertNotContains(resp, 'q-explain')
+
+
 class DifficultyTests(AstroBaseTest):
     def _add_singles(self, n):
         """Agrega n preguntas single (1 correcta) a l1 y devuelve el mapa de respuestas correctas."""

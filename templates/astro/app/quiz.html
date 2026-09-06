@@ -32,6 +32,7 @@
           {% endfor %}
         </div>
       {% endif %}
+      {% if q.explanation %}<div class="q-explain" hidden><span class="q-explain-ic">{% include 'astro/_icon.html' with name='atom' size=18 %}</span><span>{{ q.explanation }}</span></div>{% endif %}
       <button type="button" class="btn btn-primary q-next" disabled>Continuar</button>
     </div>
     {% endfor %}

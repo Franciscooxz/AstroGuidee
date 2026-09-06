@@ -55,6 +55,11 @@
     }
   });
 
+  function showExplain(block) {
+    const ex = block.querySelector('.q-explain');
+    if (ex) ex.hidden = false;
+  }
+
   function onCheckText(block) {
     if (block.classList.contains('answered')) return;
     const input = block.querySelector('.q-text-input');
@@ -76,6 +81,7 @@
       sol.textContent = 'Respuesta correcta: ' + (first ? first.dataset.text : '');
       block.insertBefore(sol, block.querySelector('.q-next'));
     }
+    showExplain(block);
     block.querySelector('.q-next').disabled = false;
   }
 
@@ -92,6 +98,7 @@
       if (right) right.classList.add('correct');
     }
     block.querySelectorAll('.q-opt').forEach(function (o) { o.classList.add('locked'); });
+    showExplain(block);
     block.querySelector('.q-next').disabled = false;
   }
 
