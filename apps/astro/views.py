@@ -8,7 +8,7 @@ from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db.models import F
+from django.db.models import F, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -16,7 +16,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from .forms import LoginForm, RegisterForm, StyledPasswordChangeForm
-from .models import (Achievement, Category, Lesson, LessonProgress,
+from .models import (Achievement, Card, Category, Lesson, LessonProgress,
                      MissionClaim, Notification, Profile, Purchase, Question,
                      QuestionReport, QuestionStat, ReviewItem, ShopItem,
                      UnitExam, UserAchievement)
@@ -493,6 +493,24 @@ def finish_exam(request, slug):
         'passed': passed, 'honors': honors, 'bonus': bonus,
         'best_score': ex.best_score,
         'cert_url': reverse('astro:certificate', args=[unit.slug]),
+    })
+
+
+@login_required(login_url=LOGIN_URL)
+def glossary(request):
+    """Explorar/buscar todas las tarjetas del contenido (glosario libre)."""
+    q = request.GET.get('q', '').strip()
+    cards = Card.objects.filter(is_active=True, category__is_active=True).select_related('category', 'lesson')
+    if q:
+        cards = cards.filter(
+            Q(title__icontains=q) | Q(subtitle__icontains=q) |
+            Q(summary__icontains=q) | Q(content__icontains=q) | Q(fun_fact__icontains=q))
+    cards = list(cards.order_by('category__order', 'lesson__order', 'order')[:120])
+    return render(request, 'astro/app/glossary.html', {
+        'cards': cards,
+        'q': q,
+        'total': len(cards),
+        'active_nav': 'glossary',
     })
 
 

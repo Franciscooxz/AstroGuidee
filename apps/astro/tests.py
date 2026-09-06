@@ -254,6 +254,23 @@ class ReportTests(AstroBaseTest):
         self.assertTrue(QuestionReport.objects.get(question=self.q1).resolved)
 
 
+class GlossaryTests(AstroBaseTest):
+    def test_glossary_lists_and_searches(self):
+        self.login()
+        resp = self.client.get(reverse('astro:glossary'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Carta A')          # tarjeta de la unidad de prueba
+        # busqueda que coincide
+        resp = self.client.get(reverse('astro:glossary'), {'q': 'Carta'})
+        self.assertContains(resp, 'Carta A')
+        # busqueda sin coincidencias
+        resp = self.client.get(reverse('astro:glossary'), {'q': 'zzzznotfound'})
+        self.assertNotContains(resp, 'Carta A')
+
+    def test_glossary_requires_login(self):
+        self.assertEqual(self.client.get(reverse('astro:glossary')).status_code, 302)
+
+
 class QuestionImageTests(AstroBaseTest):
     # PNG 1x1 valido (base64) para probar el ImageField sin ficheros externos.
     PNG = (b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01'

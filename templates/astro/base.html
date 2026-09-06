@@ -36,6 +36,7 @@
         {% if user.is_authenticated %}
           <a href="{% url 'astro:ruta' %}" class="{% if active_nav == 'ruta' %}active{% endif %}">Mi ruta</a>
           <a href="{% url 'astro:review' %}" class="{% if active_nav == 'review' %}active{% endif %}">Repaso</a>
+          <a href="{% url 'astro:glossary' %}" class="{% if active_nav == 'glossary' %}active{% endif %}">Explorar</a>
           <a href="{% url 'astro:league' %}" class="{% if active_nav == 'league' %}active{% endif %}">Ligas</a>
           <a href="{% url 'astro:store' %}" class="{% if active_nav == 'store' %}active{% endif %}">Tienda</a>
         {% else %}

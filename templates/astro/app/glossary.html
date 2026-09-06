@@ -1,0 +1,42 @@
+{% extends 'astro/base.html' %}
+{% block title %}Explorar — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap">
+  <section class="section">
+    <div class="section-head">
+      <div><h2><span class="bar"></span>Explorar el universo</h2>
+        <p>Busca cualquier concepto del contenido, sin orden ni bloqueos.</p></div>
+    </div>
+
+    <form method="get" class="glo-search">
+      <span class="glo-search-ic">{% include 'astro/_icon.html' with name='galaxy' size=20 %}</span>
+      <input type="search" name="q" value="{{ q }}" class="field" autofocus
+             placeholder="Busca: agujero negro, galaxia, Marte, supernova...">
+      <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+
+    {% if q %}<p class="glo-count">{{ total }} resultado{{ total|pluralize }} para “{{ q }}”.</p>{% endif %}
+
+    <div class="glo-grid">
+      {% for c in cards %}
+      <div class="glo-card" style="--acc: {{ c.category.accent|default:'#8b5cff' }}">
+        <div class="glo-top">
+          {% if c.image %}<img class="glo-img" src="{{ c.image.url }}" alt="">{% else %}<span class="glo-ic">{% include 'astro/_icon.html' with name=c.icon size=26 %}</span>{% endif %}
+          <div class="glo-h">
+            <b>{{ c.title }}</b>
+            {% if c.subtitle %}<small>{{ c.subtitle }}</small>{% endif %}
+          </div>
+        </div>
+        {% if c.summary %}<p class="glo-sum">{{ c.summary }}</p>{% endif %}
+        <span class="glo-unit">{{ c.category.name }}</span>
+      </div>
+      {% empty %}
+      <div class="glo-empty">
+        <span class="glo-empty-ic">{% include 'astro/_icon.html' with name='blackhole' size=48 %}</span>
+        <p>{% if q %}No encontramos nada para “{{ q }}”. Prueba otra palabra.{% else %}Aun no hay contenido para explorar.{% endif %}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}
