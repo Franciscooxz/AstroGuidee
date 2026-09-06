@@ -9,6 +9,25 @@
   const answers = {};
   let idx = 0;
 
+  // Vidas
+  const heartsBox = document.getElementById('quizHearts');
+  const heartsMax = heartsBox ? parseInt(heartsBox.dataset.max, 10) || 0 : 0;
+  let heartsLeft = heartsBox ? parseInt(heartsBox.dataset.hearts, 10) || 0 : 0;
+  function heartSvg(full) {
+    return '<svg class="ico" width="22" height="22" viewBox="0 0 64 64"><use href="#i-heart' +
+      (full ? '' : '-empty') + '"></use></svg>';
+  }
+  function renderHearts() {
+    if (!heartsBox) return;
+    let out = '';
+    for (let k = 0; k < heartsMax; k++) out += heartSvg(k < heartsLeft);
+    heartsBox.innerHTML = out;
+  }
+  function loseHeart() {
+    if (heartsLeft > 0) { heartsLeft--; renderHearts(); }
+  }
+  renderHearts();
+
   function csrf() {
     const m = document.querySelector('meta[name="csrf-token"]');
     return m ? m.getAttribute('content') : '';
@@ -71,6 +90,7 @@
     input.disabled = true;
     block.querySelector('.q-check').disabled = true;
     if (!ok) {
+      loseHeart();
       const first = block.querySelector('.q-answers span');
       const sol = document.createElement('div');
       sol.className = 'q-solution';
@@ -89,6 +109,7 @@
     const correct = opt.dataset.correct === '1';
     opt.classList.add(correct ? 'correct' : 'wrong');
     if (!correct) {
+      loseHeart();
       const right = block.querySelector('.q-opt[data-correct="1"]');
       if (right) right.classList.add('correct');
     }
@@ -188,6 +209,10 @@
     }
     if (data.daily_bonus > 0) {
       rewards += '<div class="res-daily">🎯 ¡Meta diaria cumplida! +' + data.daily_bonus + ' Cosmos</div>';
+    }
+    if (data.hearts_lost > 0) {
+      rewards += '<div class="res-hearts">Perdiste ' + data.hearts_lost + ' vida' + (data.hearts_lost === 1 ? '' : 's') +
+        ' · te quedan ' + data.hearts + '/' + data.hearts_max + '</div>';
     }
     if (passed) { try { confetti(); } catch (e) {} }
 

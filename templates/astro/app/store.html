@@ -28,6 +28,8 @@
           <div class="owned">Tienes: <b>{{ profile.streak_freezes }}</b></div>
         {% elif item.effect == 'double_xp' %}
           <div class="owned">{% if profile.double_xp_pending %}Activo para tu proximo quiz{% else %}&nbsp;{% endif %}</div>
+        {% elif item.effect == 'refill_hearts' %}
+          <div class="owned">Tienes: <b>{{ profile.hearts }}</b>/{{ hearts_max }} vidas</div>
         {% endif %}
         <form method="post" action="{% url 'astro:buy_item' item.key %}">
           {% csrf_token %}

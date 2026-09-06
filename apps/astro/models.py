@@ -216,6 +216,8 @@ class Profile(models.Model):
     frame = models.CharField('Marco de avatar', max_length=40, blank=True, default='')
     onboarded = models.BooleanField('Vio la bienvenida', default=False)
     daily_claimed = models.DateField('Meta diaria cobrada el', null=True, blank=True)
+    hearts = models.PositiveIntegerField('Vidas', default=5)
+    hearts_updated = models.DateTimeField('Vidas actualizadas', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Perfil'
@@ -258,6 +260,7 @@ class ShopItem(models.Model):
     EFFECTS = [
         ('streak_freeze', 'Congelar racha'),
         ('double_xp', 'Doble XP en el proximo quiz'),
+        ('refill_hearts', 'Recargar vidas'),
         ('frame', 'Marco de avatar (cosmetico)'),
     ]
     key = models.SlugField('Clave', max_length=40, unique=True)

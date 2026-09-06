@@ -1,6 +1,7 @@
 import json
 import math
 import unicodedata
+from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth import login, logout, update_session_auth_hash
@@ -25,6 +26,23 @@ COINS_PER_LESSON = 5
 COINS_PERFECT_BONUS = 5
 DAILY_GOAL = 1          # lecciones por dia para cumplir la meta
 DAILY_BONUS = 15        # Cosmos de recompensa al cumplirla
+HEARTS_MAX = 5          # vidas maximas
+HEART_REFILL_MIN = 30   # minutos para recuperar 1 vida
+
+
+def _refill_hearts(profile):
+    """Recupera vidas segun el tiempo transcurrido (1 cada HEART_REFILL_MIN)."""
+    now = timezone.now()
+    if profile.hearts >= HEARTS_MAX:
+        profile.hearts_updated = now
+        return profile
+    last = profile.hearts_updated or now
+    gained = int((now - last).total_seconds() // 60 // HEART_REFILL_MIN)
+    if gained > 0:
+        profile.hearts = min(HEARTS_MAX, profile.hearts + gained)
+        profile.hearts_updated = (now if profile.hearts >= HEARTS_MAX
+                                  else last + timedelta(minutes=gained * HEART_REFILL_MIN))
+    return profile
 
 # Rangos por XP total: (key, nombre, xp_minimo, color)
 RANKS = [
@@ -323,9 +341,18 @@ def quiz(request, slug):
     if not questions:
         return redirect('astro:lesson', slug=lesson_obj.slug)
 
+    profile = _get_profile(request.user)
+    _refill_hearts(profile)
+    profile.save(update_fields=['hearts', 'hearts_updated'])
+    if profile.hearts < 1:
+        messages.error(request, 'Te quedaste sin vidas. Se recargan con el tiempo o puedes recargarlas en la tienda.')
+        return redirect('astro:lesson', slug=lesson_obj.slug)
+
     return render(request, 'astro/app/quiz.html', {
         'lesson': lesson_obj,
         'questions': questions,
+        'hearts': profile.hearts,
+        'hearts_max': HEARTS_MAX,
     })
 
 
@@ -364,6 +391,10 @@ def finish_quiz(request, slug):
         user=request.user, lesson=lesson_obj, completed=True).exists()
 
     profile = _get_profile(request.user)
+    _refill_hearts(profile)
+    hearts_lost = min(total - correct, profile.hearts)
+    profile.hearts -= hearts_lost
+
     xp_earned = 0
     coins_earned = 0
     doubled = False
@@ -399,8 +430,9 @@ def finish_quiz(request, slug):
     if passed and done_today >= DAILY_GOAL and profile.daily_claimed != today:
         profile.daily_claimed = today
         profile.add_coins(DAILY_BONUS)
-        profile.save(update_fields=['daily_claimed', 'coins'])
         daily_bonus = DAILY_BONUS
+
+    profile.save()  # persiste vidas, meta diaria y demas
 
     return JsonResponse({
         'correct': correct,
@@ -411,6 +443,9 @@ def finish_quiz(request, slug):
         'doubled': doubled,
         'coins_earned': coins_earned,
         'daily_bonus': daily_bonus,
+        'hearts': profile.hearts,
+        'hearts_lost': hearts_lost,
+        'hearts_max': HEARTS_MAX,
         'total_xp': profile.xp,
         'total_coins': profile.coins,
         'streak': profile.streak,
@@ -484,6 +519,8 @@ def settings_view(request):
 @login_required(login_url=LOGIN_URL)
 def store(request):
     profile = _get_profile(request.user)
+    _refill_hearts(profile)
+    profile.save(update_fields=['hearts', 'hearts_updated'])
     items = ShopItem.objects.filter(is_active=True)
     owned = set(Purchase.objects.filter(user=request.user).values_list('item__key', flat=True))
     return render(request, 'astro/app/store.html', {
@@ -491,6 +528,7 @@ def store(request):
         'frames': [i for i in items if i.effect == 'frame'],
         'owned': owned,
         'profile': profile,
+        'hearts_max': HEARTS_MAX,
         'active_nav': 'store',
     })
 
@@ -510,11 +548,18 @@ def buy_item(request, key):
         messages.error(request, f'Te faltan Cosmos para comprar "{item.name}".')
         return redirect('astro:store')
 
+    if item.effect == 'refill_hearts' and profile.hearts >= HEARTS_MAX:
+        messages.info(request, 'Ya tienes todas tus vidas.')
+        return redirect('astro:store')
+
     profile.coins -= item.price
     if item.effect == 'streak_freeze':
         profile.streak_freezes += 1
     elif item.effect == 'double_xp':
         profile.double_xp_pending = True
+    elif item.effect == 'refill_hearts':
+        profile.hearts = HEARTS_MAX
+        profile.hearts_updated = timezone.now()
     elif item.effect == 'frame':
         Purchase.objects.create(user=request.user, item=item)
         profile.frame = item.key  # lo equipa al comprarlo

@@ -7,6 +7,7 @@
   <div class="quiz-top">
     <a href="{% url 'astro:lesson' lesson.slug %}" class="quiz-close" title="Salir">✕</a>
     <div class="quiz-bar"><span id="quizBar"></span></div>
+    <div class="quiz-hearts" id="quizHearts" data-hearts="{{ hearts }}" data-max="{{ hearts_max }}" title="Vidas"></div>
   </div>
 
   <div id="quizStage"
