@@ -31,7 +31,13 @@ body {
   position: relative;
   overflow-x: hidden;
   line-height: 1.6;
+  overflow-wrap: break-word;   /* evita que palabras largas (nombres) se salgan */
+  word-break: break-word;
 }
+/* Permitir que las cajas de texto flexibles encojan (si no, empujan el ancho) */
+.section-head > div, .profile-id, .lg-name, .unit-banner > div, .dg-txt, .cc-txt,
+.prog-top > div, .cert-card > div, .nav-uname, .stat-tile, .step, .ach, .shop-card,
+.node-info, .cat-chip span, .cst-label { min-width: 0; }
 
 /* Fondo espacial con nebulosas */
 body::before {
@@ -603,7 +609,7 @@ a.nav-user:hover, a.nav-user.active { color: var(--purple-soft); }
   background: linear-gradient(150deg, var(--blue), var(--purple));
   box-shadow: 0 10px 26px -8px rgba(139,92,255,.9);
 }
-.profile-id { flex: 1; min-width: 180px; }
+.profile-id { flex: 1; min-width: 0; }
 .profile-id h1 { font-size: 28px; }
 .pi-email { color: var(--text-dim); font-size: 14px; margin-top: 2px; }
 .pi-since { color: var(--text-faint); font-size: 13px; margin-top: 4px; }
