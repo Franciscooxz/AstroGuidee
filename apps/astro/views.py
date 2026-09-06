@@ -26,6 +26,35 @@ COINS_PERFECT_BONUS = 5
 DAILY_GOAL = 1          # lecciones por dia para cumplir la meta
 DAILY_BONUS = 15        # Cosmos de recompensa al cumplirla
 
+# Rangos por XP total: (key, nombre, xp_minimo, color)
+RANKS = [
+    ('bronce', 'Bronce', 0, '#cd7f32'),
+    ('plata', 'Plata', 250, '#c0c8d8'),
+    ('oro', 'Oro', 750, '#f5b301'),
+    ('zafiro', 'Zafiro', 1500, '#4f7cff'),
+    ('rubi', 'Rubi', 3000, '#ff4d6d'),
+    ('diamante', 'Diamante', 6000, '#6ee7ff'),
+]
+
+
+def get_rank(xp):
+    """Devuelve el rango actual y el progreso hacia el siguiente segun el XP total."""
+    current, nxt = RANKS[0], None
+    for i, r in enumerate(RANKS):
+        if xp >= r[2]:
+            current = r
+            nxt = RANKS[i + 1] if i + 1 < len(RANKS) else None
+    key, name, minimum, color = current
+    data = {'key': key, 'name': name, 'color': color, 'min': minimum,
+            'next_name': None, 'next_min': None, 'pct': 100, 'to_next': 0}
+    if nxt:
+        span = nxt[2] - minimum
+        data['next_name'] = nxt[1]
+        data['next_min'] = nxt[2]
+        data['to_next'] = nxt[2] - xp
+        data['pct'] = round((xp - minimum) / span * 100) if span else 0
+    return data
+
 
 def _norm_text(s):
     """Normaliza texto para comparar respuestas: sin acentos, minusculas, sin espacios extra."""
@@ -224,6 +253,7 @@ def profile(request):
         'level': level,
         'xp_in_level': xp_in_level,
         'xp_to_next': 100 - xp_in_level,
+        'rank': get_rank(p.xp),
         'achievements': achievements,
         'earned_count': len(earned_ids),
         'active_nav': 'profile',
@@ -363,6 +393,8 @@ def league(request):
         Profile.objects.filter(week_key=wk, weekly_xp__gt=0)
         .select_related('user').order_by('-weekly_xp', 'user__username')[:50]
     )
+    for p in top:
+        p.rank = get_rank(p.xp)  # rango (por XP total) para mostrar junto al nombre
     my_weekly = profile.weekly_xp if profile.week_key == wk else 0
     my_rank = None
     for i, p in enumerate(top, start=1):
