@@ -223,6 +223,7 @@
       '<div class="res-badge ' + badgeClass + '"><svg class="ico" width="44" height="44" viewBox="0 0 64 64"><use href="#i-' + badgeIcon + '"></use></svg></div>' +
       '<h2>' + (passed ? (data.perfect ? '¡Perfecto!' : '¡Leccion completada!') : 'Casi lo tienes') + '</h2>' +
       '<p class="res-score">Acertaste <b>' + data.correct + '</b> de <b>' + data.total + '</b></p>' +
+      (!passed && data.needed ? '<p class="res-needed">Necesitabas <b>' + data.needed + '</b> para aprobar este nivel</p>' : '') +
       rewards +
       '<div class="res-stats"><span>Racha: <b>' + data.streak + '</b> dia' + (data.streak === 1 ? '' : 's') + '</span>' +
       '<span>Total: <b>' + data.total_xp + ' XP</b></span>' +

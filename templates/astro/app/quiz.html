@@ -9,6 +9,10 @@
     <div class="quiz-bar"><span id="quizBar"></span></div>
     <div class="quiz-hearts" id="quizHearts" data-hearts="{{ hearts }}" data-max="{{ hearts_max }}" title="Vidas"></div>
   </div>
+  <p class="quiz-goal">
+    <span class="quiz-diff">Nivel {{ difficulty }} · {{ difficulty_name }}</span>
+    Necesitas acertar <b>{{ needed }}</b> de <b>{{ questions|length }}</b> para aprobar.
+  </p>
 
   <div id="quizStage"
        data-finish="{% url 'astro:finish_quiz' lesson.slug %}"

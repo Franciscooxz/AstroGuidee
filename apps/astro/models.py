@@ -18,7 +18,16 @@ class Category(models.Model):
     accent = models.CharField('Color de acento (hex)', max_length=7, blank=True, default='#8b5cff',
                               help_text='Color principal de la categoria, ej. #8b5cff')
     order = models.PositiveIntegerField('Orden', default=0)
+    difficulty = models.PositiveSmallIntegerField(
+        'Dificultad', default=1,
+        choices=[(1, 'Nivel 1 · Introductorio'), (2, 'Nivel 2 · Basico'),
+                 (3, 'Nivel 3 · Intermedio'), (4, 'Nivel 4 · Avanzado'),
+                 (5, 'Nivel 5 · Experto')],
+        help_text='1 = mas facil de aprobar. A mayor nivel, se exige acertar mas.')
     is_active = models.BooleanField('Activa', default=True)
+
+    DIFFICULTY_NAMES = {1: 'Introductorio', 2: 'Basico', 3: 'Intermedio',
+                        4: 'Avanzado', 5: 'Experto'}
 
     class Meta:
         verbose_name = 'Unidad'
@@ -27,6 +36,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def difficulty_name(self):
+        return self.DIFFICULTY_NAMES.get(self.difficulty, 'Introductorio')
 
     def save(self, *args, **kwargs):
         if not self.slug:

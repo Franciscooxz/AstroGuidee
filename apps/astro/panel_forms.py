@@ -31,7 +31,7 @@ class StyledForm(forms.ModelForm):
 class UnitForm(StyledForm):
     class Meta:
         model = Category
-        fields = ['name', 'subtitle', 'description', 'icon', 'accent', 'order', 'is_active']
+        fields = ['name', 'subtitle', 'description', 'icon', 'accent', 'order', 'difficulty', 'is_active']
         widgets = {'icon': forms.Select(choices=ICON_CHOICES)}
 
 

@@ -33,6 +33,18 @@ HEART_REFILL_MIN = 30   # minutos para recuperar 1 vida
 XP_PER_REVIEW = 3       # XP por cada repaso acertado
 REVIEW_BATCH = 15       # preguntas maximas por sesion de repaso
 
+# Umbral de aprobado por nivel de dificultad de la unidad (1 facil -> 5 dificil).
+PASS_RATIO = {1: 0.60, 2: 0.67, 3: 0.75, 4: 0.85, 5: 0.90}
+
+
+def _pass_ratio(difficulty):
+    return PASS_RATIO.get(difficulty, 0.60)
+
+
+def _needed_correct(total, difficulty):
+    """Aciertos minimos para aprobar segun el nivel."""
+    return math.ceil(_pass_ratio(difficulty) * total) if total else 0
+
 
 def _seed_reviews(user, lesson):
     """Crea items de repaso para las preguntas de una leccion recien completada."""
@@ -395,11 +407,15 @@ def quiz(request, slug):
             'coins': profile.coins,
         })
 
+    difficulty = lesson_obj.category.difficulty
     return render(request, 'astro/app/quiz.html', {
         'lesson': lesson_obj,
         'questions': questions,
         'hearts': profile.hearts,
         'hearts_max': HEARTS_MAX,
+        'difficulty': difficulty,
+        'difficulty_name': lesson_obj.category.difficulty_name,
+        'needed': _needed_correct(len(questions), difficulty),
     })
 
 
@@ -431,7 +447,9 @@ def finish_quiz(request, slug):
             if any(o.is_correct and str(o.id) == chosen for o in q.options.all()):
                 correct += 1
 
-    passed = total > 0 and correct >= math.ceil(0.6 * total)
+    difficulty = lesson_obj.category.difficulty
+    needed = _needed_correct(total, difficulty)
+    passed = total > 0 and correct >= needed
     perfect = total > 0 and correct == total
 
     already_completed = LessonProgress.objects.filter(
@@ -493,6 +511,7 @@ def finish_quiz(request, slug):
     return JsonResponse({
         'correct': correct,
         'total': total,
+        'needed': needed,
         'passed': passed,
         'perfect': perfect,
         'xp_earned': xp_earned,

@@ -65,7 +65,9 @@
     {% for u in units %}
     <div class="unit-banner {% if forloop.first %}first{% endif %}" style="--acc: {{ u.unit.accent|default:'#8b5cff' }}">
       <span class="u-ic">{% include 'astro/_icon.html' with name=u.unit.icon size=26 %}</span>
-      <div><b>{{ u.unit.name }}</b><small>{{ u.unit.subtitle }}</small></div>
+      <div><b>{{ u.unit.name }}</b>
+        <small><span class="u-diff" title="Nivel de dificultad">{% for i in "12345"|make_list %}<span class="u-diff-dot {% if forloop.counter <= u.unit.difficulty %}on{% endif %}"></span>{% endfor %} Nivel {{ u.unit.difficulty }} · {{ u.unit.difficulty_name }}</span></small>
+      </div>
       <span class="u-prog {% if u.complete %}done{% endif %}">
         {% if u.complete %}{% include 'astro/_icon.html' with name='check' size=15 %} {% endif %}{{ u.done }}/{{ u.total }}
       </span>

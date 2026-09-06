@@ -182,6 +182,51 @@ class NotificationTests(AstroBaseTest):
         self.assertEqual(Notification.objects.filter(user=self.user).count(), 0)
 
 
+class DifficultyTests(AstroBaseTest):
+    def _add_singles(self, n):
+        """Agrega n preguntas single (1 correcta) a l1 y devuelve el mapa de respuestas correctas."""
+        answers = {str(self.q1.id): self.o_ok.id, str(self.q2.id): 'sol'}
+        for i in range(n):
+            q = Question.objects.create(lesson=self.l1, text=f'Extra {i}?', qtype='single', order=10 + i)
+            ok = Option.objects.create(question=q, text='Si', is_correct=True, order=1)
+            Option.objects.create(question=q, text='No', is_correct=False, order=2)
+            answers[str(q.id)] = ok.id
+        return answers
+
+    def test_high_difficulty_requires_more(self):
+        # l1 con 5 preguntas y unidad nivel 5 -> aprobar exige 5/5 (ceil(0.9*5))
+        self.cat.difficulty = 5
+        self.cat.save()
+        answers = self._add_singles(3)  # ahora 5 preguntas en total
+        self.login()
+        # Fallar 1 (respuesta de texto mal) -> 4/5, no aprueba en nivel 5
+        wrong = dict(answers); wrong[str(self.q2.id)] = 'mal'
+        data = self.client.post(reverse('astro:finish_quiz', args=[self.l1.slug]),
+                                data=json.dumps({'answers': wrong}),
+                                content_type='application/json').json()
+        self.assertEqual(data['correct'], 4)
+        self.assertEqual(data['needed'], 5)
+        self.assertFalse(data['passed'])
+        self.assertFalse(LessonProgress.objects.filter(
+            user=self.user, lesson=self.l1, completed=True).exists())
+
+    def test_low_difficulty_passes_with_60(self):
+        # nivel 1 (default) con 5 preguntas -> basta 3/5
+        self.cat.difficulty = 1
+        self.cat.save()
+        answers = self._add_singles(3)
+        self.login()
+        wrong = dict(answers)
+        wrong[str(self.q2.id)] = 'mal'
+        wrong[str(self.q1.id)] = 0  # 2 fallos -> 3/5
+        data = self.client.post(reverse('astro:finish_quiz', args=[self.l1.slug]),
+                                data=json.dumps({'answers': wrong}),
+                                content_type='application/json').json()
+        self.assertEqual(data['correct'], 3)
+        self.assertEqual(data['needed'], 3)
+        self.assertTrue(data['passed'])
+
+
 class ReviewTests(AstroBaseTest):
     def test_completion_seeds_reviews(self):
         self.login()
