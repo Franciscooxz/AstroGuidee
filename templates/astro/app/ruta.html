@@ -57,6 +57,7 @@
       <span class="u-prog {% if u.complete %}done{% endif %}">
         {% if u.complete %}{% include 'astro/_icon.html' with name='check' size=15 %} {% endif %}{{ u.done }}/{{ u.total }}
       </span>
+      {% if u.complete %}<a href="{% url 'astro:certificate' u.unit.slug %}" class="u-cert" title="Ver certificado">🎓</a>{% endif %}
     </div>
 
     <div class="path" style="--acc: {{ u.unit.accent|default:'#8b5cff' }}">

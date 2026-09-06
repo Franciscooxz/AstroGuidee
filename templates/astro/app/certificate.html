@@ -1,0 +1,31 @@
+{% extends 'astro/base.html' %}
+{% block title %}Certificado · {{ unit.name }} — AstroGuide{% endblock %}
+{% block content %}
+<div class="wrap cert-wrap">
+  <div class="certificate" style="--acc: {{ unit.accent|default:'#8b5cff' }}">
+    <div class="cert-corner tl"></div><div class="cert-corner tr"></div>
+    <div class="cert-corner bl"></div><div class="cert-corner br"></div>
+
+    <div class="cert-logo">{% include 'astro/_icon.html' with name='orbit' size=40 %} AstroGuide</div>
+    <div class="cert-kicker">Certificado de finalizacion</div>
+
+    <div class="cert-ic">{% include 'astro/_icon.html' with name=unit.icon size=64 %}</div>
+    <p class="cert-to">Otorgado a</p>
+    <h1 class="cert-name">{{ user.username }}</h1>
+    <p class="cert-body">por completar con exito la unidad</p>
+    <h2 class="cert-unit">{{ unit.name }}</h2>
+    <p class="cert-meta">{{ n_lessons }} leccion{{ n_lessons|pluralize }} · {{ n_cards }} tarjetas dominadas</p>
+
+    <div class="cert-foot">
+      <div><b>{{ date|date:"d/m/Y" }}</b><span>Fecha</span></div>
+      <div class="cert-seal">{% include 'astro/_icon.html' with name='check' size=30 %}</div>
+      <div><b>AstroGuide</b><span>Firma</span></div>
+    </div>
+  </div>
+
+  <div class="cert-actions">
+    <button type="button" class="btn btn-primary" onclick="window.print()">Imprimir / Guardar PDF</button>
+    <a href="{% url 'astro:profile' %}" class="btn">← Mi perfil</a>
+  </div>
+</div>
+{% endblock %}

@@ -84,6 +84,19 @@
       {% endfor %}
     </div>
 
+    {% if certificates %}
+    <div class="ach-head"><h3>Certificados</h3><span>{{ certificates|length }} unidad{{ certificates|length|pluralize:"es" }}</span></div>
+    <div class="cert-grid">
+      {% for c in certificates %}
+      <a href="{% url 'astro:certificate' c.unit.slug %}" class="cert-card" style="--acc: {{ c.unit.accent|default:'#8b5cff' }}">
+        <span class="cert-card-ic">{% include 'astro/_icon.html' with name=c.unit.icon size=30 %}</span>
+        <div><b>{{ c.unit.name }}</b><small>{{ c.date|date:"d/m/Y" }}</small></div>
+        <span class="cert-card-go">🎓</span>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
     <div class="foot-actions">
       <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Seguir aprendiendo →</a>
       <a href="{% url 'astro:settings' %}" class="btn">Editar perfil</a>

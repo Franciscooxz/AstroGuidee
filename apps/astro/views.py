@@ -72,6 +72,20 @@ def _lessons_done_today(user):
         user=user, completed=True, completed_at__date=timezone.localdate()).count()
 
 
+def _user_certificates(user):
+    """Unidades totalmente completadas por el usuario (con su fecha)."""
+    done = set(LessonProgress.objects.filter(user=user, completed=True)
+               .values_list('lesson_id', flat=True))
+    certs = []
+    for unit in Category.objects.filter(is_active=True).order_by('order'):
+        lessons = list(unit.lessons.filter(is_active=True))
+        if lessons and all(l.id in done for l in lessons):
+            last = (LessonProgress.objects.filter(user=user, lesson__in=lessons, completed=True)
+                    .order_by('-completed_at').first())
+            certs.append({'unit': unit, 'date': last.completed_at if last else None})
+    return certs
+
+
 def _award_achievements(user):
     """Evalua los logros del usuario y desbloquea los nuevos. Devuelve los recien ganados."""
     profile = _get_profile(user)
@@ -220,6 +234,24 @@ def ruta(request):
 
 
 @login_required(login_url=LOGIN_URL)
+def certificate(request, slug):
+    unit = get_object_or_404(Category, slug=slug, is_active=True)
+    lessons = list(unit.lessons.filter(is_active=True))
+    done = set(LessonProgress.objects.filter(user=request.user, lesson__in=lessons, completed=True)
+               .values_list('lesson_id', flat=True))
+    if not lessons or not all(l.id in done for l in lessons):
+        return redirect('astro:ruta')
+    last = (LessonProgress.objects.filter(user=request.user, lesson__in=lessons, completed=True)
+            .order_by('-completed_at').first())
+    return render(request, 'astro/app/certificate.html', {
+        'unit': unit,
+        'date': last.completed_at if last else None,
+        'n_lessons': len(lessons),
+        'n_cards': unit.card_count,
+    })
+
+
+@login_required(login_url=LOGIN_URL)
 def onboarding(request):
     profile = _get_profile(request.user)
     if request.method == 'POST':
@@ -256,6 +288,7 @@ def profile(request):
         'rank': get_rank(p.xp),
         'achievements': achievements,
         'earned_count': len(earned_ids),
+        'certificates': _user_certificates(request.user),
         'active_nav': 'profile',
     })
 

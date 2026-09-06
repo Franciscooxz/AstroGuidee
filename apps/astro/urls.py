@@ -34,6 +34,7 @@ urlpatterns = [
     # App (requiere sesion)
     path('app/', views.ruta, name='ruta'),
     path('app/bienvenida/', views.onboarding, name='onboarding'),
+    path('app/certificado/<slug:slug>/', views.certificate, name='certificate'),
     path('app/perfil/', views.profile, name='profile'),
     path('app/ajustes/', views.settings_view, name='settings'),
     path('app/ligas/', views.league, name='league'),
