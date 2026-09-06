@@ -23,6 +23,8 @@ XP_PER_CORRECT = 10
 XP_PERFECT_BONUS = 20
 COINS_PER_LESSON = 5
 COINS_PERFECT_BONUS = 5
+DAILY_GOAL = 1          # lecciones por dia para cumplir la meta
+DAILY_BONUS = 15        # Cosmos de recompensa al cumplirla
 
 
 def _norm_text(s):
@@ -34,6 +36,11 @@ def _norm_text(s):
 def _get_profile(user):
     profile, _ = Profile.objects.get_or_create(user=user)
     return profile
+
+
+def _lessons_done_today(user):
+    return LessonProgress.objects.filter(
+        user=user, completed=True, completed_at__date=timezone.localdate()).count()
 
 
 def _award_achievements(user):
@@ -165,6 +172,7 @@ def ruta(request):
     total = len(lessons)
     done = len(completed)
     profile = _get_profile(request.user)
+    daily_done = _lessons_done_today(request.user)
     return render(request, 'astro/app/ruta.html', {
         'units': units,
         'current_lesson': current_lesson,
@@ -175,6 +183,9 @@ def ruta(request):
         'xp': profile.xp,
         'streak': profile.streak,
         'coins': profile.coins,
+        'daily_done': min(daily_done, DAILY_GOAL),
+        'daily_goal': DAILY_GOAL,
+        'daily_met': daily_done >= DAILY_GOAL,
         'active_nav': 'ruta',
     })
 
@@ -318,6 +329,16 @@ def finish_quiz(request, slug):
 
         newly = _award_achievements(request.user)
 
+    # Meta diaria: si cumpliste la meta de hoy y no la habias cobrado, bono de Cosmos
+    daily_bonus = 0
+    today = timezone.localdate()
+    done_today = _lessons_done_today(request.user)
+    if passed and done_today >= DAILY_GOAL and profile.daily_claimed != today:
+        profile.daily_claimed = today
+        profile.add_coins(DAILY_BONUS)
+        profile.save(update_fields=['daily_claimed', 'coins'])
+        daily_bonus = DAILY_BONUS
+
     return JsonResponse({
         'correct': correct,
         'total': total,
@@ -326,6 +347,7 @@ def finish_quiz(request, slug):
         'xp_earned': xp_earned,
         'doubled': doubled,
         'coins_earned': coins_earned,
+        'daily_bonus': daily_bonus,
         'total_xp': profile.xp,
         'total_coins': profile.coins,
         'streak': profile.streak,

@@ -513,6 +513,22 @@ a.node:active .node-circle { transform: translateY(6px); box-shadow: 0 2px 0 rgb
   background: linear-gradient(135deg, var(--blue), var(--purple));
 }
 
+/* ===== Meta diaria ===== */
+.daily-goal {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 6px;
+  padding: 14px 20px; border-radius: 16px;
+  background: var(--glass-bg); border: 1px solid var(--glass-brd);
+}
+.daily-goal.met { background: linear-gradient(135deg, rgba(61,220,132,.14), rgba(139,92,255,.12)); border-color: rgba(61,220,132,.4); }
+.dg-ic { display: inline-flex; }
+.dg-txt { flex: 1; }
+.dg-txt b { display: block; font-size: 15px; }
+.dg-txt small { color: var(--text-faint); font-size: 12.5px; }
+.dg-state { font-size: 18px; font-weight: 700; color: var(--purple-soft); }
+.daily-goal.met .dg-state { color: #3ddc84; }
+.res-daily { margin: 10px auto 0; display: inline-block; padding: 8px 18px; border-radius: 100px;
+  font-size: 14px; font-weight: 600; background: rgba(61,220,132,.16); border: 1px solid rgba(61,220,132,.4); color: #b7f5d0; }
+
 /* ===== Badges XP / racha ===== */
 .stat-badges { display: flex; gap: 12px; flex-wrap: wrap; }
 .sbadge {

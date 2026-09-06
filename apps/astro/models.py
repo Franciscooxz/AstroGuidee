@@ -215,6 +215,7 @@ class Profile(models.Model):
     week_key = models.CharField('Semana', max_length=10, blank=True, default='')
     frame = models.CharField('Marco de avatar', max_length=40, blank=True, default='')
     onboarded = models.BooleanField('Vio la bienvenida', default=False)
+    daily_claimed = models.DateField('Meta diaria cobrada el', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Perfil'

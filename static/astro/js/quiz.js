@@ -122,6 +122,36 @@
     showResult(data);
   }
 
+  function confetti() {
+    var canvas = document.createElement('canvas');
+    canvas.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999';
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    document.body.appendChild(canvas);
+    var ctx = canvas.getContext('2d');
+    var colors = ['#4f7cff', '#8b5cff', '#b18bff', '#ffce4d', '#ff6b81', '#3ddc84'];
+    var parts = [];
+    for (var i = 0; i < 90; i++) {
+      parts.push({
+        x: Math.random() * canvas.width, y: -20 - Math.random() * canvas.height * 0.4,
+        w: 6 + Math.random() * 6, h: 8 + Math.random() * 8, c: colors[i % colors.length],
+        vy: 2 + Math.random() * 3.5, vx: -1.5 + Math.random() * 3,
+        rot: Math.random() * 6, vr: -0.2 + Math.random() * 0.4,
+      });
+    }
+    var start = Date.now();
+    (function frame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      parts.forEach(function (p) {
+        p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+        ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore();
+      });
+      if (Date.now() - start < 2600) requestAnimationFrame(frame);
+      else canvas.remove();
+    })();
+  }
+
   function achievementsHtml(list) {
     if (!list || !list.length) return '';
     let out = '<div class="res-achs">';
@@ -155,6 +185,10 @@
     } else if (passed) {
       rewards = '<div class="res-xp muted">Ya habias ganado las recompensas de esta leccion</div>';
     }
+    if (data.daily_bonus > 0) {
+      rewards += '<div class="res-daily">🎯 ¡Meta diaria cumplida! +' + data.daily_bonus + ' Cosmos</div>';
+    }
+    if (passed) { try { confetti(); } catch (e) {} }
 
     const badgeIcon = passed ? 'check' : 'x';
     const badgeClass = passed ? (data.perfect ? 'perfect' : 'ok') : 'fail';
