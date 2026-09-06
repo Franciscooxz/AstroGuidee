@@ -400,6 +400,20 @@ a.notif:hover { border-color: var(--purple-soft); background: rgba(255,255,255,.
   .ua-row { grid-template-columns: 96px 1fr 40px; }
 }
 
+/* ===== APOD (imagen del dia NASA) ===== */
+.apod {
+  display: flex; gap: 0; margin: 4px 0 18px; border-radius: 18px; overflow: hidden;
+  background: var(--glass-bg); border: 1px solid var(--glass-brd);
+}
+.apod-media { flex-shrink: 0; width: 42%; max-width: 340px; line-height: 0; }
+.apod-media img { width: 100%; height: 100%; object-fit: cover; }
+.apod-body { flex: 1; min-width: 0; padding: 18px 20px; display: flex; flex-direction: column; gap: 7px; }
+.apod-kicker { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--blue-soft); }
+.apod-body b { font-size: 18px; }
+.apod-body p { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+.apod-body small { font-size: 11px; color: var(--text-faint); }
+@media (max-width: 640px) { .apod { flex-direction: column; } .apod-media { width: 100%; max-width: none; max-height: 220px; } }
+
 /* ===== Explorar / glosario ===== */
 .glo-search { display: flex; align-items: center; gap: 10px; margin: 4px 0 14px; position: relative; }
 .glo-search-ic { position: absolute; left: 14px; color: var(--text-faint); pointer-events: none; }

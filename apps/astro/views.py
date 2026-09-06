@@ -496,6 +496,37 @@ def finish_exam(request, slug):
     })
 
 
+def _get_apod():
+    """Imagen astronomica del dia (NASA APOD), cacheada 6h. None si falla."""
+    import json
+    import os
+    import urllib.request
+    from django.core.cache import cache
+
+    cached = cache.get('apod')
+    if cached is not None:
+        return cached or None  # '' guardado = fallo reciente, no reintentar
+    api_key = os.environ.get('NASA_API_KEY', 'DEMO_KEY')
+    url = f'https://api.nasa.gov/planetary/apod?api_key={api_key}'
+    try:
+        with urllib.request.urlopen(url, timeout=5) as r:
+            d = json.load(r)
+        apod = {
+            'title': d.get('title', ''),
+            'explanation': d.get('explanation', ''),
+            'date': d.get('date', ''),
+            'media_type': d.get('media_type', 'image'),
+            'url': d.get('url', ''),
+            'hdurl': d.get('hdurl', ''),
+            'copyright': d.get('copyright', ''),
+        }
+        cache.set('apod', apod, 60 * 60 * 6)
+        return apod
+    except Exception:
+        cache.set('apod', '', 60 * 30)  # evita reintentar cada carga durante 30 min
+        return None
+
+
 @login_required(login_url=LOGIN_URL)
 def glossary(request):
     """Explorar/buscar todas las tarjetas del contenido (glosario libre)."""
@@ -510,6 +541,7 @@ def glossary(request):
         'cards': cards,
         'q': q,
         'total': len(cards),
+        'apod': _get_apod() if not q else None,  # hero solo sin busqueda
         'active_nav': 'glossary',
     })
 

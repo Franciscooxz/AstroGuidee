@@ -8,6 +8,23 @@
         <p>Busca cualquier concepto del contenido, sin orden ni bloqueos.</p></div>
     </div>
 
+    {% if apod %}
+    <div class="apod">
+      {% if apod.media_type == 'image' %}
+      <a class="apod-media" href="{{ apod.hdurl|default:apod.url }}" target="_blank" rel="noopener">
+        <img src="{{ apod.url }}" alt="{{ apod.title }}" loading="lazy">
+      </a>
+      {% endif %}
+      <div class="apod-body">
+        <span class="apod-kicker">{% include 'astro/_icon.html' with name='star' size=16 %} Imagen astronomica del dia · NASA {% if apod.date %}· {{ apod.date }}{% endif %}</span>
+        <b>{{ apod.title }}</b>
+        <p>{{ apod.explanation|truncatewords:45 }}</p>
+        {% if apod.copyright %}<small>© {{ apod.copyright }}</small>{% endif %}
+        {% if apod.media_type != 'image' %}<a href="{{ apod.url }}" target="_blank" rel="noopener" class="btn sm">Ver contenido →</a>{% endif %}
+      </div>
+    </div>
+    {% endif %}
+
     <form method="get" class="glo-search">
       <span class="glo-search-ic">{% include 'astro/_icon.html' with name='galaxy' size=20 %}</span>
       <input type="search" name="q" value="{{ q }}" class="field" autofocus

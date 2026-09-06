@@ -270,6 +270,26 @@ class GlossaryTests(AstroBaseTest):
     def test_glossary_requires_login(self):
         self.assertEqual(self.client.get(reverse('astro:glossary')).status_code, 302)
 
+    def test_apod_hero_from_cache(self):
+        from django.core.cache import cache
+        cache.set('apod', {'title': 'Foto Test APOD', 'explanation': 'desc',
+                           'media_type': 'image', 'url': 'http://x/y.jpg',
+                           'hdurl': '', 'date': '2026-09-06', 'copyright': ''})
+        self.login()
+        # sin busqueda: aparece el hero
+        resp = self.client.get(reverse('astro:glossary'))
+        self.assertContains(resp, 'Foto Test APOD')
+        # con busqueda: no aparece el hero
+        resp = self.client.get(reverse('astro:glossary'), {'q': 'Carta'})
+        self.assertNotContains(resp, 'Foto Test APOD')
+
+    def test_apod_absent_when_unavailable(self):
+        from django.core.cache import cache
+        cache.set('apod', '')  # fallo reciente cacheado
+        self.login()
+        resp = self.client.get(reverse('astro:glossary'))
+        self.assertEqual(resp.status_code, 200)  # la pagina funciona sin APOD
+
 
 class QuestionImageTests(AstroBaseTest):
     # PNG 1x1 valido (base64) para probar el ImageField sin ficheros externos.
