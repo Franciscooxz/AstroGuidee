@@ -1407,6 +1407,38 @@ body.has-tabs { }
   /* Tarjeta continuar: apilar el boton abajo */
   .continue-card { flex-wrap: wrap; }
   .cc-btn { width: 100%; text-align: center; }
+
+  /* Nav: que quepa todo en una linea sin partirse */
+  .brand { font-size: 16px; gap: 7px; }
+  .brand .ico { width: 26px; height: 26px; }
+  .nav-bell, .theme-toggle { width: 36px; height: 36px; }
+  .nav-actions .btn { padding: 7px 11px; white-space: nowrap; }
+  .nav-avatar { width: 26px; height: 26px; }
+
+  /* Menos padding lateral para ganar ancho util */
+  .wrap { padding: 0 16px; }
+
+  /* Titulos y cabeceras mas pequenos en movil */
+  .section-head { margin-bottom: 20px; gap: 12px; }
+  .section-head h2 { font-size: 23px; }
+  .section-head .bar { height: 20px; margin-right: 9px; }
+  .section-head p { font-size: 13px; }
+
+  /* Banners (repaso / misiones / cofre): el boton pasa abajo a lo ancho,
+     asi el texto tiene sitio y no se parten las palabras */
+  .review-banner, .chest-card { flex-wrap: wrap; row-gap: 12px; padding: 14px 16px; }
+  .review-banner-body, .chest-body { flex: 1 1 60%; min-width: 0; }
+  .review-banner-go, .chest-btn { flex-basis: 100%; width: 100%; text-align: center; }
+
+  /* Meta diaria: un poco mas compacta */
+  .daily-goal { padding: 14px 16px; gap: 12px; }
+}
+
+/* Movil estrecho: ocultar el texto del logo para que la nav respire */
+@media (max-width: 430px) {
+  .brand-txt { display: none; }
+  .nav-actions { gap: 6px; }
+  .nav-inner { padding: 9px 12px; }
 }
 
 /* ===== Carrusel de leccion ===== */
