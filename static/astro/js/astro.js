@@ -156,3 +156,53 @@ async function sendReport(wrap, reason) {
   }
   wrap.innerHTML = '<span class="q-report-done">Gracias, lo revisaremos.</span>';
 }
+
+// Mapa de ruta (constelacion): dibuja las lineas que unen las estrellas midiendo
+// sus centros. La parte "encendida" llega hasta la leccion actual. Responsive.
+(function () {
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function pointsOf(list, box) {
+    return list.map(function (s) {
+      var r = s.getBoundingClientRect();
+      return ((r.left + r.right) / 2 - box.left).toFixed(1) + ',' +
+             ((r.top + r.bottom) / 2 - box.top).toFixed(1);
+    });
+  }
+  function draw() {
+    document.querySelectorAll('.constellation').forEach(function (box) {
+      var svg = box.querySelector('[data-cst]');
+      if (!svg) return;
+      var stars = Array.prototype.slice.call(box.querySelectorAll('[data-star]'));
+      svg.innerHTML = '';
+      if (stars.length < 2) return;
+      var br = box.getBoundingClientRect();
+      svg.setAttribute('viewBox', '0 0 ' + br.width.toFixed(1) + ' ' + br.height.toFixed(1));
+      var pts = pointsOf(stars, br);
+      var litIdx = -1;
+      stars.forEach(function (s, i) {
+        if (s.classList.contains('completed') || s.classList.contains('current')) litIdx = i;
+      });
+      var dim = document.createElementNS(SVGNS, 'polyline');
+      dim.setAttribute('class', 'ln-dim');
+      dim.setAttribute('points', pts.join(' '));
+      svg.appendChild(dim);
+      if (litIdx >= 1) {
+        var lit = document.createElementNS(SVGNS, 'polyline');
+        lit.setAttribute('class', 'ln-lit');
+        lit.setAttribute('points', pts.slice(0, litIdx + 1).join(' '));
+        svg.appendChild(lit);
+        if (!box.dataset.drawn) {
+          lit.style.setProperty('--len', lit.getTotalLength());
+          lit.classList.add('draw');
+        }
+      }
+      box.dataset.drawn = '1';
+    });
+  }
+  if (document.querySelector('.constellation')) {
+    if (document.readyState !== 'loading') draw();
+    else document.addEventListener('DOMContentLoaded', draw);
+    var t;
+    window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(draw, 150); });
+  }
+})();

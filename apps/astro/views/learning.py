@@ -5,6 +5,30 @@ from .common import *  # noqa: F401,F403
 # ---------- App (requiere sesion) ----------
 
 
+# Mapa de ruta = constelacion. Posiciones deterministas de cada estrella dentro
+# de su unidad: patron de X (%) que zigzaguea sin pegarse a los bordes (para que
+# las etiquetas no se corten) y una Y (px) con ritmo fijo. Las lineas que unen las
+# estrellas las dibuja astro.js midiendo los centros (responsive).
+# Patron 2D compacto (cumulo), no una columna. Cada bloque de 6 estrellas forma
+# un racimo; los bloques siguientes se apilan debajo. X en % (lejos de bordes
+# para que las etiquetas no se corten), desplazamiento Y en px dentro del bloque.
+CST_XS = (30, 60, 44, 72, 26, 52)
+CST_DY = (0, 40, 118, 152, 214, 250)
+CST_BLOCK = 300  # alto de un bloque de 6 estrellas (px)
+CST_TOP = 40
+
+
+def _place_constellation(unit):
+    lessons = unit["lessons"]
+    maxy = 0
+    for i, lesson in enumerate(lessons):
+        block, k = divmod(i, len(CST_XS))
+        lesson.cx = CST_XS[k]
+        lesson.cy = CST_TOP + block * CST_BLOCK + CST_DY[k]
+        maxy = max(maxy, lesson.cy)
+    unit["h"] = maxy + 78
+
+
 @login_required(login_url=LOGIN_URL)
 def ruta(request):
     lessons = _ordered_lessons()
@@ -27,6 +51,7 @@ def ruta(request):
 
     for u in units:
         u["complete"] = u["total"] > 0 and u["done"] == u["total"]
+        _place_constellation(u)
 
     total = len(lessons)
     done = len(completed)
