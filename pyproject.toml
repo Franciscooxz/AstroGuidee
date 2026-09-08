@@ -1,0 +1,21 @@
+# Config de herramientas de desarrollo (linting + formato).
+# El alcance activo es AstroGuide: apps/astro + config del proyecto.
+# El sitio antiguo (apps/core, slider, blog, ...) queda fuera para no churnarlo.
+
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+extend-exclude = '/migrations/'
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["migrations"]
+
+[tool.ruff.lint]
+# E/W: pycodestyle · F: pyflakes (imports/vars sin usar) · I: orden de imports
+select = ["E", "F", "W", "I"]
+ignore = [
+    "E501",  # longitud de linea -> la gestiona black
+    "E741",  # nombres "ambiguos" (usamos l = lesson, legible en contexto)
+]

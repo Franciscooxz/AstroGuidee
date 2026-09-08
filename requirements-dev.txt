@@ -1,0 +1,5 @@
+-r requirements.txt
+
+# Herramientas de desarrollo (linting + formato)
+ruff==0.16.6
+black==26.5.1
