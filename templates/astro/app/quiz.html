@@ -14,7 +14,7 @@
     Necesitas acertar <b>{{ needed }}</b> de <b>{{ questions|length }}</b> para aprobar.
   </p>
 
-  <div id="quizStage"
+  <div id="quizStage" data-mode="quiz"
        data-finish="{% url 'astro:finish_quiz' lesson.slug %}"
        data-ruta="{% url 'astro:ruta' %}">
     {% for q in questions %}
@@ -52,5 +52,5 @@
   <div id="quizResult" hidden></div>
 </div>
 
-<script src="{% static 'astro/js/quiz.js' %}"></script>
+<script src="{% static 'astro/js/quizEngine.js' %}?v={{ ASSET_VERSION }}"></script>
 {% endblock %}

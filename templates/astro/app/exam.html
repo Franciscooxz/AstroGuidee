@@ -14,7 +14,7 @@
     Necesitas <b>{{ needed }}</b> de <b>{{ questions|length }}</b> (80%) para aprobar.
   </p>
 
-  <div id="quizStage"
+  <div id="quizStage" data-mode="exam"
        data-finish="{% url 'astro:finish_exam' unit.slug %}"
        data-cert="{% url 'astro:certificate' unit.slug %}">
     {% for q in questions %}
@@ -42,5 +42,5 @@
   <div id="quizResult" hidden></div>
 </div>
 
-<script src="{% static 'astro/js/exam.js' %}?v={{ ASSET_VERSION }}"></script>
+<script src="{% static 'astro/js/quizEngine.js' %}?v={{ ASSET_VERSION }}"></script>
 {% endblock %}

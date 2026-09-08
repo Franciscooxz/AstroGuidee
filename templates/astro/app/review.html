@@ -12,7 +12,7 @@
     {% else %}<div class="review-tag">{% include 'astro/_icon.html' with name='progress' size=18 %} Repaso</div>{% endif %}
   </div>
 
-  <div id="quizStage"
+  <div id="quizStage" data-mode="review"
        data-finish="{% url 'astro:finish_review' %}"
        data-ruta="{% url 'astro:ruta' %}">
     {% for q in questions %}
@@ -76,5 +76,5 @@
   {% endif %}
 </div>
 
-{% if items %}<script src="{% static 'astro/js/review.js' %}?v={{ ASSET_VERSION }}"></script>{% endif %}
+{% if items %}<script src="{% static 'astro/js/quizEngine.js' %}?v={{ ASSET_VERSION }}"></script>{% endif %}
 {% endblock %}
