@@ -1,225 +1,178 @@
-# Artistic Mold — Sitio Web Oficial
+<div align="center">
 
-Sitio web de **Artistic Mold**, Familia Artístico-Deportiva y Dispositivo de Base Comunitaria (DBC) de Bogotá, Colombia (Convenio 552 del 2023). Fundada en abril de 2020, usa el arte y el deporte como herramientas de reconexión, prevención y recuperación integral.
+# 🌌 AstroGuide
 
-El proyecto es una aplicación **Django** completa: sitio público (frontend) + panel de administración propio (backoffice) + admin de Django.
+**Aprende astronomía como si fuera un juego.**
+Una app estilo Duolingo para *entender el universo, no solo memorizarlo.*
+
+![Python](https://img.shields.io/badge/Python-3.14-3776AB?logo=python&logoColor=white)
+![Django](https://img.shields.io/badge/Django-5.2-092E20?logo=django&logoColor=white)
+![Tests](https://img.shields.io/badge/tests-70%20passing-3ddc84)
+![PWA](https://img.shields.io/badge/PWA-installable-b18bff)
+![Status](https://img.shields.io/badge/status-en%20desarrollo-ffce4d)
+
+</div>
 
 ---
 
-## Stack Tecnológico
+## ✨ Qué es
+
+**AstroGuide** es una aplicación web educativa que enseña astronomía y astrofísica con **tarjetas y quizzes gamificados**, siguiendo una progresión pedagógica del cielo a simple vista hasta la cosmología. En vez de acumular datos sueltos, cada respuesta incorrecta se convierte en aprendizaje: explicaciones, repaso espaciado y práctica dirigida a tus puntos flojos.
+
+Construida con **Django** (server-rendered) + **JavaScript vanilla**, con diseño *glassmorphism* azul/morado sobre un fondo espacial e iconos SVG propios.
+
+> **Contenido actual:** 10 unidades · 44 lecciones · 284 preguntas, organizadas en niveles del 0 (curiosidad por el cielo) al 8 (cosmología).
+
+---
+
+## 📸 Capturas
+
+> _Añade tus capturas en `docs/screenshots/` y descomenta las líneas de abajo._
+
+<!--
+| Ruta de aprendizaje | Quiz con explicación | Estadísticas |
+|---|---|---|
+| ![ruta](docs/screenshots/ruta.png) | ![quiz](docs/screenshots/quiz.png) | ![stats](docs/screenshots/stats.png) |
+
+| Ligas con divisiones | Perfil / social | PWA en móvil |
+|---|---|---|
+| ![ligas](docs/screenshots/ligas.png) | ![perfil](docs/screenshots/perfil.png) | ![movil](docs/screenshots/movil.png) |
+-->
+
+---
+
+## 🚀 Características
+
+### 🎓 Aprendizaje
+- **Ruta por niveles** con desbloqueo secuencial (roadmap 0 → 8).
+- **Tarjetas** (flip) + **quizzes** de 3 tipos: opción múltiple, verdadero/falso y escribir la respuesta (comparación sin acentos).
+- **Explicaciones en cada pregunta** — el *porqué* de la respuesta.
+- **Dificultad progresiva**: el umbral de aprobado y el nº de preguntas escalan por nivel (60 % → 90 %).
+- **Repaso inteligente (repetición espaciada, algoritmo SM-2)** y **práctica de temas flojos**.
+- **Examen final por unidad** + **certificado** (con sello "con honores").
+- **Explorar / glosario** con buscador sobre todo el contenido.
+
+### 🎮 Gamificación
+- **XP**, **racha** con congeladores, moneda **Cosmos** + tienda y cosméticos.
+- **Vidas/corazones**, **meta diaria configurable**, **logros** y **rangos**.
+- **Misiones semanales**, **cofres por hitos de racha**.
+- **Ligas con divisiones** (Cometa → Cosmos) y **ascenso/descenso** semanal.
+
+### 👥 Social
+- **Seguir usuarios** y **perfiles públicos**.
+- **Certificados verificables** por enlace público, compartibles.
+- **Duelos 1v1** asíncronos (mismo set de preguntas, gana quien más acierte).
+
+### 📊 Progreso y calidad
+- **Estadísticas personales** con gráficas (precisión por unidad, actividad, temas flojos).
+- **Centro de notificaciones** + toasts.
+- **Reportar preguntas** + panel de calidad (preguntas más falladas).
+
+### 📱 Plataforma
+- **PWA instalable + offline** (manifest + service worker).
+- **Tema claro/oscuro**, **audio** (lectura de tarjetas con Web Speech API).
+- **Responsive** para móvil. Imagen astronómica del día vía **API de la NASA**.
+
+### 🛠️ Panel de gestión propio (`/gestion/`)
+CRUD de unidades, lecciones, tarjetas, quizzes, tienda y logros; estadísticas, calidad y anuncios — sin depender del admin de Django.
+
+---
+
+## 🧰 Stack
 
 | Capa | Tecnología |
 |---|---|
-| Lenguaje | Python 3.14 |
-| Framework | Django 5.2.4 |
-| Base de datos | SQLite (`db.sqlite3`) |
+| Backend | Django 5.2 · Python 3.14 |
+| Base de datos | SQLite (desarrollo) |
+| Frontend | Templates de Django + JavaScript vanilla (sin build step) |
+| Estilos | CSS con custom properties · iconos SVG propios |
+| PWA | Service worker + Web App Manifest |
 | Imágenes | Pillow |
-| CSS/UI | Bootstrap 5.3 (CDN) + CSS propio (`static/site/css/style.css`) |
-| Iconos | Font Awesome 6.4 (CDN) |
-| Tipografía | Poppins (Google Fonts) |
-| Editor de texto enriquecido | TinyMCE 7 (CDN, licencia GPL) — solo en el panel |
+| APIs / navegador | NASA APOD · Web Speech API · Web Share API |
+| Tests | Django test framework (70 tests) |
 
-> Nota: Bootstrap, Font Awesome, Google Fonts y TinyMCE se cargan desde CDN, por lo que el panel y el sitio necesitan conexión a internet para verse completos.
+---
 
-## Instalación y Puesta en Marcha
+## 💡 Decisiones técnicas destacadas
+
+- **Repetición espaciada (SM-2):** cada pregunta se reprograma según aciertes o falles, priorizando lo que estás a punto de olvidar — memoria a largo plazo real, no repetición ciega.
+- **Calificación en el servidor:** el cliente nunca decide si aciertas; toda la corrección y las recompensas se validan en el backend (anti-trampa).
+- **Contenido como migraciones de datos idempotentes:** el contenido es reproducible en cualquier entorno con `migrate`, versionado junto al código.
+- **Ligas con cierre semanal como *management command*** (`leagues_rollover`), pensado para ejecutarse por cron en producción.
+- **Sin *build step*:** JavaScript vanilla + render en servidor. Decisión pragmática que prioriza velocidad de desarrollo y simplicidad de despliegue.
+- **Seguridad:** `SECRET_KEY`, `DEBUG` y `ALLOWED_HOSTS` por variables de entorno; *cache-busting* de assets por versión.
+
+---
+
+## 🗂️ Estructura
+
+```
+apps/astro/
+├── models.py            # dominio: Category, Lesson, Card, Question, Profile,
+│                        #   ReviewItem (SRS), Duel, Follow, UnitExam, ...
+├── views.py             # rutas de la app (quiz, repaso, examen, ligas, social...)
+├── panel_views.py       # panel de gestión propio (/gestion/)
+├── management/commands/
+│   └── leagues_rollover.py   # cierre semanal de ligas (cron)
+├── migrations/          # esquema + contenido sembrado (idempotente)
+└── tests.py             # 70 tests
+templates/astro/         # HTML (base, ruta, quiz, panel, PWA sw.js...)
+static/astro/            # CSS, JS vanilla, iconos e imágenes
+```
+
+---
+
+## ⚙️ Puesta en marcha (local)
 
 ```bash
-# 1. Instalar dependencias
+git clone https://github.com/Franciscooxz/AstroGuidee.git
+cd AstroGuidee
+
+python -m venv venv
+# Windows:
+venv\Scripts\activate
+# macOS/Linux:
+source venv/bin/activate
+
 pip install -r requirements.txt
-
-# 2. Aplicar migraciones
 python manage.py migrate
-
-# 3. Crear usuario administrador (si no existe)
-python manage.py createsuperuser
-
-# 4. (Opcional) Cargar datos iniciales del sitio
-python load_real_data.py
-
-# 5. Iniciar el servidor de desarrollo
+python manage.py createsuperuser   # opcional, para el panel /gestion/
 python manage.py runserver
 ```
 
-El sitio queda en `http://localhost:8000/` y el panel en `http://localhost:8000/panel/`.
+Abre **http://localhost:8000**. En desarrollo funciona con valores por defecto; para producción define `DJANGO_SECRET_KEY`, `DJANGO_DEBUG=False` y `DJANGO_ALLOWED_HOSTS`.
 
----
+### 🧪 Tests
 
-## Estructura del Proyecto
-
-```
-E:\Artistic
-├── manage.py
-├── requirements.txt
-├── db.sqlite3               # Base de datos SQLite
-├── load_initial_data.py     # Script de datos de ejemplo
-├── load_real_data.py        # Script de datos reales del sitio
-│
-├── artisticmold/            # Configuración del proyecto
-│   ├── settings.py          # Configuración general (apps, BD, email, media)
-│   ├── urls.py              # Rutas raíz + robots.txt + manejadores 404/500
-│   ├── wsgi.py / asgi.py
-│
-├── apps/                    # Aplicaciones Django (una por dominio)
-│   ├── core/                # Config del sitio, home, nosotros, contacto, política, fundadores, PANEL
-│   ├── slider/              # Slides del carrusel del home
-│   ├── blog/                # Posts y categorías del blog
-│   ├── disciplines/         # Artes & Disciplinas y sus categorías
-│   ├── faq/                 # Preguntas frecuentes
-│   ├── testimonials/        # Testimonios
-│   ├── gallery/             # Álbumes y fotos (fototeca)
-│   ├── services/            # Servicios (con detalle) y PDF de catálogo
-│   └── resources/           # Centro de recursos y sus categorías
-│
-├── templates/               # HTML (Django Templates)
-│   ├── base.html            # Layout del sitio público (navbar, footer, favicon)
-│   ├── home/ nosotros/ contacto/ politica/
-│   ├── artes/ blog/ galeria/ servicios/ recursos/
-│   ├── 404.html / 500.html
-│   └── panel/               # Backoffice completo (base propia + una carpeta por módulo)
-│
-├── static/site/             # Archivos estáticos propios
-│   ├── css/style.css        # Todos los estilos del sitio público
-│   ├── js/main.js
-│   └── img/
-│
-└── media/                   # Archivos subidos por el panel (imágenes, PDFs)
+```bash
+python manage.py test apps.astro
 ```
 
 ---
 
-## Backend
+## 🗺️ Contenido por niveles
 
-### Apps y Modelos
-
-**`apps/core`** — el corazón del sitio:
-- `SiteConfig` (singleton): nombre del sitio, tagline, logo, **favicon**, teléfono, WhatsApp, email, redes sociales, dirección, convenio.
-- `HomeSection` (singleton): sección "Quiénes Somos" del home con estadísticas (cofundadores, integrantes, disciplinas).
-- `AboutPage` (singleton): contenido de la página Nosotros (historia, misión, visión, preceptos, símbolos, frase emblema).
-- `Founder`: fundadores (nombre, rol, foto, biografía enriquecida, orden, activo). Se muestran en Nosotros.
-- `PolicyPage` (singleton): política de privacidad con interruptor `is_active` (si está apagado, `/politica/` devuelve 404).
-
-> Los "singleton" fuerzan `pk=1` en `save()`: solo existe un registro, se edita siempre el mismo.
-
-**`apps/slider`** — `Slide`: imagen, título, subtítulo, link, orden, activo.
-
-**`apps/blog`** — `BlogCategory` (nombre, slug, orden) y `Post` (título, slug único, categoría, portada, extracto, contenido enriquecido, autor, publicado/destacado, fechas).
-
-**`apps/disciplines`** — `DisciplineCategory` (nombre, slug, icono FA, color, orden) y `Discipline` (nombre, slug único, descripción enriquecida, imagen, destacada en home, activa, orden). Tienen página de detalle por slug.
-
-**`apps/faq`** — `FAQ`: pregunta, respuesta, orden, activa. Se muestran en acordeón en el home.
-
-**`apps/testimonials`** — `Testimonial`: nombre, rol, cita, evento, foto, destacado, activo, orden. Los destacados+activos aparecen en el home (máx. 3).
-
-**`apps/gallery`** — `Album` (título, año, portada, descripción) y `Photo` (imagen, pie, orden). Subida múltiple de fotos desde el panel.
-
-**`apps/services`** — `Service`: título, **slug único** (URL de detalle), descripción enriquecida, icono FA, imagen, orden, activo. `ServicePDF`: catálogo descargable. Cada servicio tiene página de detalle con **formulario de contacto** integrado.
-
-**`apps/resources`** — `ResourceCategory` (título, slug automático, intro, icono, orden) y `Resource` (título, contenido enriquecido, imagen, **archivo PDF descargable opcional**, orden, activo).
-
-### Rutas Públicas
-
-| URL | Contenido |
-|---|---|
-| `/` | Home: slider, quiénes somos, disciplinas destacadas, FAQ, testimonios, blog reciente, CTA |
-| `/nosotros/` | Historia, misión/visión, preceptos, símbolos y fundadores |
-| `/artes/` y `/artes/<slug>/` | Listado (con filtro por categoría `?cat=`) y detalle de disciplinas |
-| `/servicios/` y `/servicios/<slug>/` | Listado y detalle de servicios (detalle con formulario de contacto) |
-| `/blog/` y `/blog/<slug>/` | Listado y detalle de posts |
-| `/galeria/` y `/galeria/<id>/` | Álbumes y fotos |
-| `/recursos/` | Centro de recursos por categorías (con PDFs descargables) |
-| `/contacto/` | Información de contacto + formulario |
-| `/politica/` | Política de privacidad (solo si está activada) |
-| `/sitemap.xml` y `/robots.txt` | SEO (sitemap incluye posts, disciplinas, servicios y álbumes) |
-
-### Formulario de Contacto y Correo
-
-- Los formularios de `/contacto/` y del detalle de cada servicio envían POST a la vista `contacto()` en `apps/core/views.py`, que arma y envía el correo a `CONTACT_EMAIL`.
-- **Estado actual**: `EMAIL_BACKEND` es el de **consola** — los correos se imprimen en la terminal del servidor, **no se envían de verdad**. Para producción hay que configurar SMTP (ver "Pendientes para producción").
-
-### Panel de Administración (`/panel/`)
-
-Backoffice propio (no confundir con el admin de Django) con login exclusivo para usuarios *staff*. Módulos:
-
-- **Dashboard**: contadores generales y últimos posts.
-- **Configuración** (3 pestañas): Sitio General (datos de contacto, logo, favicon), Home (sección principal y estadísticas) y Nosotros.
-- **Inicio / Slider**: CRUD de slides.
-- **Artes & Disciplinas** + **Categorías**: CRUD completo con slug automático.
-- **Servicios**: CRUD (el slug del detalle se genera automáticamente del título).
-- **Recursos** + categorías: CRUD con editor enriquecido y subida de PDF.
-- **Galería / Fototeca**: álbumes con subida múltiple de fotos.
-- **Blog** + **Categorías**: CRUD de posts (extracto, portada, publicar/destacar).
-- **Fundadores**: CRUD con foto y biografía enriquecida.
-- **Testimonios**, **FAQ**, **Política de Privacidad**.
-
-Detalles técnicos del panel:
-- Los campos de texto largo usan **TinyMCE** (clase `textarea.rich-editor`, inicializado en `templates/panel/base.html`) con subida de imágenes vía `/panel/upload/` y botón propio para insertar videos de YouTube.
-- Las vistas están en `apps/core/panel_views.py` y las rutas en `apps/core/panel_urls.py` (namespace `panel:`). No usan Django Forms: leen `request.POST`/`request.FILES` directamente.
-- Utilidades: `_unique_slug()` (slugs sin colisiones) y `_int()` (conversión segura de números).
-
-### Admin de Django (`/django-admin/`)
-
-Disponible como respaldo con todos los modelos registrados. El día a día se maneja desde `/panel/`.
+| Nivel | Unidad |
+|:---:|---|
+| 0 | Bienvenido al universo |
+| 1 | El cielo a simple vista |
+| 2 | Observación |
+| 3 | Sistema Solar · Exoplanetas |
+| 4 | Las estrellas |
+| 5 | Galaxias y el cosmos |
+| 7 | Objetos extremos (agujeros negros, neutrones, relatividad) |
+| 8 | Cosmología |
 
 ---
 
-## Frontend
+## 📌 Estado y próximos pasos
 
-### Sistema de diseño
-
-Definido en `static/site/css/style.css` con variables CSS:
-
-```css
---black: #0d0d0d    /* fondo principal */
---black3: #1c1c1c   /* tarjetas */
---yellow: #F5C518   /* color de marca */
---grey: #8a8a8a     /* texto secundario */
---radius: 12px
-```
-
-Estética: **fondo negro + acentos amarillos**, tipografía Poppins, tarjetas con hover elevado, secciones con etiqueta (`section-label`) y títulos con palabra resaltada en amarillo.
-
-### Templates
-
-- `templates/base.html`: layout público — navbar fija, mensajes flash, footer con datos de `SiteConfig` (disponible en todos los templates gracias al context processor `apps/core/context_processors.py`), favicon dinámico.
-- Cada sección tiene su carpeta (`home/`, `artes/`, `blog/`…) con `index.html`/`list.html` y `detail.html` cuando aplica.
-- Los contenidos creados con el editor enriquecido se renderizan con `|safe` dentro de `.rich-content`; en tarjetas/resúmenes se usa `|striptags|truncatewords:N` para mostrar texto plano recortado.
-- `templates/panel/base.html`: layout del backoffice (sidebar oscura, tablas, formularios, alertas) con bloque `extra_css` para estilos por página.
-
-### Contenido dinámico del Home (orden de secciones)
-
-1. Slider (slides activos)
-2. Quiénes Somos (`HomeSection` + estadísticas)
-3. Disciplinas destacadas (máx. 6, `is_featured=True`)
-4. Preguntas Frecuentes (acordeón)
-5. Testimonios (máx. 3 destacados)
-6. Últimas publicaciones del blog (máx. 3 publicadas)
-7. CTA final de contacto
+🚧 **En desarrollo activo.** Próximo: despliegue con enlace público, CI (GitHub Actions), y andamiaje de plan **Premium** (freemium).
 
 ---
 
-## Archivos Subidos (`media/`)
+## 👤 Autor
 
-| Carpeta | Contenido |
-|---|---|
-| `site/` | Logo y favicon |
-| `slider/`, `home/`, `nosotros/` | Imágenes de secciones |
-| `disciplines/`, `services/`, `blog/`, `resources/` | Imágenes de contenido |
-| `services/pdf/`, `resources/pdf/` | PDFs descargables |
-| `gallery/covers/`, `gallery/photos/` | Fototeca |
-| `founders/` | Fotos de fundadores |
-| `editor/` | Imágenes subidas desde el editor enriquecido |
+**Francisco** — [@Franciscooxz](https://github.com/Franciscooxz)
 
-En desarrollo los sirve Django (`DEBUG=True`); en producción deben servirse por el servidor web (Nginx/Apache) o un storage externo.
-
----
-
-## Pendientes para Producción
-
-Antes de publicar el sitio en internet hay que:
-
-1. **Correo real**: cambiar `EMAIL_BACKEND` a SMTP en `settings.py` (Gmail requiere una *contraseña de aplicación*). Hoy los mensajes del formulario solo se imprimen en consola.
-2. **`DEBUG = False`** y configurar `ALLOWED_HOSTS` con el dominio real.
-3. **`SECRET_KEY`**: mover a variable de entorno (actualmente está escrita en el código).
-4. **Estáticos**: ejecutar `python manage.py collectstatic` y servir `static/` y `media/` desde el servidor web.
-5. Considerar migrar de SQLite a PostgreSQL si crece el tráfico.
-6. Activar la **Política de Privacidad** desde el panel cuando el texto esté listo.
+> Proyecto personal de aprendizaje y portfolio. Si quieres definir una licencia, añade un archivo `LICENSE` (por ejemplo, MIT).
