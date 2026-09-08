@@ -1411,7 +1411,9 @@ body.has-tabs { }
   /* Nav: que quepa todo en una linea sin partirse */
   .brand { font-size: 16px; gap: 7px; }
   .brand .ico { width: 26px; height: 26px; }
-  .nav-bell, .theme-toggle { width: 36px; height: 36px; }
+  .theme-toggle { width: 36px; height: 36px; }
+  /* La campana ya esta en la barra inferior ("Avisos"): evitar duplicado en movil */
+  .nav-bell { display: none; }
   .nav-actions .btn { padding: 7px 11px; white-space: nowrap; }
   .nav-avatar { width: 26px; height: 26px; }
 
