@@ -46,7 +46,7 @@
         {% if item.key in owned %}
           {% if profile.frame == item.key %}
             <form method="post" action="{% url 'astro:equip_frame' 'none' %}">{% csrf_token %}
-              <button type="submit" class="btn buy-btn on">Equipado ✓ (quitar)</button></form>
+              <button type="submit" class="btn buy-btn on">{% include 'astro/_icon.html' with name='check' size=16 class='inline' %} Equipado (quitar)</button></form>
           {% else %}
             <form method="post" action="{% url 'astro:equip_frame' item.key %}">{% csrf_token %}
               <button type="submit" class="btn btn-primary buy-btn">Equipar</button></form>

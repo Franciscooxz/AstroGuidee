@@ -78,7 +78,7 @@
     {% elif all_done %}
     <div class="all-done-card">
       <div class="ad-ic">{% include 'astro/_icon.html' with name='check' size=40 %}</div>
-      <h3>¡Completaste todo el contenido disponible! 🎉</h3>
+      <h3>¡Completaste todo el contenido disponible!</h3>
       <p>Repasa tus lecciones cuando quieras. Muy pronto llegaran mas unidades (Estrellas, Agujeros negros, Galaxias...).</p>
     </div>
     {% endif %}
@@ -92,7 +92,7 @@
       <span class="u-prog {% if u.complete %}done{% endif %}">
         {% if u.complete %}{% include 'astro/_icon.html' with name='check' size=15 %} {% endif %}{{ u.done }}/{{ u.total }}
       </span>
-      {% if u.complete %}<a href="{% url 'astro:certificate' u.unit.slug %}" class="u-cert" title="Ver certificado">🎓</a>{% endif %}
+      {% if u.complete %}<a href="{% url 'astro:certificate' u.unit.slug %}" class="u-cert" title="Ver certificado">{% include 'astro/_icon.html' with name='cap' size=22 %}</a>{% endif %}
     </div>
 
     <div class="path" style="--acc: {{ u.unit.accent|default:'#8b5cff' }}">

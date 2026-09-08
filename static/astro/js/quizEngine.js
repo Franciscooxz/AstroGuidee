@@ -253,7 +253,9 @@
     }
     if (data.daily_bonus > 0) {
       rewards +=
-        '<div class="res-daily">🎯 ¡Meta diaria cumplida! +' + data.daily_bonus + " Cosmos</div>";
+        '<div class="res-daily"><svg class="ico inline" width="18" height="18" viewBox="0 0 64 64" aria-hidden="true"><use href="#i-target"></use></svg> ¡Meta diaria cumplida! +' +
+        data.daily_bonus +
+        " Cosmos</div>";
     }
     if (data.hearts_lost > 0) {
       rewards +=

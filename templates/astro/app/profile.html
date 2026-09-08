@@ -22,7 +22,7 @@
           <small>{{ rank.to_next }} XP para <b>{{ rank.next_name }}</b></small>
         </div>
         {% else %}
-        <p class="pi-since">¡Rango maximo alcanzado! 💎</p>
+        <p class="pi-since">¡Rango maximo alcanzado! {% include 'astro/_icon.html' with name='trophy' size=18 class='inline' %}</p>
         {% endif %}
       </div>
       <div class="level-box">
@@ -91,7 +91,7 @@
       <a href="{% url 'astro:certificate' c.unit.slug %}" class="cert-card" style="--acc: {{ c.unit.accent|default:'#8b5cff' }}">
         <span class="cert-card-ic">{% include 'astro/_icon.html' with name=c.unit.icon size=30 %}</span>
         <div><b>{{ c.unit.name }}</b><small>{{ c.date|date:"d/m/Y" }}</small></div>
-        <span class="cert-card-go">🎓</span>
+        <span class="cert-card-go">{% include 'astro/_icon.html' with name='cap' size=22 %}</span>
       </a>
       {% endfor %}
     </div>
