@@ -14,8 +14,16 @@ def robots_txt(request):
     content = (
         "User-agent: *\n"
         "Allow: /\n"
+        # Zonas privadas o de accion (sin valor para buscadores): no rastrear.
+        "Disallow: /app/\n"
+        "Disallow: /gestion/\n"
         "Disallow: /panel/\n"
         "Disallow: /django-admin/\n"
+        "Disallow: /registro/\n"
+        "Disallow: /entrar/\n"
+        "Disallow: /salir/\n"
+        "Disallow: /recuperar/\n"
+        "Crawl-delay: 5\n"
         "\n"
         "Sitemap: {}/sitemap.xml\n".format(domain)
     )

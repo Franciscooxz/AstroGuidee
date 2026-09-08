@@ -1,5 +1,6 @@
 """Vistas: review_exam."""
 
+from ..security import rate_limit
 from .common import *  # noqa: F401,F403
 
 
@@ -29,6 +30,7 @@ def exam(request, slug):
 
 @login_required(login_url=LOGIN_URL)
 @require_POST
+@rate_limit("quiz", limit=30, window=60)
 def finish_exam(request, slug):
     unit = get_object_or_404(Category, slug=slug, is_active=True)
     complete, lessons = _unit_complete(request.user, unit)
@@ -140,6 +142,7 @@ def review_weak(request):
 
 @login_required(login_url=LOGIN_URL)
 @require_POST
+@rate_limit("quiz", limit=30, window=60)
 def finish_review(request):
     """Corrige una sesion de repaso: reprograma (SM-2) y acumula estadisticas.
 

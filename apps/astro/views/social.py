@@ -1,5 +1,6 @@
 """Vistas: social."""
 
+from ..security import rate_limit
 from .common import *  # noqa: F401,F403
 
 
@@ -162,6 +163,7 @@ def play_duel(request, pk):
 
 @login_required(login_url=LOGIN_URL)
 @require_POST
+@rate_limit("quiz", limit=30, window=60)
 def finish_duel(request, pk):
     duel = get_object_or_404(Duel, pk=pk)
     role = _duel_role(duel, request.user)

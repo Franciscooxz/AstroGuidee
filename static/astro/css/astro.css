@@ -1462,3 +1462,6 @@ body.has-tabs { }
   .hero h1 { font-size: 44px; }
   .nav-links { display: none; }
 }
+
+/* Honeypot anti-bots: fuera de pantalla, invisible y sin foco */
+.hp-field { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; }

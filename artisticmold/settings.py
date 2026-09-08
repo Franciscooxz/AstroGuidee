@@ -127,6 +127,11 @@ LOGIN_URL = "/panel/login/"
 LOGIN_REDIRECT_URL = "/panel/"
 LOGOUT_REDIRECT_URL = "/panel/login/"
 
+# Cloudflare Turnstile (CAPTCHA invisible) en el registro. Vacio = inactivo.
+# Consigue tus llaves gratis en https://dash.cloudflare.com (Turnstile).
+TURNSTILE_SITEKEY = os.environ.get("TURNSTILE_SITEKEY", "")
+TURNSTILE_SECRET = os.environ.get("TURNSTILE_SECRET", "")
+
 # Seguridad de produccion: solo cuando DEBUG=False (en local no estorba).
 if not DEBUG:
     # Render termina TLS en su proxy: confia en la cabecera para saber que es https.

@@ -1,5 +1,6 @@
 """Vistas: learning."""
 
+from ..security import rate_limit
 from .common import *  # noqa: F401,F403
 
 # ---------- App (requiere sesion) ----------
@@ -166,6 +167,7 @@ def quiz(request, slug):
 
 @login_required(login_url=LOGIN_URL)
 @require_POST
+@rate_limit("quiz", limit=30, window=60)  # anti-farmeo: 30 envios / min por IP
 def finish_quiz(request, slug):
     lesson_obj = get_object_or_404(Lesson, slug=slug, is_active=True)
     status, _ = _lesson_status(request.user)

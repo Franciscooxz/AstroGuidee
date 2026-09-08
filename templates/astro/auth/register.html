@@ -9,6 +9,8 @@
 
     <form method="post" novalidate>
       {% csrf_token %}
+      {# honeypot anti-bots: invisible para humanos #}
+      <div class="hp-field" aria-hidden="true"><label>No rellenar<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
       {% for field in form %}
         <div class="form-row">
           <label for="{{ field.id_for_label }}">{{ field.label }}</label>
@@ -18,6 +20,10 @@
         </div>
       {% endfor %}
       {% for error in form.non_field_errors %}<div class="err block">{{ error }}</div>{% endfor %}
+      {% if turnstile_sitekey %}
+      <div class="cf-turnstile" data-sitekey="{{ turnstile_sitekey }}" data-theme="dark"></div>
+      <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+      {% endif %}
       <button type="submit" class="btn btn-primary btn-block">Crear cuenta</button>
     </form>
 

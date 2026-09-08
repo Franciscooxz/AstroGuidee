@@ -2,6 +2,7 @@ import json
 from datetime import timedelta
 
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -862,3 +863,48 @@ class PanelTests(AstroBaseTest):
         self.login()
         self.assertEqual(self.client.get("/gestion/").status_code, 200)
         self.assertEqual(self.client.get("/gestion/estadisticas/").status_code, 200)
+
+
+class SecurityTests(TestCase):
+    """Rate limiting por IP y honeypot anti-bots."""
+
+    def setUp(self):
+        cache.clear()  # el contador de rate limit vive en cache; aislar cada test
+
+    def test_login_rate_limited(self):
+        url = reverse("astro:login")
+        # limite = 12 POST / ventana; los primeros 12 pasan (form invalido -> 200)
+        for _ in range(12):
+            self.assertEqual(
+                self.client.post(url, {"username": "x", "password": "y"}).status_code, 200
+            )
+        # el 13o supera el limite -> 429
+        self.assertEqual(self.client.post(url, {"username": "x", "password": "y"}).status_code, 429)
+
+    def test_register_honeypot_blocks_bot(self):
+        resp = self.client.post(
+            reverse("astro:register"),
+            {
+                "username": "botuser",
+                "email": "bot@b.com",
+                "password1": "Cosmos2026xyz",
+                "password2": "Cosmos2026xyz",
+                "website": "http://spam.example",  # campo trampa relleno = bot
+            },
+        )
+        self.assertEqual(resp.status_code, 200)  # no redirige: rechazado
+        self.assertFalse(User.objects.filter(username="botuser").exists())
+
+    def test_register_ok_without_honeypot(self):
+        resp = self.client.post(
+            reverse("astro:register"),
+            {
+                "username": "humano",
+                "email": "h@b.com",
+                "password1": "Cosmos2026xyz",
+                "password2": "Cosmos2026xyz",
+                "website": "",
+            },
+        )
+        self.assertEqual(resp.status_code, 302)
+        self.assertTrue(User.objects.filter(username="humano").exists())
