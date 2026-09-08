@@ -1149,7 +1149,9 @@ a.sbadge.link:hover { border-color: var(--purple-soft); transform: translateY(-2
 .inventory .btn { margin-left: auto; }
 
 /* Recompensas en el resultado del quiz */
-.res-rewards { display: flex; gap: 12px; justify-content: center; margin: 16px 0 4px; flex-wrap: wrap; }
+.res-rewards { display: flex; gap: 12px; justify-content: center; align-items: center; margin: 16px 0 4px; flex-wrap: wrap; }
+/* Dentro del contenedor flex, el margin:auto de .res-xp empujaba los pills a los extremos. */
+.res-rewards .res-xp, .res-rewards .res-coins { margin: 0; }
 .res-coins {
   display: inline-block; padding: 8px 18px; border-radius: 100px; font-size: 18px; font-weight: 700; color: #3a2a08;
   background: linear-gradient(135deg, #ffe08a, #ffbe3d);
