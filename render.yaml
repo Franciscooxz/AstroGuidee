@@ -1,0 +1,33 @@
+# Blueprint de Render para AstroGuide.
+# Crea el servicio web + la base de datos Postgres y las conecta solas.
+# En Render: "New +" -> "Blueprint" -> elige este repo. Rellena las envVars sync:false.
+#
+# Nota: todo el contenido vive en migraciones idempotentes, asi que `migrate`
+# reconstruye la base completa en Postgres en el primer despliegue.
+
+databases:
+  - name: astroguide-db
+    databaseName: astroguide
+    plan: free
+
+services:
+  - type: web
+    name: astroguide
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate"
+    startCommand: "gunicorn artisticmold.wsgi:application"
+    healthCheckPath: /
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: astroguide-db
+          property: connectionString
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: NASA_API_KEY
+        sync: false
