@@ -1,7 +1,6 @@
 import json
 import math
 import random
-import unicodedata
 from datetime import timedelta
 
 from django.contrib import messages
@@ -16,6 +15,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
+from . import services
 from .forms import LoginForm, RegisterForm, StyledPasswordChangeForm
 from .models import (
     Achievement,
@@ -70,27 +70,12 @@ HEART_REFILL_MIN = 30  # minutos para recuperar 1 vida
 XP_PER_REVIEW = 3  # XP por cada repaso acertado
 REVIEW_BATCH = 15  # preguntas maximas por sesion de repaso
 
-# Umbral de aprobado por nivel de dificultad de la unidad (1 facil -> 5 dificil).
-PASS_RATIO = {1: 0.60, 2: 0.67, 3: 0.75, 4: 0.85, 5: 0.90}
-
-
-def _pass_ratio(difficulty):
-    return PASS_RATIO.get(difficulty, 0.60)
-
-
-def _record_answer(user, question, correct):
-    """Acumula la estadistica del usuario sobre una pregunta (precision / temas flojos)."""
-    stat, _ = QuestionStat.objects.get_or_create(user=user, question=question)
-    stat.seen += 1
-    if correct:
-        stat.correct += 1
-    stat.last_seen = timezone.now()
-    stat.save(update_fields=["seen", "correct", "last_seen"])
-
-
-def _needed_correct(total, difficulty):
-    """Aciertos minimos para aprobar segun el nivel."""
-    return math.ceil(_pass_ratio(difficulty) * total) if total else 0
+# Logica de dominio (calificacion, estadistica, umbrales) en services.py.
+# Se mantienen los nombres privados como alias para no tocar las llamadas.
+PASS_RATIO = services.PASS_RATIO
+_pass_ratio = services.pass_ratio
+_needed_correct = services.needed_correct
+_record_answer = services.record_answer
 
 
 def _seed_reviews(user, lesson):
@@ -283,10 +268,7 @@ def get_rank(xp):
     return data
 
 
-def _norm_text(s):
-    """Normaliza texto para comparar respuestas: sin acentos, minusculas, sin espacios extra."""
-    s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode()
-    return s.lower().strip()
+_norm_text = services.norm_text
 
 
 def _get_profile(user):
@@ -651,12 +633,7 @@ def finish_exam(request, slug):
     correct = 0
     for q in questions:
         val = answers.get(str(q.id), "")
-        if q.qtype == "text":
-            typed = _norm_text(str(val))
-            accepted = [_norm_text(o.text) for o in q.options.all() if o.is_correct]
-            ok = bool(typed) and typed in accepted
-        else:
-            ok = any(o.is_correct and str(o.id) == str(val) for o in q.options.all())
+        ok = services.grade_question(q, val)
         if ok:
             correct += 1
         _record_answer(request.user, q, ok)
@@ -1104,12 +1081,7 @@ def finish_duel(request, pk):
     correct = 0
     for q in _duel_questions(duel):
         val = answers.get(str(q.id), "")
-        if q.qtype == "text":
-            typed = _norm_text(str(val))
-            accepted = [_norm_text(o.text) for o in q.options.all() if o.is_correct]
-            ok = bool(typed) and typed in accepted
-        else:
-            ok = any(o.is_correct and str(o.id) == str(val) for o in q.options.all())
+        ok = services.grade_question(q, val)
         if ok:
             correct += 1
         _record_answer(request.user, q, ok)
@@ -1755,12 +1727,7 @@ def finish_review(request):
     total = 0
     for q in questions:
         val = answers.get(str(q.id), "")
-        if q.qtype == "text":
-            typed = _norm_text(str(val))
-            accepted = [_norm_text(o.text) for o in q.options.all() if o.is_correct]
-            ok = bool(typed) and typed in accepted
-        else:
-            ok = any(o.is_correct and str(o.id) == str(val) for o in q.options.all())
+        ok = services.grade_question(q, val)
         item, _ = ReviewItem.objects.get_or_create(user=request.user, question=q)
         item.schedule(ok)
         item.save()
