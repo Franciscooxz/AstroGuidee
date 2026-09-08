@@ -47,7 +47,7 @@
           <a href="{% url 'astro:league' %}" class="{% if active_nav == 'league' %}active{% endif %}">Ligas</a>
           <a href="{% url 'astro:store' %}" class="{% if active_nav == 'store' %}active{% endif %}">Tienda</a>
         {% else %}
-          <a href="{% url 'astro:home' %}#como">Como funciona</a>
+          <a href="{% url 'astro:home' %}#como">Cómo funciona</a>
           <a href="{% url 'astro:home' %}#muestra">Muestra</a>
           <a href="{% url 'astro:home' %}#temas">Temas</a>
         {% endif %}
@@ -58,7 +58,7 @@
           <span class="tt-moon">{% include 'astro/_icon.html' with name='moon' size=20 %}</span>
         </button>
         {% if user.is_authenticated %}
-          {% if user.is_staff %}<a href="{% url 'gestion:dashboard' %}" class="btn">Gestion</a>{% endif %}
+          {% if user.is_staff %}<a href="{% url 'gestion:dashboard' %}" class="btn">Gestión</a>{% endif %}
           <a href="{% url 'astro:notifications' %}" class="nav-bell {% if active_nav == 'notifications' %}active{% endif %}" title="Notificaciones" aria-label="Notificaciones">
             {% include 'astro/_icon.html' with name='bell' size=20 %}
             {% if unread_notifications %}<span class="bell-badge">{{ unread_notifications }}</span>{% endif %}

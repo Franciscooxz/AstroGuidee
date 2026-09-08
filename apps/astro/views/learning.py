@@ -216,7 +216,7 @@ def finish_quiz(request, slug):
         if level_after > level_before:
             Notification.push(
                 request.user,
-                f"Subiste al nivel {level_after}! Sigue asi.",
+                f"¡Subiste al nivel {level_after}! Sigue así.",
                 icon="star",
                 url=reverse("astro:profile"),
             )

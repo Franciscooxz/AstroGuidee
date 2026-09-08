@@ -32,7 +32,7 @@ def open_chest(request):
     profile.pending_chest = 0
     profile.save()
     extra = " y 1 congelador de racha" if freeze else ""
-    messages.success(request, f"Cofre de {day} dias abierto: +{reward} Cosmos{extra}!")
+    messages.success(request, f"¡Cofre de {day} días abierto: +{reward} Cosmos{extra}!")
     return redirect("astro:ruta")
 
 
@@ -42,11 +42,11 @@ def claim_mission(request, key):
     items, wk = _build_missions(request.user)
     mission = next((m for m in items if m["key"] == key), None)
     if not mission:
-        messages.error(request, "Mision no encontrada.")
+        messages.error(request, "Misión no encontrada.")
     elif mission["claimed"]:
-        messages.info(request, "Ya reclamaste esa mision.")
+        messages.info(request, "Ya reclamaste esa misión.")
     elif not mission["done"]:
-        messages.error(request, "Aun no completaste esa mision.")
+        messages.error(request, "Aún no completaste esa misión.")
     else:
         MissionClaim.objects.get_or_create(user=request.user, mission_key=key, week_key=wk)
         profile = _get_profile(request.user)

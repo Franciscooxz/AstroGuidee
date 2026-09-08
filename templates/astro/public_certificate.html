@@ -9,14 +9,14 @@
     <div class="cert-corner bl"></div><div class="cert-corner br"></div>
 
     <div class="cert-logo">{% include 'astro/_icon.html' with name='orbit' size=40 %} AstroGuide</div>
-    <div class="cert-kicker">Certificado de finalizacion</div>
+    <div class="cert-kicker">Certificado de finalización</div>
 
     <div class="cert-ic">{% include 'astro/_icon.html' with name=unit.icon size=64 %}</div>
     <p class="cert-to">Otorgado a</p>
     <h1 class="cert-name">{{ owner.username }}</h1>
     <p class="cert-body">por completar con exito la unidad</p>
     <h2 class="cert-unit">{{ unit.name }}</h2>
-    <p class="cert-meta">{{ n_lessons }} leccion{{ n_lessons|pluralize:"es" }} · {{ n_cards }} tarjetas dominadas</p>
+    <p class="cert-meta">{{ n_lessons }} lección{{ n_lessons|pluralize:"es" }} · {{ n_cards }} tarjetas dominadas</p>
 
     {% if exam and exam.passed %}
     <div class="cert-honors {% if exam.best_score >= 100 %}gold{% endif %}">
@@ -36,7 +36,7 @@
     {% if user.is_authenticated %}
     <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Ir a mi ruta</a>
     {% else %}
-    <a href="{% url 'astro:register' %}" class="btn btn-primary">Aprende astronomia gratis</a>
+    <a href="{% url 'astro:register' %}" class="btn btn-primary">Aprende astronomía gratis</a>
     <a href="{% url 'astro:home' %}" class="btn">Conocer AstroGuide</a>
     {% endif %}
   </div>

@@ -1,9 +1,9 @@
 {% extends 'astro/panel/base.html' %}
-{% block title %}Tienda — Gestion{% endblock %}
+{% block title %}Tienda — Gestión{% endblock %}
 {% block content %}
 <div class="panel-head">
-  <div><h1>Tienda</h1><p>Articulos que los usuarios compran con Cosmos.</p></div>
-  <a href="{% url 'gestion:shop_new' %}" class="btn btn-primary">+ Nuevo articulo</a>
+  <div><h1>Tienda</h1><p>Artículos que los usuarios compran con Cosmos.</p></div>
+  <a href="{% url 'gestion:shop_new' %}" class="btn btn-primary">+ Nuevo artículo</a>
 </div>
 
 <div class="table-wrap">
@@ -26,7 +26,7 @@
         </td>
       </tr>
     {% empty %}
-      <tr><td colspan="7" class="empty">Aun no hay articulos.</td></tr>
+      <tr><td colspan="7" class="empty">Aún no hay artículos.</td></tr>
     {% endfor %}
     </tbody>
   </table>

@@ -6,10 +6,10 @@
     <div class="section-head">
       <div>
         <h2><span class="bar"></span>Hola, {{ user.username }}</h2>
-        <p>Sigue tu ruta. Completa cada leccion para desbloquear la siguiente.</p>
+        <p>Sigue tu ruta. Completa cada lección para desbloquear la siguiente.</p>
       </div>
       <div class="stat-badges">
-        <a href="{% url 'astro:store' %}" class="sbadge link" title="{% if next_heart %}Proxima vida en ~{{ next_heart }} min{% else %}Vidas al maximo{% endif %}">{% include 'astro/_icon.html' with name='heart' size=22 %} <b>{{ hearts }}</b><span>/{{ hearts_max }} vidas</span></a>
+        <a href="{% url 'astro:store' %}" class="sbadge link" title="{% if next_heart %}Próxima vida en ~{{ next_heart }} min{% else %}Vidas al máximo{% endif %}">{% include 'astro/_icon.html' with name='heart' size=22 %} <b>{{ hearts }}</b><span>/{{ hearts_max }} vidas</span></a>
         <div class="sbadge">{% include 'astro/_icon.html' with name='flame' size=22 %} <b>{{ streak }}</b><span>racha</span></div>
         <div class="sbadge">{% include 'astro/_icon.html' with name='star' size=22 %} <b>{{ xp }}</b><span>XP</span></div>
         <a href="{% url 'astro:store' %}" class="sbadge link">{% include 'astro/_icon.html' with name='coin' size=22 %} <b>{{ coins }}</b><span>Cosmos</span></a>
@@ -27,7 +27,7 @@
       <span class="dg-ic">{% include 'astro/_icon.html' with name='flame' size=24 %}</span>
       <div class="dg-txt">
         <b>Meta diaria</b>
-        <small>{% if daily_met %}¡Cumplida! Vuelve manana para mantener tu racha.{% else %}Completa {{ daily_goal }} leccion{{ daily_goal|pluralize:"es" }} hoy y gana Cosmos.{% endif %}</small>
+        <small>{% if daily_met %}¡Cumplida! Vuelve mañana para mantener tu racha.{% else %}Completa {{ daily_goal }} lección{{ daily_goal|pluralize:"es" }} hoy y gana Cosmos.{% endif %}</small>
       </div>
       <div class="dg-state">{% if daily_met %}{% include 'astro/_icon.html' with name='check' size=20 %}{% else %}{{ daily_done }}/{{ daily_goal }}{% endif %}</div>
     </div>
@@ -37,7 +37,7 @@
       {% csrf_token %}
       <span class="chest-ic">{% include 'astro/_icon.html' with name='trophy' size=30 %}</span>
       <div class="chest-body">
-        <b>¡Cofre de racha de {{ pending_chest }} dias!</b>
+        <b>¡Cofre de racha de {{ pending_chest }} días!</b>
         <span>Abrelo para reclamar tu recompensa.</span>
       </div>
       <button type="submit" class="chest-btn">Abrir cofre →</button>
@@ -79,7 +79,7 @@
     <div class="all-done-card">
       <div class="ad-ic">{% include 'astro/_icon.html' with name='check' size=40 %}</div>
       <h3>¡Completaste todo el contenido disponible!</h3>
-      <p>Repasa tus lecciones cuando quieras. Muy pronto llegaran mas unidades (Estrellas, Agujeros negros, Galaxias...).</p>
+      <p>Repasa tus lecciones cuando quieras. Muy pronto llegarán más unidades (Estrellas, Agujeros negros, Galaxias...).</p>
     </div>
     {% endif %}
 
@@ -99,7 +99,7 @@
       {% for l in u.lessons %}
       <div class="node-wrap">
         {% if l.status == 'locked' %}
-          <div class="node locked" title="Completa la leccion anterior">
+          <div class="node locked" title="Completa la lección anterior">
             <div class="node-circle">{% include 'astro/_icon.html' with name='lock' size=28 %}</div>
           </div>
           <div class="node-label locked">{{ l.title }}</div>

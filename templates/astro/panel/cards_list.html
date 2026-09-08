@@ -1,5 +1,5 @@
 {% extends 'astro/panel/base.html' %}
-{% block title %}Tarjetas — Gestion{% endblock %}
+{% block title %}Tarjetas — Gestión{% endblock %}
 {% block content %}
 <div class="panel-head">
   <div><h1>Tarjetas</h1><p>El contenido que estudian los usuarios.</p></div>
@@ -7,7 +7,7 @@
 </div>
 
 <form method="get" class="filter-bar">
-  <label>Filtrar por leccion:</label>
+  <label>Filtrar por lección:</label>
   <select name="lesson" class="field" onchange="this.form.submit()">
     <option value="">Todas</option>
     {% for l in all_lessons %}
@@ -18,13 +18,13 @@
 
 <div class="table-wrap">
   <table class="p-table">
-    <thead><tr><th>Icono</th><th>Titulo</th><th>Leccion</th><th>Orden</th><th>Activa</th><th></th></tr></thead>
+    <thead><tr><th>Icono</th><th>Título</th><th>Lección</th><th>Orden</th><th>Activa</th><th></th></tr></thead>
     <tbody>
     {% for c in cards %}
       <tr>
         <td>{% include 'astro/_icon.html' with name=c.icon size=28 %}</td>
         <td><b>{{ c.title }}</b><br><small>{{ c.subtitle }}</small></td>
-        <td>{% if c.lesson %}{{ c.lesson.title }}{% else %}<small>(sin leccion)</small>{% endif %}</td>
+        <td>{% if c.lesson %}{{ c.lesson.title }}{% else %}<small>(sin lección)</small>{% endif %}</td>
         <td>{{ c.order }}</td>
         <td>{% if c.is_active %}<span class="tag on">Si</span>{% else %}<span class="tag">No</span>{% endif %}</td>
         <td class="actions">

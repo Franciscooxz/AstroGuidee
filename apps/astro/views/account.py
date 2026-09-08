@@ -137,7 +137,7 @@ def settings_view(request):
                 try:
                     validate_email(email)
                 except ValidationError:
-                    messages.error(request, "El correo no es valido.")
+                    messages.error(request, "El correo no es válido.")
                     valid = False
             if valid:
                 request.user.email = email
@@ -161,7 +161,7 @@ def settings_view(request):
             if pw_form.is_valid():
                 user = pw_form.save()
                 update_session_auth_hash(request, user)
-                messages.success(request, "Contrasena cambiada correctamente.")
+                messages.success(request, "Contraseña cambiada correctamente.")
                 return redirect("astro:settings")
 
     return render(

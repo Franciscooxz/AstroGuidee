@@ -1,8 +1,8 @@
 {% extends 'astro/panel/base.html' %}
-{% block title %}Inicio — Gestion AstroGuide{% endblock %}
+{% block title %}Inicio — Gestión AstroGuide{% endblock %}
 {% block content %}
 <div class="panel-head">
-  <h1>Panel de gestion</h1>
+  <h1>Panel de gestión</h1>
   <p>Administra el contenido de AstroGuide.</p>
 </div>
 
@@ -31,7 +31,7 @@
 
 <div class="quick-actions">
   <a href="{% url 'gestion:unit_new' %}" class="btn btn-primary">+ Nueva unidad</a>
-  <a href="{% url 'gestion:lesson_new' %}" class="btn">+ Nueva leccion</a>
+  <a href="{% url 'gestion:lesson_new' %}" class="btn">+ Nueva lección</a>
   <a href="{% url 'gestion:card_new' %}" class="btn">+ Nueva tarjeta</a>
 </div>
 {% endblock %}

@@ -22,7 +22,7 @@
           <small>{{ rank.to_next }} XP para <b>{{ rank.next_name }}</b></small>
         </div>
         {% else %}
-        <p class="pi-since">¡Rango maximo alcanzado! {% include 'astro/_icon.html' with name='trophy' size=18 class='inline' %}</p>
+        <p class="pi-since">¡Rango máximo alcanzado! {% include 'astro/_icon.html' with name='trophy' size=18 class='inline' %}</p>
         {% endif %}
       </div>
       <div class="level-box">
@@ -100,9 +100,9 @@
     <div class="foot-actions">
       <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Seguir aprendiendo →</a>
       <a href="{% url 'astro:friends' %}" class="btn">Amigos</a>
-      <a href="{% url 'astro:stats' %}" class="btn">Mis estadisticas</a>
+      <a href="{% url 'astro:stats' %}" class="btn">Mis estadísticas</a>
       <a href="{% url 'astro:settings' %}" class="btn">Editar perfil</a>
-      <a href="{% url 'astro:logout' %}" class="btn">Cerrar sesion</a>
+      <a href="{% url 'astro:logout' %}" class="btn">Cerrar sesión</a>
     </div>
   </section>
 </div>

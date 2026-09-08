@@ -27,31 +27,31 @@
       <div class="car-count"><span id="carPos">1</span> / {{ cards|length }} tarjeta{{ cards|length|pluralize }}</div>
     </div>
     {% else %}
-    <p style="color:var(--text-dim)">Esta leccion aun no tiene tarjetas.</p>
+    <p style="color:var(--text-dim)">Esta lección aún no tiene tarjetas.</p>
     {% endif %}
 
     <!-- Completar leccion -->
     <div class="lesson-foot">
       {% if has_quiz %}
         {% if is_completed %}
-          <div class="done-badge">{% include 'astro/_icon.html' with name='check' size=22 %} Leccion completada</div>
+          <div class="done-badge">{% include 'astro/_icon.html' with name='check' size=22 %} Lección completada</div>
           <div class="foot-actions">
             <a href="{% url 'astro:quiz' lesson.slug %}" class="btn">Repetir quiz</a>
             <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Volver a la ruta →</a>
           </div>
         {% else %}
-          <p>Cuando te sientas listo, pon a prueba lo aprendido con el quiz para completar la leccion y ganar XP.</p>
+          <p>Cuando te sientas listo, pon a prueba lo aprendido con el quiz para completar la lección y ganar XP.</p>
           <a href="{% url 'astro:quiz' lesson.slug %}" class="btn btn-primary">{% include 'astro/_icon.html' with name='quiz' size=18 %} Empezar quiz</a>
         {% endif %}
       {% else %}
         {% if is_completed %}
-          <div class="done-badge">{% include 'astro/_icon.html' with name='check' size=22 %} Leccion completada</div>
+          <div class="done-badge">{% include 'astro/_icon.html' with name='check' size=22 %} Lección completada</div>
           <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Volver a la ruta →</a>
         {% else %}
-          <p>Cuando termines de repasar las tarjetas, marca la leccion como completada para desbloquear la siguiente.</p>
+          <p>Cuando termines de repasar las tarjetas, marca la lección como completada para desbloquear la siguiente.</p>
           <form method="post" action="{% url 'astro:complete_lesson' lesson.slug %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-primary">{% include 'astro/_icon.html' with name='check' size=18 %} Completar leccion</button>
+            <button type="submit" class="btn btn-primary">{% include 'astro/_icon.html' with name='check' size=18 %} Completar lección</button>
           </form>
         {% endif %}
       {% endif %}

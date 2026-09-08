@@ -7,7 +7,7 @@
     <h1>Te quedaste sin vidas</h1>
     <p class="auth-sub">
       Fallar en los quizzes gasta vidas. Se recuperan solas con el tiempo,
-      {% if next_heart %}<br>tu proxima vida llega en <b>~{{ next_heart }} min</b>.{% else %}vuelve en un rato.{% endif %}
+      {% if next_heart %}<br>tu próxima vida llega en <b>~{{ next_heart }} min</b>.{% else %}vuelve en un rato.{% endif %}
     </p>
     <div class="foot-actions" style="flex-direction:column; gap:10px; margin-top:8px;">
       <a href="{% url 'astro:store' %}" class="btn btn-primary btn-block">{% include 'astro/_icon.html' with name='heart' size=18 %} Recargar vidas en la tienda</a>

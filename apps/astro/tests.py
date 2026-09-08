@@ -281,7 +281,7 @@ class ReportTests(AstroBaseTest):
         self.login()
         resp = self.client.get(reverse("gestion:quality"))
         self.assertEqual(resp.status_code, 200)
-        self.assertContains(resp, "Preguntas mas falladas")
+        self.assertContains(resp, "Preguntas más falladas")
         self.assertContains(resp, self.q1.text)
 
     def test_panel_quality_and_resolve(self):
@@ -792,7 +792,7 @@ class StatsTests(AstroBaseTest):
         self.login()
         resp = self.client.get(reverse("astro:stats"))
         self.assertEqual(resp.status_code, 200)
-        self.assertContains(resp, "Aun no hay datos")
+        self.assertContains(resp, "Aún no hay datos")
 
 
 class ReviewTests(AstroBaseTest):

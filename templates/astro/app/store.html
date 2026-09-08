@@ -6,7 +6,7 @@
     <div class="section-head">
       <div>
         <h2><span class="bar"></span>Tienda</h2>
-        <p>Gana Cosmos completando lecciones y gastalos aqui.</p>
+        <p>Gana Cosmos completando lecciones y gástalos aquí.</p>
       </div>
       <div class="coins-balance">{% include 'astro/_icon.html' with name='coin' size=26 %} <b>{{ profile.coins }}</b> Cosmos</div>
     </div>
@@ -21,7 +21,7 @@
         {% if item.effect == 'streak_freeze' %}
           <div class="owned">Tienes: <b>{{ profile.streak_freezes }}</b></div>
         {% elif item.effect == 'double_xp' %}
-          <div class="owned">{% if profile.double_xp_pending %}Activo para tu proximo quiz{% else %}&nbsp;{% endif %}</div>
+          <div class="owned">{% if profile.double_xp_pending %}Activo para tu próximo quiz{% else %}&nbsp;{% endif %}</div>
         {% elif item.effect == 'refill_hearts' %}
           <div class="owned">Tienes: <b>{{ profile.hearts }}</b>/{{ hearts_max }} vidas</div>
         {% endif %}

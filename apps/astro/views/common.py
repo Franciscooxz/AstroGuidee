@@ -122,7 +122,7 @@ def _refill_hearts(profile):
         if profile.hearts >= HEARTS_MAX:
             Notification.push(
                 profile.user,
-                "Tus vidas se recargaron al maximo. A seguir aprendiendo!",
+                "Tus vidas se recargaron al máximo. ¡A seguir aprendiendo!",
                 icon="heart",
                 url=reverse("astro:ruta"),
             )
@@ -159,7 +159,7 @@ MISSIONS = [
     },
     {
         "key": "lessons5",
-        "name": "Maraton de lecciones",
+        "name": "Maratón de lecciones",
         "desc": "Completa 5 lecciones esta semana",
         "icon": "cards",
         "metric": "lessons",
@@ -178,7 +178,7 @@ MISSIONS = [
     {
         "key": "streak5",
         "name": "Constancia",
-        "desc": "Manten una racha de 5 dias",
+        "desc": "Mantén una racha de 5 días",
         "icon": "flame",
         "metric": "streak",
         "target": 5,
@@ -201,7 +201,7 @@ def _check_streak_chest(profile):
     if changed:
         Notification.push(
             profile.user,
-            "Cofre de racha desbloqueado! Abrelo en tu ruta.",
+            "¡Cofre de racha desbloqueado! Ábrelo en tu ruta.",
             icon="trophy",
             url=reverse("astro:ruta"),
         )

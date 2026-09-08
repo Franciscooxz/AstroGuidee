@@ -9,7 +9,7 @@
     <div class="quiz-bar"><span id="quizBar"></span></div>
     <div class="review-tag exam">{% include 'astro/_icon.html' with name='flame' size=18 %} Duelo</div>
   </div>
-  <p class="quiz-goal"><span class="quiz-diff">Duelo vs {{ rival.username }}</span> Responde rapido y acierta mas que tu rival.</p>
+  <p class="quiz-goal"><span class="quiz-diff">Duelo vs {{ rival.username }}</span> Responde rápido y acierta más que tu rival.</p>
 
   <div id="quizStage" data-mode="duel"
        data-finish="{% url 'astro:finish_duel' duel.id %}"

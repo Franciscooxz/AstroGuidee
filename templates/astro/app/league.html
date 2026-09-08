@@ -5,7 +5,7 @@
   <section class="section">
     <div class="section-head">
       <div><h2><span class="bar"></span>Liga semanal</h2>
-        <p>Compite en tu division. Se reinicia cada lunes.</p></div>
+        <p>Compite en tu división. Se reinicia cada lunes.</p></div>
       {% if my_rank %}<div class="my-rank">Tu puesto: <b>#{{ my_rank }}</b></div>{% endif %}
     </div>
 
@@ -16,8 +16,8 @@
         <b>Liga {{ division.name }}</b>
         <small>
           {% if promote_n %}Top {{ promote_n }} asciende{% if division.next_name %} a {{ division.next_name }}{% endif %}.{% endif %}
-          {% if relegate_n %} Ultimos {{ relegate_n }} bajan{% if division.prev_name %} a {{ division.prev_name }}{% endif %}.{% endif %}
-          {% if division.is_top %}Estas en la liga mas alta.{% endif %}
+          {% if relegate_n %} Últimos {{ relegate_n }} bajan{% if division.prev_name %} a {{ division.prev_name }}{% endif %}.{% endif %}
+          {% if division.is_top %}Estas en la liga más alta.{% endif %}
         </small>
       </div>
       <span class="div-count">{{ total }} jugador{{ total|pluralize:"es" }}</span>
@@ -45,7 +45,7 @@
       {% endif %}
       {% empty %}
       <div class="league-empty">
-        <p>Aun nadie ha ganado XP esta semana en tu division. ¡Completa una leccion y ponte primero!</p>
+        <p>Aún nadie ha ganado XP esta semana en tu división. ¡Completa una lección y ponte primero!</p>
         <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Ir a mi ruta</a>
       </div>
       {% endfor %}

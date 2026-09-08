@@ -249,7 +249,7 @@
         rewards += '<span class="res-coins">+' + data.coins_earned + " Cosmos</span>";
       rewards += "</div>";
     } else if (passed) {
-      rewards = '<div class="res-xp muted">Ya habias ganado las recompensas de esta leccion</div>';
+      rewards = '<div class="res-xp muted">Ya habías ganado las recompensas de esta lección</div>';
     }
     if (data.daily_bonus > 0) {
       rewards +=
@@ -281,7 +281,7 @@
       '">' +
       badge(badgeClass, passed ? "check" : "x") +
       "<h2>" +
-      (passed ? (data.perfect ? "¡Perfecto!" : "¡Leccion completada!") : "Casi lo tienes") +
+      (passed ? (data.perfect ? "¡Perfecto!" : "¡Lección completada!") : "Casi lo tienes") +
       "</h2>" +
       '<p class="res-score">Acertaste <b>' +
       data.correct +
@@ -294,7 +294,7 @@
       rewards +
       '<div class="res-stats"><span>Racha: <b>' +
       data.streak +
-      "</b> dia" +
+      "</b> día" +
       plural(data.streak) +
       "</span>" +
       "<span>Total: <b>" +
@@ -339,17 +339,17 @@
       rewards +
       '<div class="res-stats"><span>Racha: <b>' +
       data.streak +
-      "</b> dia" +
+      "</b> día" +
       plural(data.streak) +
       "</span>" +
       "<span>Total: <b>" +
       data.total_xp +
       " XP</b></span></div>" +
-      '<p class="res-srs">Las que fallaste volveran pronto; las que acertaste, mas adelante.</p>' +
+      '<p class="res-srs">Las que fallaste volverán pronto; las que acertaste, más adelante.</p>' +
       '<div class="res-actions">' +
       '<a href="' +
       window.location.pathname +
-      '" class="btn">Repasar mas</a>' +
+      '" class="btn">Repasar más</a>' +
       '<a href="' +
       ruta +
       '" class="btn btn-primary">Volver a la ruta →</a>' +
@@ -445,7 +445,7 @@
   function errorCard() {
     const back = stage.dataset.ruta || stage.dataset.cert || stage.dataset.duels || "/app/";
     return (
-      '<div class="result-card"><h2>Ups</h2><p>No pudimos guardar tu resultado. Revisa tu conexion.</p>' +
+      '<div class="result-card"><h2>Ups</h2><p>No pudimos guardar tu resultado. Revisa tu conexión.</p>' +
       '<a href="' +
       back +
       '" class="btn btn-primary">Volver</a></div>'

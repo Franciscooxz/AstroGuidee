@@ -1,11 +1,11 @@
 {% extends 'astro/base.html' %}
-{% block title %}Mis estadisticas — AstroGuide{% endblock %}
+{% block title %}Mis estadísticas — AstroGuide{% endblock %}
 {% block content %}
 <div class="wrap">
   <section class="section">
     <div class="section-head">
-      <div><h2><span class="bar"></span>Mis estadisticas</h2>
-        <p>Como va tu aprendizaje: precision, actividad y puntos flojos.</p></div>
+      <div><h2><span class="bar"></span>Mis estadísticas</h2>
+        <p>Cómo va tu aprendizaje: precisión, actividad y puntos flojos.</p></div>
     </div>
 
     <!-- Metricas -->
@@ -15,7 +15,7 @@
       <div class="st-tile"><span class="st-ic">{% include 'astro/_icon.html' with name='flame' size=26 %}</span>
         <b>{{ profile.streak }}</b><span>Racha (mejor: {{ profile.best_streak }})</span></div>
       <div class="st-tile"><span class="st-ic">{% include 'astro/_icon.html' with name='check' size=26 %}</span>
-        <b>{% if global_acc is not None %}{{ global_acc }}%{% else %}—{% endif %}</b><span>Precision global</span></div>
+        <b>{% if global_acc is not None %}{{ global_acc }}%{% else %}—{% endif %}</b><span>Precisión global</span></div>
       <div class="st-tile" style="--rc: {{ rank.color }}"><span class="st-ic">{% include 'astro/_icon.html' with name='rocket' size=26 %}</span>
         <b>{{ rank.name }}</b><span>Rango actual</span></div>
     </div>
@@ -23,8 +23,8 @@
     {% if total_seen %}
     <!-- Actividad ultimos 14 dias -->
     <div class="st-card">
-      <h3>Actividad (ultimos 14 dias)</h3>
-      <div class="st-activity" role="img" aria-label="Lecciones completadas por dia">
+      <h3>Actividad (últimos 14 días)</h3>
+      <div class="st-activity" role="img" aria-label="Lecciones completadas por día">
         {% for a in activity %}
         <div class="st-abar" title="{{ a.date|date:'d/m' }}: {{ a.count }} leccion{{ a.count|pluralize:"es" }}">
           <span class="st-abar-fill" style="height: {% if act_max %}{% widthratio a.count act_max 100 %}{% else %}0{% endif %}%"></span>
@@ -36,7 +36,7 @@
 
     <!-- Precision por unidad -->
     <div class="st-card">
-      <h3>Precision por unidad</h3>
+      <h3>Precisión por unidad</h3>
       <div class="ua-list">
         {% for u in units %}{% if u.seen %}
         <div class="ua-row" style="--acc: {{ u.unit.accent|default:'#8b5cff' }}">
@@ -52,7 +52,7 @@
     <!-- Temas mas flojos -->
     <div class="st-card">
       <h3>Refuerza estos temas</h3>
-      <p class="st-sub">Donde mas fallas. Un repaso te vendria bien.</p>
+      <p class="st-sub">Dónde más fallas. Un repaso te vendría bien.</p>
       <div class="weak-list">
         {% for u in weak %}
         <div class="weak-item" style="--acc: {{ u.unit.accent|default:'#8b5cff' }}">
@@ -68,8 +68,8 @@
     {% else %}
     <div class="st-empty">
       <span class="st-empty-ic">{% include 'astro/_icon.html' with name='progress' size=52 %}</span>
-      <h3>Aun no hay datos</h3>
-      <p>Responde algunos quizzes y aqui veras tu precision, tus temas flojos y tu actividad.</p>
+      <h3>Aún no hay datos</h3>
+      <p>Responde algunos quizzes y aquí veras tu precisión, tus temas flojos y tu actividad.</p>
       <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Ir a mi ruta</a>
     </div>
     {% endif %}
