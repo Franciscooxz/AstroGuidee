@@ -4,7 +4,7 @@
 <div class="wrap auth-wrap">
   <div class="auth-card">
     {% if validlink %}
-      <div class="ico-wrap">{% include 'astro/_icon.html' with name='orbit' size=52 %}</div>
+      {% include 'astro/_logo.html' with size=72 class='auth' %}
       <h1>Nueva contraseña</h1>
       <p class="auth-sub">Elige una contraseña nueva para tu cuenta.</p>
       <form method="post" novalidate>

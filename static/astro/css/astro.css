@@ -107,7 +107,11 @@ textarea:focus-visible, [tabindex]:focus-visible, .flip:focus-visible {
   border-radius: 16px;
   box-shadow: var(--shadow);
 }
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; letter-spacing: .2px; text-decoration: none; color: var(--text); }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; letter-spacing: -0.02em; text-decoration: none; color: var(--text); }
+.brand-logo { display: block; object-fit: contain; flex-shrink: 0; border-radius: 9px; }
+.brand .brand-logo { width: 32px; height: 32px; }
+.cert-logo .brand-logo { width: 40px; height: 40px; border-radius: 11px; }
+.brand-logo.auth { width: 72px; height: 72px; margin: 0 auto 14px; border-radius: 18px; }
 .brand .dot {
   width: 30px; height: 30px; border-radius: 50%;
   background: var(--purple);
@@ -1367,7 +1371,7 @@ body.has-tabs { }
 
   /* Nav: que quepa todo en una linea sin partirse */
   .brand { font-size: 16px; gap: 7px; }
-  .brand .ico { width: 26px; height: 26px; }
+  .brand .brand-logo { width: 28px; height: 28px; border-radius: 8px; }
   .theme-toggle { width: 36px; height: 36px; }
   /* La campana ya esta en la barra inferior ("Avisos"): evitar duplicado en movil */
   .nav-bell { display: none; }

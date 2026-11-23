@@ -4,6 +4,7 @@ const ASSETS = [
   '{% static "astro/css/astro.css" %}',
   '{% static "astro/js/astro.js" %}',
   '{% static "astro/img/icon-192.png" %}',
+  '{% static "astro/img/logo.png" %}',
   '{% static "astro/img/streak.webp" %}',
   '{% static "astro/img/icon-512.png" %}',
 ];
