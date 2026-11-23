@@ -848,7 +848,9 @@ a.notif:hover { border-color: var(--purple-soft); background: var(--overlay); tr
 .know-btn:disabled { opacity: .6; cursor: default; }
 
 /* ===== Ruta (Duolingo) ===== */
-.route-stack { display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px; }
+.route-page { padding-top: 16px; }
+.route-top { display: flex; justify-content: flex-end; gap: 10px; margin: 0 0 6px; }
+.route-stack { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
 .route-progress {
   display: flex; align-items: center; gap: 16px; margin: 0;
   padding: 14px 16px; border-radius: 16px;
