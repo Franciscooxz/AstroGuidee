@@ -214,14 +214,6 @@ async function sendReport(wrap, reason) {
       fold.addEventListener('toggle', draw);
     });
   }
-  function centerLeague() {
-    var leagueCurrent = document.querySelector('.lg-slot.current');
-    if (!leagueCurrent || !leagueCurrent.parentElement) return;
-    var track = leagueCurrent.parentElement;
-    track.scrollLeft = leagueCurrent.offsetLeft - (track.clientWidth - leagueCurrent.offsetWidth) / 2;
-  }
-  centerLeague();
-  window.addEventListener('resize', centerLeague);
   if (document.querySelector('.sky-path') || document.querySelector('.sky-fold')) {
     if (document.readyState !== 'loading') boot();
     else document.addEventListener('DOMContentLoaded', boot);

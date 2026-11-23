@@ -6,21 +6,15 @@
   <section class="section league-page">
     <p class="lg-time">{% if days_left == 1 %}Queda 1 día{% else %}Quedan {{ days_left }} días{% endif %}</p>
 
-    <div class="lg-track">
+    <div class="lg-stage">
       {% for d in ladder %}
-      {% if d.state == 'locked' %}
-      <div class="lg-slot locked">
-        <img src="{% static 'astro/img/leagues/locked.webp' %}" alt="Siguiente liga, bloqueada" width="78" height="78">
-        <span>Bloqueada</span>
-      </div>
-      {% elif d.state == 'current' %}
+      {% if d.state == 'current' %}
       <div class="lg-slot current">
-        <img src="{{ d.image }}" alt="Liga {{ d.name }}" width="132" height="132">
+        <img src="{{ d.image }}" alt="Liga {{ d.name }}" width="128" height="128">
       </div>
-      {% else %}
-      <div class="lg-slot past">
-        <img src="{{ d.image }}" alt="Liga {{ d.name }}" width="48" height="48">
-        <span>{{ d.name }}</span>
+      {% elif d.state == 'locked' %}
+      <div class="lg-slot locked">
+        <img src="{% static 'astro/img/leagues/locked.webp' %}" alt="Siguiente liga, bloqueada" width="56" height="56">
       </div>
       {% endif %}
       {% endfor %}

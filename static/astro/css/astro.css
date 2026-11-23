@@ -1253,16 +1253,18 @@ a.sbadge.link:hover { border-color: var(--purple-soft); transform: translateY(-2
 /* ===== Liga / ranking ===== */
 .league-page { width: min(480px, 100%); margin: 0 auto; padding-top: 4px; }
 .lg-time { text-align: center; font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--purple-soft); }
-.lg-track {
-  display: flex; align-items: flex-end; justify-content: safe center; gap: 14px;
-  margin: 14px 0 6px; overflow-x: auto; padding: 6px 4px 0; scrollbar-width: none;
+.lg-stage {
+  position: relative; display: flex; justify-content: center; align-items: flex-end;
+  min-height: 132px; margin: 12px 0 2px;
 }
-.lg-track::-webkit-scrollbar { display: none; }
-.lg-slot { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-faint); }
-.lg-slot img { width: 48px; height: 48px; object-fit: contain; display: block; }
-.lg-slot.current img { width: 132px; height: 132px; }
-.lg-slot.locked img { width: 84px; height: 84px; }
-.lg-slot span { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.lg-slot img { object-fit: contain; display: block; }
+.lg-slot.current { position: relative; z-index: 1; }
+.lg-slot.current img { width: 128px; height: 128px; }
+.lg-slot.locked {
+  position: absolute; z-index: 0; bottom: 6px;
+  left: calc(50% - 64px - 16px - 56px);
+}
+.lg-slot.locked img { width: 56px; height: 56px; }
 .lg-title { text-align: center; margin: 2px 0 18px; }
 .lg-title h2 { font-size: clamp(26px, 7vw, 32px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
 .lg-title p { margin-top: 6px; color: var(--text-dim); font-size: 14px; }
