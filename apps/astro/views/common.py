@@ -255,6 +255,7 @@ def get_rank(xp):
         "key": key,
         "name": name,
         "color": color,
+        "image": static(f"astro/img/ranks/{key}.webp"),
         "min": minimum,
         "next_name": None,
         "next_min": None,

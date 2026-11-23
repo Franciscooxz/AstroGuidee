@@ -14,7 +14,7 @@
       <div class="avatar {% if profile.frame %}av-{{ profile.frame }}{% endif %}">{% if profile.avatar %}{% include 'astro/_icon.html' with name=profile.avatar size=46 %}{% else %}{{ user.username|first|upper }}{% endif %}</div>
       <div class="profile-id">
         <h1>{{ user.username }}</h1>
-        <div class="rank-badge" style="--rc: {{ rank.color }}"><span class="rank-gem"></span>Rango {{ rank.name }}</div>
+        <div class="rank-badge" style="--rc: {{ rank.color }}"><img src="{{ rank.image }}" alt="" width="36" height="36">Rango {{ rank.name }}</div>
         {% if user.email %}<p class="pi-email">{{ user.email }}</p>{% endif %}
         <p class="pi-since">Miembro desde {{ user.date_joined|date:"F Y" }}</p>
         {% if rank.next_name %}

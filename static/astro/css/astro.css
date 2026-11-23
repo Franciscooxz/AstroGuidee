@@ -636,7 +636,6 @@ a.notif:hover { border-color: var(--purple-soft); background: var(--overlay); tr
 .div-emblem img { width: 100%; height: 100%; object-fit: contain; display: block; }
 @media (max-width: 520px) { .div-emblem { width: 84px; height: 84px; } }
 .rank-pill.with-badge { display: inline-flex; align-items: center; gap: 6px; padding-left: 6px; }
-.rank-pill.with-badge img { width: 22px; height: 22px; object-fit: contain; }
 .div-info { flex: 1; min-width: 0; }
 .div-info b { display: block; font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
 .div-info small { color: var(--text-dim); font-size: 13.5px; line-height: 1.4; }
@@ -1138,8 +1137,10 @@ a.sbadge.link:hover { border-color: var(--purple-soft); transform: translateY(-2
   background: color-mix(in srgb, var(--rc, #8b5cff) 16%, transparent);
   border: 2px solid color-mix(in srgb, var(--rc, #8b5cff) 45%, transparent);
 }
-.rank-gem { width: 12px; height: 12px; border-radius: 3px; transform: rotate(45deg);
-  background: var(--rc, var(--purple)); }
+.rank-badge img { width: 36px; height: 36px; object-fit: contain; display: block; }
+.rank-pill.with-badge img, .emblem { width: 20px; height: 20px; object-fit: contain; display: block; }
+.emblem.sm { width: 16px; height: 16px; display: inline-block; vertical-align: -3px; }
+.st-ic .emblem { width: 32px; height: 32px; }
 .rank-prog { margin-top: 10px; max-width: 260px; }
 .rank-bar { height: 8px; border-radius: 100px; background: var(--overlay); overflow: hidden; }
 .rank-bar span { display: block; height: 100%; border-radius: 100px; background: var(--rc, var(--purple)); }

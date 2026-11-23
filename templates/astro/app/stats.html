@@ -16,7 +16,7 @@
         <b>{{ profile.streak }}</b><span>Racha (mejor: {{ profile.best_streak }})</span></div>
       <div class="st-tile"><span class="st-ic">{% include 'astro/_icon.html' with name='check' size=26 %}</span>
         <b>{% if global_acc is not None %}{{ global_acc }}%{% else %}—{% endif %}</b><span>Precisión global</span></div>
-      <div class="st-tile" style="--rc: {{ rank.color }}"><span class="st-ic">{% include 'astro/_icon.html' with name='rocket' size=26 %}</span>
+      <div class="st-tile" style="--rc: {{ rank.color }}"><span class="st-ic"><img class="emblem" src="{{ rank.image }}" alt="" width="32" height="32"></span>
         <b>{{ rank.name }}</b><span>Rango actual</span></div>
     </div>
 
