@@ -34,18 +34,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.sitemaps",
-    # Local apps
     "apps.astro",
-    "apps.core",
-    "apps.slider",
-    "apps.blog",
-    "apps.disciplines",
-    "apps.faq",
-    "apps.testimonials",
-    "apps.gallery",
-    "apps.services",
-    "apps.resources",
 ]
 
 MIDDLEWARE = [
@@ -60,7 +49,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "artisticmold.urls"
+ROOT_URLCONF = "astroguide.urls"
 
 TEMPLATES = [
     {
@@ -73,14 +62,13 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "apps.core.context_processors.site_config",
                 "apps.astro.context_processors.astro_profile",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = "artisticmold.wsgi.application"
+WSGI_APPLICATION = "astroguide.wsgi.application"
 
 # En produccion usa DATABASE_URL (Postgres en Render); en local, SQLite por defecto.
 DATABASES = {
@@ -118,14 +106,13 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Email — use console backend in dev; swap for SMTP in production
+# Email — consola en desarrollo; cambia a SMTP en produccion.
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-DEFAULT_FROM_EMAIL = "Artistic Mold <artisticmoldfad@gmail.com>"
-CONTACT_EMAIL = "artisticmoldfad@gmail.com"
+DEFAULT_FROM_EMAIL = "AstroGuide <noreply@localhost>"
 
-LOGIN_URL = "/panel/login/"
-LOGIN_REDIRECT_URL = "/panel/"
-LOGOUT_REDIRECT_URL = "/panel/login/"
+LOGIN_URL = "/entrar/"
+LOGIN_REDIRECT_URL = "/app/"
+LOGOUT_REDIRECT_URL = "/"
 
 # Cloudflare Turnstile (CAPTCHA invisible) en el registro. Vacio = inactivo.
 # Consigue tus llaves gratis en https://dash.cloudflare.com (Turnstile).

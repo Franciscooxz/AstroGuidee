@@ -3,79 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Página no encontrada — Artistic Mold</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <title>Página no encontrada — AstroGuide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Poppins', sans-serif;
-      background: #0d0d0d;
-      color: #e0e0e0;
+      font-family: 'Poppins', system-ui, sans-serif;
+      color: #eef2ff;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
       padding: 24px;
+      background:
+        radial-gradient(60% 55% at 15% 10%, rgba(79, 124, 255, 0.28), transparent 60%),
+        radial-gradient(55% 50% at 88% 8%, rgba(139, 92, 255, 0.30), transparent 62%),
+        linear-gradient(180deg, #0a0b1e, #05060f 70%);
     }
-    .error-wrap { max-width: 560px; }
+    .error-wrap { max-width: 520px; }
     .error-code {
-      font-size: clamp(100px, 20vw, 160px);
-      font-weight: 900;
-      line-height: 1;
-      color: #1a1a1a;
-      position: relative;
-      display: inline-block;
-    }
-    .error-code::after {
-      content: '404';
-      position: absolute;
-      inset: 0;
-      color: #F5C518;
-      clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
-    }
-    .error-title {
-      font-size: 24px;
+      font-size: clamp(88px, 18vw, 140px);
       font-weight: 700;
-      color: #fff;
-      margin: 24px 0 12px;
+      line-height: 1;
+      letter-spacing: -2px;
+      background: linear-gradient(120deg, #6ea8ff, #b18bff 55%, #d16bff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
-    .error-desc {
-      color: #888;
-      font-size: 15px;
-      line-height: 1.6;
-      margin-bottom: 36px;
-    }
+    .error-title { font-size: 24px; font-weight: 700; margin: 18px 0 10px; }
+    .error-desc { color: #bcc4e6; font-size: 15px; line-height: 1.6; margin-bottom: 28px; }
     .btn-home {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: #F5C518;
-      color: #000;
-      font-weight: 700;
-      font-size: 14px;
-      padding: 12px 28px;
-      border-radius: 6px;
+      padding: 12px 26px;
+      border-radius: 100px;
       text-decoration: none;
-      transition: background 0.2s;
-    }
-    .btn-home:hover { background: #d4a400; color: #000; }
-    .divider {
-      width: 48px;
-      height: 3px;
-      background: #F5C518;
-      margin: 0 auto 24px;
+      color: #fff;
+      font-weight: 600;
+      background: linear-gradient(135deg, #4f7cff, #8b5cff);
+      box-shadow: 0 10px 26px -8px rgba(139, 92, 255, .8);
     }
   </style>
 </head>
 <body>
   <div class="error-wrap">
     <div class="error-code">404</div>
-    <div class="divider"></div>
     <h1 class="error-title">Página no encontrada</h1>
-    <p class="error-desc">La página que buscas no existe o fue movida.<br>Verifica la URL o regresa al inicio.</p>
-    <a href="/" class="btn-home"><i class="fas fa-home"></i> Volver al inicio</a>
+    <p class="error-desc">Esa ruta no existe en AstroGuide.<br>Vuelve al inicio y sigue la constelación.</p>
+    <a href="/" class="btn-home">Volver al inicio</a>
   </div>
 </body>
 </html>

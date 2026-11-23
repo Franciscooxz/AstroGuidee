@@ -1,6 +1,5 @@
 # Config de herramientas de desarrollo (linting + formato).
-# El alcance activo es AstroGuide: apps/astro + config del proyecto.
-# El sitio antiguo (apps/core, slider, blog, ...) queda fuera para no churnarlo.
+# El alcance es AstroGuide: apps/astro + el paquete de proyecto astroguide.
 
 [tool.black]
 line-length = 100
