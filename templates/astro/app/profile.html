@@ -8,6 +8,7 @@
       <a href="{% url 'astro:ruta' %}" class="btn">← Mi ruta</a>
     </div>
 
+    <div class="profile-stack">
     <!-- Cabecera del perfil -->
     <div class="profile-hero">
       <div class="avatar {% if profile.frame %}av-{{ profile.frame }}{% endif %}">{% if profile.avatar %}{% include 'astro/_icon.html' with name=profile.avatar size=46 %}{% else %}{{ user.username|first|upper }}{% endif %}</div>
@@ -103,6 +104,7 @@
       <a href="{% url 'astro:stats' %}" class="btn">Mis estadísticas</a>
       <a href="{% url 'astro:settings' %}" class="btn">Editar perfil</a>
       <a href="{% url 'astro:logout' %}" class="btn">Cerrar sesión</a>
+    </div>
     </div>
   </section>
 </div>
