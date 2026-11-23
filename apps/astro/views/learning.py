@@ -14,9 +14,9 @@ from .common import *  # noqa: F401,F403
 # un racimo; los bloques siguientes se apilan debajo. X en % (lejos de bordes
 # para que las etiquetas no se corten), desplazamiento Y en px dentro del bloque.
 CST_XS = (28, 70, 42, 76, 24, 56)
-CST_DY = (0, 96, 192, 288, 384, 480)
-CST_BLOCK = 576  # alto de un bloque de 6 estrellas (px)
-CST_TOP = 96
+CST_DY = (0, 72, 144, 216, 288, 360)
+CST_BLOCK = 432  # alto de un bloque de 6 estrellas (px)
+CST_TOP = 64
 
 
 def _place_constellation(unit):
@@ -27,7 +27,7 @@ def _place_constellation(unit):
         lesson.cx = CST_XS[k]
         lesson.cy = CST_TOP + block * CST_BLOCK + CST_DY[k]
         maxy = max(maxy, lesson.cy)
-    unit["h"] = maxy + 108
+    unit["h"] = maxy + 72
 
 
 @login_required(login_url=LOGIN_URL)
@@ -53,6 +53,37 @@ def ruta(request):
     for u in units:
         u["complete"] = u["total"] > 0 and u["done"] == u["total"]
         _place_constellation(u)
+
+    flat = [lesson for u in units for lesson in u["lessons"]]
+    current_at = None
+    for lesson in flat:
+        lesson.show_label = lesson.status in ("completed", "current")
+        lesson.is_next = False
+        if lesson.status == "current" and current_at is None:
+            current_at = lesson
+    if current_at is not None:
+        idx = flat.index(current_at)
+        if idx + 1 < len(flat):
+            flat[idx + 1].show_label = True
+            flat[idx + 1].is_next = True
+
+    current_unit = next((i for i, u in enumerate(units) if any(l.status == "current" for l in u["lessons"])), None)
+    for i, u in enumerate(units):
+        if current_unit is None:
+            u["open"] = False
+            u["fold"] = "done" if u["complete"] else "locked"
+        elif i < current_unit:
+            u["open"] = False
+            u["fold"] = "done"
+        elif i == current_unit:
+            u["open"] = True
+            u["fold"] = "current"
+        elif i == current_unit + 1:
+            u["open"] = False
+            u["fold"] = "next"
+        else:
+            u["open"] = False
+            u["fold"] = "locked"
 
     total = len(lessons)
     done = len(completed)

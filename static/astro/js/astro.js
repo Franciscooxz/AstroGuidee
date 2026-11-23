@@ -170,6 +170,7 @@ async function sendReport(wrap, reason) {
   }
   function draw() {
     document.querySelectorAll('.constellation').forEach(function (box) {
+      if (!box.getClientRects().length) return;
       var svg = box.querySelector('[data-cst]');
       if (!svg) return;
       var stars = Array.prototype.slice.call(box.querySelectorAll('[data-star]'));
@@ -199,9 +200,27 @@ async function sendReport(wrap, reason) {
       box.dataset.drawn = '1';
     });
   }
-  if (document.querySelector('.constellation')) {
-    if (document.readyState !== 'loading') draw();
-    else document.addEventListener('DOMContentLoaded', draw);
+  function focusCurrent() {
+    var cur = document.getElementById('route-current');
+    if (!cur) return;
+    var y = cur.getBoundingClientRect().top + window.pageYOffset - 150;
+    window.scrollTo(0, Math.max(0, y));
+  }
+  function boot() {
+    draw();
+    focusCurrent();
+    document.querySelectorAll('.unit-fold').forEach(function (fold) {
+      fold.addEventListener('toggle', function () {
+        if (!fold.open) return;
+        var box = fold.querySelector('.constellation');
+        if (box) delete box.dataset.drawn;
+        draw();
+      });
+    });
+  }
+  if (document.querySelector('.constellation') || document.querySelector('.unit-fold')) {
+    if (document.readyState !== 'loading') boot();
+    else document.addEventListener('DOMContentLoaded', boot);
     var t;
     window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(draw, 150); });
   }

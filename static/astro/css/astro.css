@@ -866,6 +866,20 @@ a.notif:hover { border-color: var(--purple-soft); background: var(--overlay); tr
   background: var(--glass-bg); border: 2px solid var(--glass-brd); box-shadow: 0 3px 0 var(--glass-brd);
 }
 .unit-banner.first { margin-top: 0; }
+.unit-banner.compact { margin: 0 0 10px; padding: 12px 14px; }
+.unit-banner.is-locked { color: var(--text-dim); }
+.unit-banner.is-locked .u-ic { filter: grayscale(1); opacity: .8; }
+.unit-banner.is-next { border-color: var(--purple); box-shadow: 0 3px 0 var(--purple-deep); }
+.unit-fold { margin: 0 0 10px; }
+summary.unit-banner { cursor: pointer; list-style: none; }
+summary.unit-banner::-webkit-details-marker { display: none; }
+summary.unit-banner::after {
+  content: ""; width: 8px; height: 8px; flex-shrink: 0; margin-left: 4px;
+  border-right: 2px solid var(--text-faint); border-bottom: 2px solid var(--text-faint);
+  transform: rotate(45deg);
+}
+details[open] > summary.unit-banner::after { transform: rotate(-135deg); margin-top: 4px; }
+.unit-fold .constellation { margin-bottom: 18px; }
 .u-ic { width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0; display: grid; place-items: center;
   background: color-mix(in srgb, var(--acc, var(--purple)) 20%, var(--bg-1));
   border: 2px solid color-mix(in srgb, var(--acc, var(--purple)) 45%, var(--glass-brd)); }
