@@ -1,33 +1,10 @@
 """Vistas: learning."""
 
+from ..models import CardProgress
 from ..security import rate_limit
 from .common import *  # noqa: F401,F403
 
 # ---------- App (requiere sesion) ----------
-
-
-# Mapa de ruta = constelacion. Posiciones deterministas de cada estrella dentro
-# de su unidad: patron de X (%) que zigzaguea sin pegarse a los bordes (para que
-# las etiquetas no se corten) y una Y (px) con ritmo fijo. Las lineas que unen las
-# estrellas las dibuja astro.js midiendo los centros (responsive).
-# Patron 2D compacto (cumulo), no una columna. Cada bloque de 6 estrellas forma
-# un racimo; los bloques siguientes se apilan debajo. X en % (lejos de bordes
-# para que las etiquetas no se corten), desplazamiento Y en px dentro del bloque.
-CST_XS = (28, 70, 42, 76, 24, 56)
-CST_DY = (0, 72, 144, 216, 288, 360)
-CST_BLOCK = 432  # alto de un bloque de 6 estrellas (px)
-CST_TOP = 64
-
-
-def _place_constellation(unit):
-    lessons = unit["lessons"]
-    maxy = 0
-    for i, lesson in enumerate(lessons):
-        block, k = divmod(i, len(CST_XS))
-        lesson.cx = CST_XS[k]
-        lesson.cy = CST_TOP + block * CST_BLOCK + CST_DY[k]
-        maxy = max(maxy, lesson.cy)
-    unit["h"] = maxy + 72
 
 
 @login_required(login_url=LOGIN_URL)
@@ -50,40 +27,45 @@ def ruta(request):
         if lesson.status == "completed":
             current_unit["done"] += 1
 
-    for u in units:
+    started_ids = set(
+        LessonProgress.objects.filter(user=request.user, completed=False).values_list(
+            "lesson_id", flat=True
+        )
+    )
+    started_ids.update(
+        CardProgress.objects.filter(
+            user=request.user, known=True, card__lesson_id__isnull=False
+        ).values_list("card__lesson_id", flat=True)
+    )
+    for i, u in enumerate(units, start=1):
+        u["index"] = i
         u["complete"] = u["total"] > 0 and u["done"] == u["total"]
-        _place_constellation(u)
+        u["pct"] = round(100 * u["done"] / u["total"]) if u["total"] else 0
+        for n, lesson in enumerate(u["lessons"], start=1):
+            lesson.n = n
+            lesson.side = "left" if n % 2 else "right"
+            lesson.started = lesson.id in started_ids
 
-    flat = [lesson for u in units for lesson in u["lessons"]]
-    current_at = None
-    for lesson in flat:
-        lesson.show_label = lesson.status in ("completed", "current")
-        lesson.is_next = False
-        if lesson.status == "current" and current_at is None:
-            current_at = lesson
-    if current_at is not None:
-        idx = flat.index(current_at)
-        if idx + 1 < len(flat):
-            flat[idx + 1].show_label = True
-            flat[idx + 1].is_next = True
-
-    current_unit = next((i for i, u in enumerate(units) if any(l.status == "current" for l in u["lessons"])), None)
+    current_index = next(
+        (i for i, u in enumerate(units) if any(l.status == "current" for l in u["lessons"])),
+        None,
+    )
+    if current_index is None and units:
+        current_index = len(units) - 1 if all(u["complete"] for u in units) else 0
     for i, u in enumerate(units):
-        if current_unit is None:
-            u["open"] = False
-            u["fold"] = "done" if u["complete"] else "locked"
-        elif i < current_unit:
-            u["open"] = False
+        if current_index is None:
+            u["fold"] = "locked"
+        elif i < current_index:
             u["fold"] = "done"
-        elif i == current_unit:
-            u["open"] = True
+        elif i == current_index:
             u["fold"] = "current"
-        elif i == current_unit + 1:
-            u["open"] = False
+        elif i == current_index + 1:
             u["fold"] = "next"
         else:
-            u["open"] = False
             u["fold"] = "locked"
+    featured = units[current_index] if current_index is not None else None
+    earlier = [u for u in units if u["fold"] == "done"]
+    upcoming = [u for u in units if u["fold"] in ("next", "locked")]
 
     total = len(lessons)
     done = len(completed)
@@ -99,6 +81,9 @@ def ruta(request):
         "astro/app/ruta.html",
         {
             "units": units,
+            "featured": featured,
+            "earlier": earlier,
+            "upcoming": upcoming,
             "current_lesson": current_lesson,
             "reviews_due": reviews_due,
             "missions_claimable": missions_claimable,

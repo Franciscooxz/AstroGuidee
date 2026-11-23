@@ -1,87 +1,135 @@
 {% extends 'astro/base.html' %}
+{% load static %}
 {% block title %}Mi ruta — AstroGuide{% endblock %}
+{% block body_class %}is-route{% endblock %}
 {% block content %}
 <div class="wrap">
-  <section class="section route-page">
-    <div class="route-top">
-      <a href="{% url 'astro:store' %}" class="sbadge link" title="{% if next_heart %}Próxima vida en ~{{ next_heart }} min{% else %}Vidas al máximo{% endif %}">{% include 'astro/_icon.html' with name='heart' size=22 %} <b>{{ hearts }}</b><span>/{{ hearts_max }}</span></a>
-      <div class="sbadge">{% include 'astro/_streak.html' with size=26 %} <b>{{ streak }}</b><span>racha</span></div>
+  <section class="sky">
+    <header class="sky-top">
+      <a href="{% url 'astro:home' %}" class="sky-brand">
+        <img src="{% static 'astro/img/logo.png' %}" alt="" width="32" height="32">
+        <span>AstroGuide</span>
+      </a>
+      <div class="sky-stats">
+        <a class="sky-stat" href="{% url 'astro:store' %}" aria-label="Vidas: {{ hearts }} de {{ hearts_max }}{% if next_heart %}. Próxima en {{ next_heart }} minutos{% endif %}">
+          {% include 'astro/_icon.html' with name='heart' size=22 %}
+          <b>{{ hearts }}</b>
+        </a>
+        <span class="sky-stat" aria-label="Racha de {{ streak }} días">
+          {% include 'astro/_icon.html' with name='flame' size=22 %}
+          <b>{{ streak }}</b>
+        </span>
+      </div>
+    </header>
+
+    <div class="sky-hello">
+      <h1>Explora el<br>universo</h1>
+      <img class="sky-mascot" src="{% static 'astro/img/logo.png' %}" alt="" width="112" height="112">
     </div>
 
-    {% if reviews_due or pending_chest or missions_claimable or all_done %}
-    <div class="route-stack">
-    {% if pending_chest %}
-    <form method="post" action="{% url 'astro:open_chest' %}" class="chest-card">
-      {% csrf_token %}
-      <span class="chest-ic">{% include 'astro/_icon.html' with name='trophy' size=30 %}</span>
-      <div class="chest-body">
-        <b>¡Cofre de racha de {{ pending_chest }} días!</b>
-        <span>Ábrelo para reclamar tu recompensa.</span>
+    {% if earlier %}
+    <details class="sky-fold">
+      <summary>{% if earlier|length == 1 %}Unidad anterior{% else %}Unidades anteriores · {{ earlier|length }}{% endif %}</summary>
+      {% for u in earlier %}
+      <div class="sky-past">
+        <div class="sky-past-top">
+          <b>{{ u.unit.name }}</b>
+          <span>{{ u.done }}/{{ u.total }}</span>
+          {% if u.complete %}<a href="{% url 'astro:certificate' u.unit.slug %}">Certificado</a>{% endif %}
+        </div>
+        {% include 'astro/app/_sky_path.html' %}
       </div>
-      <button type="submit" class="chest-btn">Abrir cofre →</button>
-    </form>
+      {% endfor %}
+    </details>
     {% endif %}
 
-    {% if reviews_due %}
-    <a href="{% url 'astro:review' %}" class="review-banner due">
-      <span class="review-banner-ic">{% include 'astro/_icon.html' with name='progress' size=26 %}</span>
-      <span class="review-banner-body">
-        <b>Repaso</b>
-        <span>Tienes {{ reviews_due }} pregunta{{ reviews_due|pluralize }} lista{{ reviews_due|pluralize }} para reforzar.</span>
-      </span>
-      <span class="review-banner-go">Repasar →</span>
-    </a>
+    {% if featured %}
+    <div class="sky-unit">
+      <div class="sky-unit-top">
+        <div>
+          <p class="sky-kicker">Unidad {{ featured.index }}</p>
+          <h2>{{ featured.unit.name }}</h2>
+        </div>
+        <span class="sky-count">{{ featured.done }}/{{ featured.total }}</span>
+      </div>
+      <div class="sky-bar" role="progressbar" aria-valuenow="{{ featured.done }}" aria-valuemin="0" aria-valuemax="{{ featured.total }}" aria-label="Progreso de {{ featured.unit.name }}">
+        <span style="width: {{ featured.pct }}%"></span>
+      </div>
+    </div>
+    {% with u=featured %}{% include 'astro/app/_sky_path.html' %}{% endwith %}
+    {% if featured.complete %}
+    <p class="sky-note"><a href="{% url 'astro:certificate' featured.unit.slug %}">Ver certificado de esta unidad</a></p>
+    {% endif %}
+    {% else %}
+    <p class="sky-note">Todavía no hay lecciones en tu ruta.</p>
     {% endif %}
 
-    {% if missions_claimable %}
-    <a href="{% url 'astro:missions' %}" class="review-banner mission-banner">
-      <span class="review-banner-ic">{% include 'astro/_icon.html' with name='rocket' size=26 %}</span>
-      <span class="review-banner-body">
-        <b>Misiones</b>
-        <span>Tienes {{ missions_claimable }} recompensa{{ missions_claimable|pluralize }} lista{{ missions_claimable|pluralize }}.</span>
-      </span>
-      <span class="review-banner-go">Reclamar →</span>
-    </a>
+    {% if upcoming %}
+    <div class="sky-upcoming">
+      {% for u in upcoming %}
+      {% if forloop.first %}
+      <div class="sky-locked-unit {% if u.fold == 'next' %}is-next{% endif %}">
+        <span class="sky-lock">{% include 'astro/_icon.html' with name='lock' size=18 %}</span>
+        <span><b>{{ u.unit.name }}</b><small>{% if u.fold == 'next' %}Siguiente{% else %}Bloqueada{% endif %}</small></span>
+      </div>
+      {% endif %}
+      {% endfor %}
+      {% if upcoming|length > 1 %}
+      <details class="sky-fold">
+        <summary>Más adelante · {{ upcoming|length|add:"-1" }}</summary>
+        {% for u in upcoming %}
+        {% if not forloop.first %}
+        <div class="sky-locked-unit">
+          <span class="sky-lock">{% include 'astro/_icon.html' with name='lock' size=18 %}</span>
+          <span><b>{{ u.unit.name }}</b><small>Bloqueada</small></span>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </details>
+      {% endif %}
+    </div>
     {% endif %}
 
     {% if all_done %}
-    <div class="all-done-card">
-      <div class="ad-ic">{% include 'astro/_icon.html' with name='check' size=40 %}</div>
-      <h3>Completaste todo el contenido disponible</h3>
-      <p>Repasa tus lecciones cuando quieras. Tu progreso queda guardado.</p>
-    </div>
-    {% endif %}
-    </div>
+    <p class="sky-note">Completaste el contenido disponible. Puedes repetir cualquier lección.</p>
     {% endif %}
 
-    <svg width="0" height="0" aria-hidden="true"><defs><linearGradient id="cstGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6ea8ff"/><stop offset="1" stop-color="#8b5cff"/></linearGradient></defs></svg>
-    {% for u in units %}
-      {% if u.fold == 'done' %}
-      <details class="unit-fold">
-        <summary class="unit-banner compact" style="--acc: {{ u.unit.accent|default:'#8b5cff' }}">
-          <span class="u-ic">{% include 'astro/_icon.html' with name=u.unit.icon size=26 %}</span>
-          <div><b>{{ u.unit.name }}</b><small>Completada</small></div>
-          <span class="u-prog done">{% include 'astro/_icon.html' with name='check' size=15 %} {{ u.done }}/{{ u.total }}</span>
-          {% if u.complete %}<a href="{% url 'astro:certificate' u.unit.slug %}" class="u-cert" title="Ver certificado" onclick="event.stopPropagation()">{% include 'astro/_icon.html' with name='cap' size=22 %}</a>{% endif %}
-        </summary>
-        {% include 'astro/app/_constellation.html' %}
-      </details>
-      {% elif u.open %}
-      <div class="unit-banner" style="--acc: {{ u.unit.accent|default:'#8b5cff' }}">
-        <span class="u-ic">{% include 'astro/_icon.html' with name=u.unit.icon size=26 %}</span>
-        <div><b>{{ u.unit.name }}</b>
-          <small><span class="u-diff" title="Nivel de dificultad">{% for i in "12345"|make_list %}<span class="u-diff-dot {% if forloop.counter <= u.unit.difficulty %}on{% endif %}"></span>{% endfor %} Nivel {{ u.unit.difficulty }} · {{ u.unit.difficulty_name }}</span></small>
-        </div>
-        <span class="u-prog">{{ u.done }}/{{ u.total }}</span>
-      </div>
-      {% include 'astro/app/_constellation.html' %}
-      {% else %}
-      <div class="unit-banner compact is-locked {% if u.fold == 'next' %}is-next{% endif %}" style="--acc: {{ u.unit.accent|default:'#8b5cff' }}">
-        <span class="u-ic">{% include 'astro/_icon.html' with name='lock' size=22 %}</span>
-        <div><b>{{ u.unit.name }}</b><small>{% if u.fold == 'next' %}Siguiente{% else %}Bloqueada{% endif %}</small></div>
-      </div>
-      {% endif %}
-    {% endfor %}
+    {% if pending_chest %}
+    <form method="post" action="{% url 'astro:open_chest' %}" class="sky-strip">
+      {% csrf_token %}
+      <span class="sky-strip-ic">{% include 'astro/_icon.html' with name='trophy' size=22 %}</span>
+      <span class="sky-strip-txt"><b>Cofre de {{ pending_chest }} días</b><small>Listo para abrir</small></span>
+      <button type="submit" class="sky-strip-go">Abrir</button>
+    </form>
+    {% endif %}
+
+    {% if missions_claimable %}
+    <a href="{% url 'astro:missions' %}" class="sky-strip">
+      <span class="sky-strip-ic">{% include 'astro/_icon.html' with name='rocket' size=22 %}</span>
+      <span class="sky-strip-txt">
+        <b>Misiones</b>
+        <small>{{ missions_claimable }} recompensa{{ missions_claimable|pluralize }} lista{{ missions_claimable|pluralize }}</small>
+      </span>
+      <span class="sky-strip-go" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </a>
+    {% endif %}
+
+    <a href="{% url 'astro:review' %}" class="sky-strip sky-review">
+      <span class="sky-strip-ic">{% include 'astro/_icon.html' with name='progress' size=22 %}</span>
+      <span class="sky-strip-txt">
+        <b>¿Un repaso rápido?</b>
+        {% if reviews_due %}
+        <small>{{ reviews_due }} pregunta{{ reviews_due|pluralize }} pendiente{{ reviews_due|pluralize }}</small>
+        {% else %}
+        <small>No tienes preguntas pendientes</small>
+        {% endif %}
+      </span>
+      <span class="sky-strip-go" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </a>
   </section>
 </div>
 {% endblock %}

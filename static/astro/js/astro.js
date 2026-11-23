@@ -157,68 +157,64 @@ async function sendReport(wrap, reason) {
   wrap.innerHTML = '<span class="q-report-done">Gracias, lo revisaremos.</span>';
 }
 
-// Mapa de ruta (constelacion): dibuja las lineas que unen las estrellas midiendo
-// sus centros. La parte "encendida" llega hasta la leccion actual. Responsive.
+// Ruta: une los planetas con una curva punteada medida sobre su posicion real.
+// El tramo que llega a una leccion bloqueada queda mas tenue.
 (function () {
   var SVGNS = 'http://www.w3.org/2000/svg';
-  function pointsOf(list, box) {
-    return list.map(function (s) {
-      var r = s.getBoundingClientRect();
-      return ((r.left + r.right) / 2 - box.left).toFixed(1) + ',' +
-             ((r.top + r.bottom) / 2 - box.top).toFixed(1);
-    });
-  }
+  function num(v) { return v.toFixed(1); }
   function draw() {
-    document.querySelectorAll('.constellation').forEach(function (box) {
+    document.querySelectorAll('.sky-path').forEach(function (box) {
       if (!box.getClientRects().length) return;
-      var svg = box.querySelector('[data-cst]');
+      var svg = box.querySelector('[data-path]');
       if (!svg) return;
-      var stars = Array.prototype.slice.call(box.querySelectorAll('[data-star]'));
+      var nodes = Array.prototype.slice.call(box.querySelectorAll('.sky-node'));
       svg.innerHTML = '';
-      if (stars.length < 2) return;
+      if (nodes.length < 2) return;
       var br = box.getBoundingClientRect();
-      svg.setAttribute('viewBox', '0 0 ' + br.width.toFixed(1) + ' ' + br.height.toFixed(1));
-      var pts = pointsOf(stars, br);
-      var litIdx = -1;
-      stars.forEach(function (s, i) {
-        if (s.classList.contains('completed') || s.classList.contains('current')) litIdx = i;
-      });
-      var dim = document.createElementNS(SVGNS, 'polyline');
-      dim.setAttribute('class', 'ln-dim');
-      dim.setAttribute('points', pts.join(' '));
-      svg.appendChild(dim);
-      if (litIdx >= 1) {
-        var lit = document.createElementNS(SVGNS, 'polyline');
-        lit.setAttribute('class', 'ln-lit');
-        lit.setAttribute('points', pts.slice(0, litIdx + 1).join(' '));
-        svg.appendChild(lit);
-        if (!box.dataset.drawn) {
-          lit.style.setProperty('--len', lit.getTotalLength());
-          lit.classList.add('draw');
-        }
+      svg.setAttribute('viewBox', '0 0 ' + num(br.width) + ' ' + num(br.height));
+      for (var i = 0; i < nodes.length - 1; i++) {
+        var a = nodes[i].querySelector('[data-planet]');
+        var b = nodes[i + 1].querySelector('[data-planet]');
+        if (!a || !b) continue;
+        var ar = a.getBoundingClientRect();
+        var bp = b.getBoundingClientRect();
+        var nr = nodes[i].getBoundingClientRect();
+        var nr2 = nodes[i + 1].getBoundingClientRect();
+        var x1 = (ar.left + ar.right) / 2 - br.left;
+        var y1 = ar.bottom - br.top;
+        var x2 = (bp.left + bp.right) / 2 - br.left;
+        var y2 = bp.top - br.top;
+        var gapTop = nr.bottom - br.top + 8;
+        var gapBot = nr2.top - br.top - 8;
+        var lane = (gapTop + gapBot) / 2;
+        if (gapBot < gapTop + 10) lane = (y1 + y2) / 2;
+        var mid = (x1 + x2) / 2;
+        var d = 'M ' + num(x1) + ' ' + num(y1) +
+          ' C ' + num(x1) + ' ' + num(lane) + ', ' + num(mid) + ' ' + num(lane) + ', ' + num(mid) + ' ' + num(lane) +
+          ' C ' + num(mid) + ' ' + num(lane) + ', ' + num(x2) + ' ' + num(lane) + ', ' + num(x2) + ' ' + num(y2);
+        var path = document.createElementNS(SVGNS, 'path');
+        path.setAttribute('class', nodes[i + 1].classList.contains('locked') ? 'sky-ln ahead' : 'sky-ln');
+        path.setAttribute('d', d);
+        svg.appendChild(path);
       }
-      box.dataset.drawn = '1';
     });
   }
   function focusCurrent() {
     var cur = document.getElementById('route-current');
     if (!cur) return;
-    var y = cur.getBoundingClientRect().top + window.pageYOffset - 150;
+    var top = cur.getBoundingClientRect().top;
+    if (top < window.innerHeight * 0.72) return;
+    var y = top + window.pageYOffset - 96;
     window.scrollTo(0, Math.max(0, y));
   }
   function boot() {
     draw();
     focusCurrent();
-    document.querySelectorAll('.unit-fold').forEach(function (fold) {
-      fold.addEventListener('toggle', function () {
-        if (!fold.open) return;
-        var box = fold.querySelector('.constellation');
-        if (box) delete box.dataset.drawn;
-        draw();
-      });
+    document.querySelectorAll('.sky-fold').forEach(function (fold) {
+      fold.addEventListener('toggle', draw);
     });
   }
-  if (document.querySelector('.constellation') || document.querySelector('.unit-fold')) {
+  if (document.querySelector('.sky-path') || document.querySelector('.sky-fold')) {
     if (document.readyState !== 'loading') boot();
     else document.addEventListener('DOMContentLoaded', boot);
     var t;

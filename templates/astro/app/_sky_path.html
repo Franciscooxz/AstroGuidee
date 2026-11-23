@@ -1,0 +1,51 @@
+<div class="sky-path">
+  <svg class="sky-lines" data-path preserveAspectRatio="none" aria-hidden="true"></svg>
+  {% if u.lessons.0.status != 'current' %}
+  <svg class="sky-deco" viewBox="0 0 64 48" aria-hidden="true">
+    <g fill="#C5ACF5" stroke="#C5ACF5" stroke-width="1" stroke-linecap="round">
+      <circle cx="46" cy="10" r="1.3"/>
+      <circle cx="30" cy="24" r="1.1"/>
+      <circle cx="54" cy="30" r="1.2"/>
+      <polyline points="46,10 30,24 54,30" fill="none"/>
+    </g>
+  </svg>
+  {% endif %}
+  {% for l in u.lessons %}
+  <div class="sky-node {{ l.status }} side-{{ l.side }}" {% if l.status == 'current' %}id="route-current"{% endif %}>
+    {% if l.status == 'current' %}
+    <div class="node-copy">
+      <small class="node-kicker">Siguiente</small>
+      <b>{{ l.title }}</b>
+      <span class="node-meta">Lección {{ l.n }}</span>
+      <a class="sky-go" href="{% url 'astro:lesson' l.slug %}">{% if l.started %}Continuar{% else %}Empezar{% endif %}</a>
+    </div>
+    <a class="planet-wrap is-live" href="{% url 'astro:lesson' l.slug %}" aria-label="{% if l.started %}Continuar{% else %}Empezar{% endif %}: {{ l.title }}">
+      <span class="orbit"></span>
+      <span class="orbit two"></span>
+      <span class="planet" data-planet>
+        <svg class="planet-arrow" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </a>
+    {% elif l.status == 'completed' %}
+    <a class="planet-wrap" href="{% url 'astro:lesson' l.slug %}" aria-label="Repetir: {{ l.title }}">
+      <span class="planet done" data-planet></span>
+      <span class="planet-check" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="14" height="14"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="#3a2468" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </a>
+    <a class="node-copy" href="{% url 'astro:lesson' l.slug %}">
+      <b>{{ l.title }}</b>
+      <span class="sky-sr">Completada</span>
+    </a>
+    {% else %}
+    <div class="planet-wrap" aria-hidden="true">
+      <span class="planet is-locked" data-planet>{% include 'astro/_icon.html' with name='lock' size=22 %}</span>
+    </div>
+    <div class="node-copy">
+      <b>{{ l.title }}</b>
+      <span class="sky-sr">Bloqueada</span>
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
