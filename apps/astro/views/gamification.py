@@ -92,11 +92,26 @@ def league(request):
             )
 
     relegate_start = relegate_cut + 1 if relegate_n and total > promote_n + relegate_n else None
+    days_left = (7 - timezone.localdate().weekday()) % 7 or 7
+    ladder = []
+    for i in range(len(DIVISIONS)):
+        if i > profile.division + 1:
+            break
+        item = get_division(i)
+        if i < profile.division:
+            item["state"] = "past"
+        elif i == profile.division:
+            item["state"] = "current"
+        else:
+            item["state"] = "locked"
+        ladder.append(item)
     return render(
         request,
         "astro/app/league.html",
         {
             "division": div,
+            "ladder": ladder,
+            "days_left": days_left,
             "rows": rows,
             "my_rank": my_rank,
             "my_weekly": _weekly_of(profile, wk),

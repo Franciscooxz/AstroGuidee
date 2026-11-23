@@ -1,54 +1,67 @@
 {% extends 'astro/base.html' %}
+{% load static %}
 {% block title %}Liga {{ division.name }} — AstroGuide{% endblock %}
 {% block content %}
 <div class="wrap">
-  <section class="section">
-    <div class="section-head">
-      <div><h2><span class="bar"></span>Liga semanal</h2>
-        <p>Compite en tu división. Se reinicia cada lunes.</p></div>
-      {% if my_rank %}<div class="my-rank">Tu puesto: <b>#{{ my_rank }}</b></div>{% endif %}
-    </div>
+  <section class="section league-page">
+    <p class="lg-time">{% if days_left == 1 %}Queda 1 día{% else %}Quedan {{ days_left }} días{% endif %}</p>
 
-    <!-- Cabecera de division -->
-    <div class="div-hero" style="--dc: {{ division.color }}">
-      <span class="div-emblem"><img src="{{ division.image }}" alt="Liga {{ division.name }}" width="104" height="104"></span>
-      <div class="div-info">
-        <b>Liga {{ division.name }}</b>
-        <small>
-          {% if promote_n %}Top {{ promote_n }} asciende{% if division.next_name %} a {{ division.next_name }}{% endif %}.{% endif %}
-          {% if relegate_n %} Últimos {{ relegate_n }} bajan{% if division.prev_name %} a {{ division.prev_name }}{% endif %}.{% endif %}
-          {% if division.is_top %}Estas en la liga más alta.{% endif %}
-        </small>
+    <div class="lg-track">
+      {% for d in ladder %}
+      {% if d.state == 'locked' %}
+      <div class="lg-slot locked">
+        <img src="{% static 'astro/img/leagues/locked.webp' %}" alt="Siguiente liga, bloqueada" width="78" height="78">
+        <span>Bloqueada</span>
       </div>
-      <span class="div-count">{{ total }} jugador{{ total|pluralize:"es" }}</span>
-    </div>
-
-    <div class="league-list">
-      {% for r in rows %}
-      <div class="lg-row {% if r.me %}me{% endif %} {% if r.pos <= 3 %}top{{ r.pos }}{% endif %} zone-{{ r.zone }}">
-        <span class="lg-rank">
-          {% if r.zone == 'up' %}<span class="zic up" title="Zona de ascenso">▲</span>
-          {% elif r.zone == 'down' %}<span class="zic down" title="Zona de descenso">▼</span>{% endif %}
-          {% if r.pos <= 3 %}<span class="medal">{{ r.pos }}</span>{% else %}{{ r.pos }}{% endif %}
-        </span>
-        <span class="lg-av">{% if r.p.avatar %}{% include 'astro/_icon.html' with name=r.p.avatar size=22 %}{% else %}{{ r.p.user.username|first|upper }}{% endif %}</span>
-        <span class="lg-name">{% if r.me %}{{ r.p.user.username }} <small>(tu)</small>{% else %}<a href="{% url 'astro:pub_profile' r.p.user.username %}">{{ r.p.user.username }}</a>{% endif %}
-          <span class="rank-pill with-badge" style="--rc: {{ r.rank.color }}"><img src="{{ r.rank.image }}" alt="" width="18" height="18">{{ r.rank.name }}</span>
-        </span>
-        <span class="lg-xp">{% include 'astro/_icon.html' with name='star' size=18 %} {{ r.eff }}</span>
+      {% elif d.state == 'current' %}
+      <div class="lg-slot current">
+        <img src="{{ d.image }}" alt="Liga {{ d.name }}" width="132" height="132">
       </div>
-      {% if promote_n and r.pos == promote_n and total > promote_n %}
-      <div class="zone-divider up"><span>Zona de ascenso ▲</span></div>
+      {% else %}
+      <div class="lg-slot past">
+        <img src="{{ d.image }}" alt="Liga {{ d.name }}" width="48" height="48">
+        <span>{{ d.name }}</span>
+      </div>
       {% endif %}
-      {% if relegate_start and r.pos == relegate_start|add:'-1' %}
-      <div class="zone-divider down"><span>Zona de descenso ▼</span></div>
-      {% endif %}
-      {% empty %}
-      <div class="league-empty">
-        <p>Aún nadie ha ganado XP esta semana en tu división. ¡Completa una lección y ponte primero!</p>
-        <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Ir a mi ruta</a>
-      </div>
       {% endfor %}
+    </div>
+
+    <div class="lg-title">
+      <h2>Liga {{ division.name }}</h2>
+      <p>
+        {% if division.is_top %}
+        Estás en la liga más alta.
+        {% else %}
+        {% if promote_n %}Los {{ promote_n }} primeros ascienden.{% endif %}
+        {% if relegate_n %} Los {{ relegate_n }} últimos descienden.{% endif %}
+        {% endif %}
+      </p>
+    </div>
+
+    <div class="league-board">
+      <div class="league-list">
+        {% for r in rows %}
+        <div class="lg-row {% if r.me %}me{% endif %} {% if r.pos <= 3 %}top{{ r.pos }}{% endif %} zone-{{ r.zone }}">
+          <span class="lg-rank">{% if r.pos <= 3 %}<span class="medal">{{ r.pos }}</span>{% else %}{{ r.pos }}{% endif %}</span>
+          <span class="lg-av">{% if r.p.avatar %}{% include 'astro/_icon.html' with name=r.p.avatar size=22 %}{% else %}{{ r.p.user.username|first|upper }}{% endif %}</span>
+          <span class="lg-name">{% if r.me %}{{ r.p.user.username }} <small>(tú)</small>{% else %}<a href="{% url 'astro:pub_profile' r.p.user.username %}">{{ r.p.user.username }}</a>{% endif %}
+            <img class="emblem sm" src="{{ r.rank.image }}" alt="{{ r.rank.name }}" width="16" height="16" title="{{ r.rank.name }}">
+          </span>
+          <span class="lg-xp">{% include 'astro/_icon.html' with name='star' size=16 %} {{ r.eff }}</span>
+        </div>
+        {% if promote_n and r.pos == promote_n and total > promote_n %}
+        <div class="zone-divider up"><span>Zona de ascenso</span></div>
+        {% endif %}
+        {% if relegate_start and r.pos == relegate_start|add:'-1' %}
+        <div class="zone-divider down"><span>Zona de descenso</span></div>
+        {% endif %}
+        {% empty %}
+        <div class="league-empty">
+          <p>Aún nadie ha ganado XP esta semana en tu división. Completa una lección y ponte primero.</p>
+          <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Ir a mi ruta</a>
+        </div>
+        {% endfor %}
+      </div>
     </div>
 
     {% if my_rank and my_rank > 30 %}

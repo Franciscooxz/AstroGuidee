@@ -1251,14 +1251,35 @@ a.sbadge.link:hover { border-color: var(--purple-soft); transform: translateY(-2
   border: 1px solid color-mix(in srgb, var(--rc, #8b5cff) 45%, transparent); }
 
 /* ===== Liga / ranking ===== */
+.league-page { width: min(480px, 100%); margin: 0 auto; padding-top: 4px; }
+.lg-time { text-align: center; font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--purple-soft); }
+.lg-track {
+  display: flex; align-items: flex-end; justify-content: safe center; gap: 14px;
+  margin: 14px 0 6px; overflow-x: auto; padding: 6px 4px 0; scrollbar-width: none;
+}
+.lg-track::-webkit-scrollbar { display: none; }
+.lg-slot { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-faint); }
+.lg-slot img { width: 48px; height: 48px; object-fit: contain; display: block; }
+.lg-slot.current img { width: 132px; height: 132px; }
+.lg-slot.locked img { width: 84px; height: 84px; }
+.lg-slot span { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.lg-title { text-align: center; margin: 2px 0 18px; }
+.lg-title h2 { font-size: clamp(26px, 7vw, 32px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+.lg-title p { margin-top: 6px; color: var(--text-dim); font-size: 14px; }
+.league-board {
+  background: var(--glass-bg); border: 1px solid var(--glass-brd); border-radius: 18px; overflow: hidden;
+}
 .my-rank { padding: 10px 16px; border-radius: 14px; background: var(--glass-bg); border: 2px solid var(--glass-brd); box-shadow: 0 3px 0 var(--glass-brd); font-size: 14px; font-weight: 700; }
 .my-rank b { color: var(--purple-soft); font-size: 18px; font-weight: 800; }
-.league-list { display: flex; flex-direction: column; gap: 12px; }
+.league-list { display: flex; flex-direction: column; gap: 0; }
 .lg-row {
-  display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 14px;
-  background: var(--glass-bg); border: 2px solid var(--glass-brd); box-shadow: 0 3px 0 var(--glass-brd);
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+  background: transparent; border: 0; border-bottom: 1px solid var(--glass-brd); border-radius: 0; box-shadow: none;
 }
-.lg-row.me { border-color: var(--purple-deep); background: color-mix(in srgb, var(--purple) 12%, var(--glass-bg)); box-shadow: 0 3px 0 var(--purple-deep); }
+.league-list .lg-row:last-child { border-bottom: 0; }
+.lg-row.zone-up { background: color-mix(in srgb, #3ddc84 12%, transparent); border-left: 0; }
+.lg-row.zone-down { background: color-mix(in srgb, #ff6b81 12%, transparent); border-left: 0; }
+.lg-row.me { background: color-mix(in srgb, var(--purple) 16%, var(--glass-bg)); box-shadow: inset 3px 0 0 var(--purple); }
 .lg-row.out { margin-top: 10px; }
 .lg-rank { width: 30px; text-align: center; font-weight: 700; color: var(--text-dim); flex-shrink: 0; }
 .medal { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; color: #2a2208; font-size: 13px; }
