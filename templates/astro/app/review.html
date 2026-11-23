@@ -62,7 +62,7 @@
       <p>Ahora mismo no tienes preguntas falladas pendientes. Sigue practicando para mantenerlo así.</p>
       <a href="{% url 'astro:review' %}" class="btn btn-primary">Ir al repaso</a>
       {% elif total_items %}
-      <h2>¡Estas al día!</h2>
+      <h2>¡Estás al día!</h2>
       <p>No tienes repasos pendientes por ahora. La repetición espaciada te avisará cuando toque reforzar.</p>
       {% if next_due %}<p class="muted">Tu próximo repaso será el {{ next_due|date:"d/m/Y" }}.</p>{% endif %}
       {% if weak_available %}<a href="{% url 'astro:review_weak' %}" class="btn btn-primary">Practicar temas flojos</a>{% else %}<a href="{% url 'astro:ruta' %}" class="btn btn-primary">Ir a mi ruta</a>{% endif %}

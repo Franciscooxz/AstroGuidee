@@ -8,6 +8,7 @@
         <p>Cómo va tu aprendizaje: precisión, actividad y puntos flojos.</p></div>
     </div>
 
+    <div class="page-stack">
     <!-- Metricas -->
     <div class="st-tiles">
       <div class="st-tile"><span class="st-ic">{% include 'astro/_icon.html' with name='star' size=26 %}</span>
@@ -26,7 +27,7 @@
       <h3>Actividad (últimos 14 días)</h3>
       <div class="st-activity" role="img" aria-label="Lecciones completadas por día">
         {% for a in activity %}
-        <div class="st-abar" title="{{ a.date|date:'d/m' }}: {{ a.count }} leccion{{ a.count|pluralize:"es" }}">
+        <div class="st-abar" title="{{ a.date|date:'d/m' }}: {{ a.count }} {% if a.count == 1 %}lección{% else %}lecciones{% endif %}">
           <span class="st-abar-fill" style="height: {% if act_max %}{% widthratio a.count act_max 100 %}{% else %}0{% endif %}%"></span>
           <small>{{ a.date|date:'d' }}</small>
         </div>
@@ -69,10 +70,11 @@
     <div class="st-empty">
       <span class="st-empty-ic">{% include 'astro/_icon.html' with name='progress' size=52 %}</span>
       <h3>Aún no hay datos</h3>
-      <p>Responde algunos quizzes y aquí veras tu precisión, tus temas flojos y tu actividad.</p>
+      <p>Responde algunos quizzes y aquí verás tu precisión, tus temas flojos y tu actividad.</p>
       <a href="{% url 'astro:ruta' %}" class="btn btn-primary">Ir a mi ruta</a>
     </div>
     {% endif %}
+    </div>
   </section>
 </div>
 {% endblock %}

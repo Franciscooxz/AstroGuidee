@@ -14,7 +14,7 @@
     <h1 class="cert-name">{{ user.username }}</h1>
     <p class="cert-body">por completar con exito la unidad</p>
     <h2 class="cert-unit">{{ unit.name }}</h2>
-    <p class="cert-meta">{{ n_lessons }} lección{{ n_lessons|pluralize:"es" }} · {{ n_cards }} tarjetas dominadas</p>
+    <p class="cert-meta">{% if n_lessons == 1 %}1 lección{% else %}{{ n_lessons }} lecciones{% endif %} · {{ n_cards }} tarjetas dominadas</p>
 
     {% if exam and exam.passed %}
     <div class="cert-honors {% if exam.best_score >= 100 %}gold{% endif %}">

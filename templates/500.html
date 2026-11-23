@@ -10,46 +10,49 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Nunito', system-ui, sans-serif;
-      color: #eef2ff;
+      color: #f4f4f8;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
       padding: 24px;
-      background:
-        radial-gradient(60% 55% at 15% 10%, rgba(79, 124, 255, 0.28), transparent 60%),
-        radial-gradient(55% 50% at 88% 8%, rgba(139, 92, 255, 0.30), transparent 62%),
-        linear-gradient(180deg, #0a0b1e, #05060f 70%);
+      background: #0e0e12;
     }
-    .error-wrap { max-width: 520px; }
+    .error-card {
+      width: min(480px, 100%);
+      padding: 36px 28px 32px;
+      border-radius: 18px;
+      background: #1c1c26;
+      border: 2px solid #32323f;
+      box-shadow: 0 4px 0 #32323f;
+    }
     .error-code {
-      font-size: clamp(88px, 18vw, 140px);
-      font-weight: 700;
+      font-size: clamp(72px, 16vw, 112px);
+      font-weight: 800;
       line-height: 1;
       letter-spacing: -2px;
-      background: linear-gradient(120deg, #6ea8ff, #b18bff 55%, #d16bff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+      color: #7c4dff;
     }
-    .error-title { font-size: 24px; font-weight: 700; margin: 18px 0 10px; }
-    .error-desc { color: #bcc4e6; font-size: 15px; line-height: 1.6; margin-bottom: 28px; }
+    .error-title { font-size: 24px; font-weight: 800; margin: 12px 0 8px; }
+    .error-desc { color: #b7b7c9; font-size: 15px; line-height: 1.5; margin-bottom: 24px; }
     .btn-home {
       display: inline-flex;
       align-items: center;
-      padding: 12px 26px;
-      border-radius: 100px;
+      padding: 12px 22px;
+      border-radius: 14px;
       text-decoration: none;
       color: #fff;
-      font-weight: 600;
-      background: linear-gradient(135deg, #4f7cff, #8b5cff);
-      box-shadow: 0 10px 26px -8px rgba(139, 92, 255, .8);
+      font-weight: 800;
+      background: #7c4dff;
+      border: 2px solid #5426c4;
+      box-shadow: 0 4px 0 #5426c4;
     }
+    .btn-home:active { transform: translateY(3px); box-shadow: 0 1px 0 #5426c4; }
   </style>
 </head>
 <body>
-  <div class="error-wrap">
+  <div class="error-card">
     <div class="error-code">500</div>
     <h1 class="error-title">Error interno del servidor</h1>
     <p class="error-desc">Algo falló de nuestro lado.<br>Intenta de nuevo en unos minutos.</p>

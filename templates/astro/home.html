@@ -8,9 +8,9 @@
     <div class="hero-text">
       <span class="pill">{% include 'astro/_icon.html' with name='rocket' size=18 %} Astronomía + astrofísica</span>
       <h1>Entiende el <span class="grad">Universo</span>,<br>no solo lo memorices</h1>
-      <p>AstroGuide te explica el cosmos con tarjetas claras y quizzes: desde el sistema
-         solar hasta los agujeros negros y la física que hay detrás. Aprende paso a paso
-         y sigue tu progreso.</p>
+      <p>AstroGuide te explica el cosmos con tarjetas claras y quizzes. La ruta empieza
+         por el cielo que ves y avanza hasta las estrellas, las galaxias y los objetos
+         extremos. Aprende paso a paso y sigue tu progreso.</p>
       <div class="hero-actions">
         <a href="{% url 'astro:register' %}" class="btn btn-primary">{% include 'astro/_icon.html' with name='rocket' size=18 %} Crear cuenta gratis</a>
         <a href="#muestra" class="btn">Ver una muestra</a>
@@ -84,8 +84,8 @@
   <!-- TEMAS -->
   <section class="section" id="temas">
     <div class="section-head">
-      <div><h2><span class="bar"></span>Qué aprenderas</h2>
-        <p>Empezamos por el sistema solar y crecemos hacia la astrofísica.</p></div>
+      <div><h2><span class="bar"></span>Qué aprenderás</h2>
+        <p>Empieza en el universo que ves y sigue por el Sistema Solar, las estrellas, las galaxias y los objetos extremos.</p></div>
     </div>
     <div class="cats">
       {% for cat in categories %}
@@ -94,10 +94,6 @@
         <span><b>{{ cat.name }}</b><small>{{ cat.card_count }} tarjeta{{ cat.card_count|pluralize }}</small></span>
       </a>
       {% endfor %}
-      <div class="cat-chip soon"><span class="ic">{% include 'astro/_icon.html' with name='star' size=30 %}</span><span><b>Estrellas</b><small>Próximamente</small></span></div>
-      <div class="cat-chip soon"><span class="ic">{% include 'astro/_icon.html' with name='blackhole' size=30 %}</span><span><b>Agujeros negros</b><small>Próximamente</small></span></div>
-      <div class="cat-chip soon"><span class="ic">{% include 'astro/_icon.html' with name='galaxy' size=30 %}</span><span><b>Galaxias</b><small>Próximamente</small></span></div>
-      <div class="cat-chip soon"><span class="ic">{% include 'astro/_icon.html' with name='atom' size=30 %}</span><span><b>Astrofísica</b><small>Próximamente</small></span></div>
     </div>
   </section>
 

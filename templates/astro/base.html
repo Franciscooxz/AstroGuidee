@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>(function(){try{var t=localStorage.getItem('astro-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <title>{% block title %}AstroGuide — Entiende el Universo{% endblock %}</title>
-  <meta name="description" content="AstroGuide: aprende astronomia y astrofisica con tarjetas y quizzes. Entiende el universo, no solo lo memorices.">
+  <meta name="description" content="AstroGuide: aprende astronomía y astrofísica con tarjetas y quizzes. Entiende el universo, no solo lo memorices.">
   <link rel="manifest" href="{% url 'astro:manifest' %}">
   <meta name="theme-color" content="#0a0b1e">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -81,6 +81,8 @@
   {% if user.is_authenticated %}
   <nav class="app-tabs">
     <a href="{% url 'astro:ruta' %}" class="{% if active_nav == 'ruta' %}on{% endif %}">{% include 'astro/_icon.html' with name='orbit' size=24 %}<span>Ruta</span></a>
+    <a href="{% url 'astro:review' %}" class="{% if active_nav == 'review' %}on{% endif %}">{% include 'astro/_icon.html' with name='progress' size=24 %}<span>Repaso</span></a>
+    <a href="{% url 'astro:glossary' %}" class="{% if active_nav == 'glossary' %}on{% endif %}">{% include 'astro/_icon.html' with name='cards' size=24 %}<span>Explorar</span></a>
     <a href="{% url 'astro:league' %}" class="{% if active_nav == 'league' %}on{% endif %}">{% include 'astro/_icon.html' with name='star' size=24 %}<span>Ligas</span></a>
     <a href="{% url 'astro:store' %}" class="{% if active_nav == 'store' %}on{% endif %}">{% include 'astro/_icon.html' with name='coin' size=24 %}<span>Tienda</span></a>
     <a href="{% url 'astro:notifications' %}" class="tab-bell {% if active_nav == 'notifications' %}on{% endif %}">{% include 'astro/_icon.html' with name='bell' size=24 %}{% if unread_notifications %}<span class="bell-badge">{{ unread_notifications }}</span>{% endif %}<span>Avisos</span></a>
