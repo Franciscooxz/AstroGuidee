@@ -15,7 +15,7 @@
       <h1 class="pub-name">{{ user.username }}</h1>
       <div class="pub-pills">
         <span class="rank-pill" style="--rc: {{ rank.color }}">{{ rank.name }}</span>
-        <span class="rank-pill" style="--rc: {{ division.color }}">Liga {{ division.name }}</span>
+        <span class="rank-pill with-badge" style="--rc: {{ division.color }}"><img src="{{ division.image }}" alt="" width="22" height="22">Liga {{ division.name }}</span>
         <span class="rank-pill">Nivel {{ level }}</span>
       </div>
 

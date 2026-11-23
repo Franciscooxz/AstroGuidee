@@ -11,6 +11,7 @@ from django.core.validators import validate_email
 from django.db.models import F, Q
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
@@ -139,12 +140,12 @@ def _next_heart_minutes(profile):
 
 # Divisiones de liga (ascendentes): (key, nombre, color, icono). Distintas de RANKS.
 DIVISIONS = [
-    ("cometa", "Cometa", "#8ea2ff", "rocket"),
-    ("luna", "Luna", "#c0c8d8", "planet"),
-    ("estrella", "Estrella", "#f5b301", "star"),
-    ("nebulosa", "Nebulosa", "#b18bff", "orbit"),
-    ("galaxia", "Galaxia", "#4f7cff", "galaxy"),
-    ("cosmos", "Cosmos", "#6ee7ff", "sun"),
+    ("cometa", "Cometa", "#cd8e85", "rocket"),
+    ("luna", "Luna", "#8cb7f0", "planet"),
+    ("estrella", "Estrella", "#ffc857", "star"),
+    ("nebulosa", "Nebulosa", "#a477ef", "orbit"),
+    ("galaxia", "Galaxia", "#49b5f5", "galaxy"),
+    ("cosmos", "Cosmos", "#f4b942", "sun"),
 ]
 # Misiones semanales: metric in {xp, lessons, streak, perfect}. reward = Cosmos.
 MISSIONS = [
@@ -223,6 +224,7 @@ def get_division(index):
         "name": name,
         "color": color,
         "icon": icon,
+        "image": static(f"astro/img/leagues/{key}.webp"),
         "is_top": i == len(DIVISIONS) - 1,
         "is_bottom": i == 0,
         "next_name": DIVISIONS[i + 1][1] if i + 1 < len(DIVISIONS) else None,

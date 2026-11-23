@@ -11,7 +11,7 @@
 
     <!-- Cabecera de division -->
     <div class="div-hero" style="--dc: {{ division.color }}">
-      <span class="div-emblem">{% include 'astro/_icon.html' with name=division.icon size=34 %}</span>
+      <span class="div-emblem"><img src="{{ division.image }}" alt="Liga {{ division.name }}" width="104" height="104"></span>
       <div class="div-info">
         <b>Liga {{ division.name }}</b>
         <small>
