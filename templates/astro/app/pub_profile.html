@@ -21,7 +21,7 @@
 
       <div class="pub-stats">
         <div><b>{{ profile.xp }}</b><span>XP</span></div>
-        <div><b>{{ profile.streak }}</b><span>Racha</span></div>
+        <div><b class="with-flame">{% include 'astro/_streak.html' with size=18 %}{{ profile.streak }}</b><span>Racha</span></div>
         <div><b>{{ done_lessons }}</b><span>Lecciones</span></div>
         <div><b>{{ achievements }}</b><span>Logros</span></div>
         <div><b>{{ certificates }}</b><span>Certificados</span></div>

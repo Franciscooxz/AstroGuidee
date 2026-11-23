@@ -1,0 +1,5 @@
+{% load static %}
+<span class="streak-flame{% if class %} {{ class }}{% endif %}" style="width:{{ size|default:28 }}px;height:{{ size|default:28 }}px" aria-hidden="true">
+  <img src="{% static 'astro/img/streak.webp' %}" alt="" width="{{ size|default:28 }}" height="{{ size|default:28 }}" decoding="async">
+  {% include 'astro/_icon.html' with name='flame' size=size %}
+</span>
