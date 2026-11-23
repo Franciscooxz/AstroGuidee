@@ -1401,8 +1401,8 @@ body.has-tabs { }
 
 @media (max-width: 760px) {
   .nav-links { display: none; }
-  .app-tabs { display: flex; padding: 9px 6px; overflow-x: auto; }
-  .app-tabs a { flex: 1 0 58px; font-size: 10px; }
+  .app-tabs { display: flex; padding: 8px 6px; overflow: hidden; }
+  .app-tabs a { flex: 1 1 0; min-width: 0; font-size: 11px; }
   body.has-tabs { padding-bottom: 96px; }
   body.has-tabs .foot { padding-bottom: 20px; }
 
@@ -1435,8 +1435,7 @@ body.has-tabs { }
   .brand { font-size: 16px; gap: 7px; }
   .brand .brand-logo { width: 28px; height: 28px; border-radius: 8px; }
   .theme-toggle { width: 36px; height: 36px; }
-  /* La campana ya esta en la barra inferior ("Avisos"): evitar duplicado en movil */
-  .nav-bell { display: none; }
+  .nav-bell { width: 36px; height: 36px; border-radius: 12px; }
   .nav-actions .btn { padding: 7px 11px; white-space: nowrap; }
   .nav-avatar { width: 26px; height: 26px; }
 
