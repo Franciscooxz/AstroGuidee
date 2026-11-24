@@ -11,6 +11,7 @@
     <div class="quiz-bar"><span id="quizBar"></span></div>
     {% if weak %}<div class="review-tag weak">{% include 'astro/_icon.html' with name='flame' size=18 %} Temas flojos</div>
     {% else %}<div class="review-tag">{% include 'astro/_icon.html' with name='progress' size=18 %} Repaso</div>{% endif %}
+    <button type="button" class="q-report quiz-flag" title="Reportar problema" aria-label="Reportar problema">{% include 'astro/_icon.html' with name='flag' size=20 %}</button>
   </div>
 
   <div id="quizStage" data-mode="review"
@@ -35,7 +36,6 @@
       {% if q.explanation %}<div class="q-explain" hidden><span class="q-explain-ic">{% include 'astro/_icon.html' with name='atom' size=18 %}</span><span>{{ q.explanation }}</span></div>{% endif %}
       <button type="button" class="btn btn-primary q-next" disabled>Continuar</button>
       <div class="q-report-wrap" data-url="{% url 'astro:report_question' q.id %}">
-        <button type="button" class="q-report">Reportar problema</button>
         <div class="q-report-panel" hidden>
           <span>¿Qué falla?</span>
           <button type="button" data-reason="opcion">Respuesta mal</button>

@@ -72,7 +72,9 @@
   });
 
   function setBar() {
-    bar.style.width = (idx / total) * 100 + "%";
+    if (!bar || !total) return;
+    var filled = Math.min(idx + 1, total);
+    bar.style.width = (filled / total) * 100 + "%";
   }
   setBar();
 

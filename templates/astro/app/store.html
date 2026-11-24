@@ -19,7 +19,7 @@
         <div class="shop-body">
           <h3>{{ item.name }}</h3>
           <p>{{ item.description }}</p>
-          {% if item.effect == 'streak_freeze' %}
+          {% if item.effect == 'streak_freeze' and profile.streak_freezes %}
             <div class="owned">Tienes {{ profile.streak_freezes }}</div>
           {% elif item.effect == 'double_xp' and profile.double_xp_pending %}
             <div class="owned">Activo en tu próximo quiz</div>
@@ -29,9 +29,16 @@
         </div>
         <form method="post" action="{% url 'astro:buy_item' item.key %}">
           {% csrf_token %}
-          <button type="submit" class="btn btn-primary buy-btn" {% if profile.coins < item.price %}disabled{% endif %}>
+          {% if item.shortfall %}
+          <button type="button" class="btn buy-btn short" disabled title="Te faltan {{ item.shortfall }} Cosmos">
+            {% include 'astro/_icon.html' with name='coin' size=18 %} {{ item.price }}
+            <span class="buy-miss">Faltan {{ item.shortfall }}</span>
+          </button>
+          {% else %}
+          <button type="submit" class="btn btn-primary buy-btn">
             {% include 'astro/_icon.html' with name='coin' size=18 %} {{ item.price }}
           </button>
+          {% endif %}
         </form>
       </div>
       {% endfor %}
@@ -57,9 +64,17 @@
           {% endif %}
         {% else %}
           <form method="post" action="{% url 'astro:buy_item' item.key %}">{% csrf_token %}
-            <button type="submit" class="btn btn-primary buy-btn" {% if profile.coins < item.price %}disabled{% endif %}>
+            {% if item.shortfall %}
+            <button type="button" class="btn buy-btn short" disabled title="Te faltan {{ item.shortfall }} Cosmos">
               {% include 'astro/_icon.html' with name='coin' size=18 %} {{ item.price }}
-            </button></form>
+              <span class="buy-miss">Faltan {{ item.shortfall }}</span>
+            </button>
+            {% else %}
+            <button type="submit" class="btn btn-primary buy-btn">
+              {% include 'astro/_icon.html' with name='coin' size=18 %} {{ item.price }}
+            </button>
+            {% endif %}
+          </form>
         {% endif %}
       </div>
       {% endfor %}

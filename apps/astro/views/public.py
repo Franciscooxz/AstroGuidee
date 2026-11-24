@@ -6,6 +6,8 @@ from .common import *  # noqa: F401,F403
 
 
 def home(request):
+    if request.user.is_authenticated:
+        return redirect("astro:ruta")
     categories = Category.objects.filter(is_active=True)
     featured = categories.first()
     featured_cards = featured.cards.filter(is_active=True) if featured else []

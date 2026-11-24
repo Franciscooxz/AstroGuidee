@@ -2,91 +2,25 @@
 {% load static %}
 {% block content %}
 <div class="wrap">
-
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-text">
-      <span class="pill">{% include 'astro/_icon.html' with name='rocket' size=18 %} Astronomía + astrofísica</span>
-      <h1>Entiende el <span class="grad">Universo</span>,<br>no solo lo memorices</h1>
-      <p>AstroGuide te explica el cosmos con tarjetas claras y quizzes. La ruta empieza
-         por el cielo que ves y avanza hasta las estrellas, las galaxias y los objetos
-         extremos. Aprende paso a paso y sigue tu progreso.</p>
-      <div class="hero-actions">
-        <a href="{% url 'astro:register' %}" class="btn btn-primary">{% include 'astro/_icon.html' with name='rocket' size=18 %} Crear cuenta gratis</a>
-        <a href="#muestra" class="btn">Ver una muestra</a>
-      </div>
-      <div class="hero-stats">
-        <div class="stat"><b>{{ categories.count }}</b><span>Tema{{ categories.count|pluralize }} de estudio</span></div>
-        {% if featured %}<div class="stat"><b>{{ featured.card_count }}</b><span>Tarjetas en {{ featured.name }}</span></div>{% endif %}
-        <div class="stat"><b>Quiz</b><span>Pon a prueba tu avance</span></div>
-      </div>
-    </div>
+  <section class="home">
+    <header class="home-hero">
+      <h1>Entiende el universo</h1>
+      <p>Tarjetas claras y quizzes, desde el cielo que ves hasta las estrellas, las galaxias y los objetos extremos.</p>
+      <a href="{% url 'astro:register' %}" class="btn btn-primary">{% include 'astro/_icon.html' with name='rocket' size=18 %} Crear cuenta gratis</a>
+    </header>
 
     {% if featured_cards %}
-    <div class="hero-card">
-      {% with c=featured_cards.0 %}
-      <div class="ico-wrap big">{% include 'astro/_icon.html' with name=c.icon size=104 %}</div>
-      <div class="label">{{ featured.name }}</div>
-      <h3>{{ c.title }}</h3>
-      <p>{{ c.summary|truncatewords:22 }}</p>
-      {% endwith %}
-    </div>
-    {% endif %}
-  </section>
-
-  <!-- COMO FUNCIONA -->
-  <section class="section" id="como">
-    <div class="section-head">
-      <div><h2><span class="bar"></span>Cómo funciona</h2>
-        <p>Un método simple para que los conceptos hagan clic.</p></div>
-    </div>
-    <div class="steps">
-      <div class="step">
-        <div class="step-ic">{% include 'astro/_icon.html' with name='cards' size=40 %}</div>
-        <h3>1 · Aprende con tarjetas</h3>
-        <p>Cada concepto en una tarjeta: idea principal, explicación y un dato que engancha.</p>
-      </div>
-      <div class="step">
-        <div class="step-ic">{% include 'astro/_icon.html' with name='quiz' size=40 %}</div>
-        <h3>2 · Ponte a prueba</h3>
-        <p>Quizzes cortos para comprobar que de verdad entendiste, no solo memorizaste.</p>
-      </div>
-      <div class="step">
-        <div class="step-ic">{% include 'astro/_icon.html' with name='progress' size=40 %}</div>
-        <h3>3 · Sigue tu progreso</h3>
-        <p>Tu cuenta guarda lo que dominas y lo que toca repasar. Aprende a tu ritmo.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- MUESTRA -->
-  {% if featured_cards %}
-  <section class="section" id="muestra">
-    <div class="section-head">
-      <div><h2><span class="bar"></span>Muestra: {{ featured.name }}</h2>
-        <p>Toca una tarjeta para girarla. Así se siente aprender en AstroGuide.</p></div>
-    </div>
+    <h2 class="shop-sec" id="muestra">Una muestra</h2>
+    <p class="home-lead">Toca una tarjeta para girarla. Así se siente aprender en AstroGuide.</p>
     <div class="cards-grid">
       {% for card in featured_cards|slice:":3" %}
         {% include 'astro/_card.html' %}
       {% endfor %}
     </div>
-    <div class="unlock">
-      <div>
-        <b>Esto es solo una probada.</b>
-        <span>Crea tu cuenta para desbloquear las {{ featured.card_count }} tarjetas de {{ featured.name }}, los quizzes y tu progreso.</span>
-      </div>
-      <a href="{% url 'astro:register' %}" class="btn btn-primary">Crear cuenta gratis</a>
-    </div>
-  </section>
-  {% endif %}
+    {% endif %}
 
-  <!-- TEMAS -->
-  <section class="section" id="temas">
-    <div class="section-head">
-      <div><h2><span class="bar"></span>Qué aprenderás</h2>
-        <p>Empieza en el universo que ves y sigue por el Sistema Solar, las estrellas, las galaxias y los objetos extremos.</p></div>
-    </div>
+    <h2 class="shop-sec" id="temas">Qué aprenderás</h2>
+    <p class="home-lead">Empieza en el universo que ves y sigue por el Sistema Solar, las estrellas, las galaxias y los objetos extremos.</p>
     <div class="cats">
       {% for cat in categories %}
       <a href="{% url 'astro:ruta' %}" class="cat-chip">
@@ -96,16 +30,5 @@
       {% endfor %}
     </div>
   </section>
-
-  <!-- CTA FINAL -->
-  <section class="section">
-    <div class="cta-final">
-      <div class="ico-wrap">{% include 'astro/_icon.html' with name='rocket' size=54 %}</div>
-      <h2>Empieza a entender el universo hoy</h2>
-      <p>Crea tu cuenta gratis y guarda tu progreso desde la primera tarjeta.</p>
-      <a href="{% url 'astro:register' %}" class="btn btn-primary">Crear cuenta gratis</a>
-    </div>
-  </section>
-
 </div>
 {% endblock %}

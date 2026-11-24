@@ -2,15 +2,17 @@
 {% block title %}Duelos — AstroGuide{% endblock %}
 {% block content %}
 <div class="wrap">
-  <section class="section">
-    <div class="section-head">
-      <div><h2><span class="bar"></span>Duelos</h2>
-        <p>Reta a otros a un duelo de preguntas rapidas. Gana quien más acierte.</p></div>
-    </div>
+  <section class="shop-page">
+    <header class="shop-top">
+      <div>
+        <h2>Duelos</h2>
+        <p>Reta a otros a un duelo de preguntas rápidas. Gana quien más acierte.</p>
+      </div>
+    </header>
 
     {% if to_play %}
-    <h3 class="friends-h">Te toca jugar</h3>
-    <div class="duel-list">
+    <h3 class="shop-sec">Te toca jugar</h3>
+    <div class="shop-list">
       {% for info in to_play %}
       <div class="duel-row play">
         <span class="duel-av">{{ info.rival.username|first|upper }}</span>
@@ -22,8 +24,8 @@
     {% endif %}
 
     {% if pending %}
-    <h3 class="friends-h">Esperando al rival</h3>
-    <div class="duel-list">
+    <h3 class="shop-sec">Esperando al rival</h3>
+    <div class="shop-list">
       {% for info in pending %}
       <div class="duel-row">
         <span class="duel-av">{{ info.rival.username|first|upper }}</span>
@@ -35,8 +37,8 @@
     {% endif %}
 
     {% if done %}
-    <h3 class="friends-h">Terminados</h3>
-    <div class="duel-list">
+    <h3 class="shop-sec">Terminados</h3>
+    <div class="shop-list">
       {% for info in done %}
       <div class="duel-row {% if info.won %}won{% elif info.tie %}tie{% else %}lost{% endif %}">
         <span class="duel-av">{{ info.rival.username|first|upper }}</span>
@@ -52,7 +54,7 @@
     {% if not to_play and not pending and not done %}
     <div class="friends-empty">
       <span class="friends-empty-ic">{% include 'astro/_icon.html' with name='flame' size=48 %}</span>
-      <p>Aún no tienes duelos. Entra al perfil de alguien (desde las ligas o tus amigos) y toca “Retar a un duelo”.</p>
+      <p>Aún no tienes duelos. Entra al perfil de alguien, desde las ligas o tus amigos, y toca “Retar a un duelo”.</p>
       <a href="{% url 'astro:league' %}" class="btn btn-primary">Ir a las ligas</a>
     </div>
     {% endif %}

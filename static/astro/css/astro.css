@@ -336,8 +336,8 @@ textarea:focus-visible, [tabindex]:focus-visible, .flip:focus-visible {
 }
 a.notif:hover { border-color: var(--purple-soft); background: var(--overlay); transform: translateY(-1px); }
 .notif.unread {
-  background: radial-gradient(120% 140% at 0% 50%, rgba(139,92,255,.16), transparent 55%), var(--glass-bg);
-  border-color: rgba(139,92,255,.4);
+  background: var(--glass-bg);
+  box-shadow: inset 3px 0 0 var(--purple);
 }
 .notif.unread::before {
   content: ''; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
@@ -478,17 +478,19 @@ a.notif:hover { border-color: var(--purple-soft); background: var(--overlay); tr
 @media (prefers-reduced-motion: reduce) { .q-explain { animation: none; } }
 
 /* ===== Reportar pregunta ===== */
-.q-report-wrap { margin-top: 14px; text-align: center; }
-.q-report {
-  background: none; border: none; cursor: pointer;
-  color: var(--text-faint); font-size: 12px; font-family: inherit;
-  text-decoration: underline; text-underline-offset: 3px;
+.quiz-flag {
+  width: 44px; height: 44px; flex-shrink: 0; display: grid; place-items: center;
+  padding: 0; border-radius: 12px; cursor: pointer;
+  background: none; border: 0; box-shadow: none; color: var(--text-dim);
 }
-.q-report:hover { color: var(--text-dim); }
+.quiz-flag:hover { color: var(--text); }
+.q-report-wrap { order: -1; width: 100%; margin: 0 0 12px; }
+.q-report-wrap:not(:has(.q-report-panel:not([hidden]))):not(:has(.q-report-done)) { display: none; }
 .q-report-panel {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px;
-  margin-top: 10px; padding: 12px; border-radius: 12px;
-  background: var(--glass-bg); border: 1px solid var(--glass-brd);
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 8px;
+  margin: 0; padding: 12px; border-radius: 16px;
+  background: var(--bg-2); border: 1px solid var(--glass-brd);
+  box-shadow: 0 8px 24px rgba(0,0,0,.28);
 }
 .q-report-panel span { font-size: 13px; color: var(--text-dim); width: 100%; }
 .q-report-panel button {
@@ -497,7 +499,10 @@ a.notif:hover { border-color: var(--purple-soft); background: var(--overlay); tr
   transition: all .15s;
 }
 .q-report-panel button:hover { border-color: var(--purple-soft); color: var(--text); }
-.q-report-done { font-size: 13px; color: var(--blue-soft); }
+.q-report-done {
+  display: block; padding: 10px 12px; border-radius: 12px; font-size: 13px; font-weight: 800;
+  color: var(--text); background: var(--bg-2); border: 1px solid var(--glass-brd);
+}
 
 /* ===== Meta diaria configurable ===== */
 .fs-sub { font-size: 13px; color: var(--text-faint); margin: -6px 0 12px; }
@@ -567,13 +572,9 @@ a.notif:hover { border-color: var(--purple-soft); background: var(--overlay); tr
 .pub-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 .duel-list { display: flex; flex-direction: column; gap: 10px; }
 .duel-row {
-  display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-radius: 14px;
-  background: var(--glass-bg); border: 1px solid var(--glass-brd); border-left: 3px solid var(--glass-brd);
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px;
+  background: var(--glass-bg); border: 1px solid var(--glass-brd);
 }
-.duel-row.play { border-left-color: #ffce4d; }
-.duel-row.won { border-left-color: #3ddc84; }
-.duel-row.lost { border-left-color: #ff6b81; }
-.duel-row.tie { border-left-color: var(--purple-soft); }
 .duel-av { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center;
   font-weight: 700; color: #fff; background: linear-gradient(150deg, var(--blue), var(--purple)); }
 .duel-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
@@ -1215,7 +1216,12 @@ a.sbadge.link:hover { border-color: var(--purple-soft); transform: translateY(-2
 .shop-card .owned { color: var(--text-faint); font-size: 12px; font-weight: 800; margin: 4px 0 0; }
 .shop-card form { width: auto; flex-shrink: 0; }
 .buy-btn { margin-top: 0; width: auto; min-height: 44px; padding: 0 14px; white-space: nowrap; }
-.buy-btn:disabled { opacity: .45; cursor: default; }
+.buy-btn.short {
+  flex-direction: column; gap: 1px; line-height: 1.05; padding: 6px 12px; opacity: 1;
+  background: var(--bg-2); color: var(--text);
+}
+.buy-btn.short:disabled { opacity: 1; cursor: default; }
+.buy-miss { font-size: 11px; font-weight: 800; color: var(--text-dim); }
 @media (max-width: 380px) {
   .shop-card { flex-wrap: wrap; }
   .shop-card form, .buy-btn { width: 100%; }
@@ -1442,7 +1448,6 @@ a.sbadge.link:hover { border-color: var(--purple-soft); transform: translateY(-2
 .q-options.tf { flex-direction: row; }
 .q-options.tf .q-opt { flex: 1; text-align: center; font-size: 17px; font-weight: 600; }
 .q-block { padding-bottom: 84px; }
-.q-report-wrap { order: 2; }
 .q-next {
   order: 3; justify-content: center; min-height: 52px; margin: 0; border-radius: 16px;
   position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom));
@@ -1620,3 +1625,27 @@ body.is-drill .app-tabs,
 body.is-drill .foot { display: none; }
 body.is-drill.has-tabs { padding-bottom: 20px; }
 .quiz-wrap .section { padding: 8px 0 0; }
+
+/* ===== Inicio (visitante) ===== */
+.home { width: min(720px, 100%); margin: 0 auto; padding: 28px 0 12px; }
+.home-hero h1 { font-size: clamp(32px, 8vw, 48px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; }
+.home-hero p, .home-lead { color: var(--text-dim); font-size: 16px; max-width: 42ch; margin: 12px 0 22px; }
+.home-lead { font-size: 14px; margin: 0 0 14px; }
+.home .shop-sec:first-of-type { margin-top: 36px; }
+.home .cards-grid { margin-bottom: 8px; }
+.home .cats { margin-bottom: 8px; }
+
+/* Explorar, avisos y duelos dentro de la columna */
+.shop-page .apod { flex-direction: column; margin: 8px 0 16px; }
+.shop-page .apod-media { width: 100%; max-width: none; max-height: 220px; }
+.shop-page .glo-search { flex-direction: column; align-items: stretch; margin: 0 0 16px; }
+.shop-page .glo-search .field { width: 100%; }
+.shop-page .glo-search .btn { width: 100%; }
+.shop-page .glo-ic, .shop-page .glo-img { width: 52px; height: 52px; border-radius: 14px; }
+.shop-page .glo-sum {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.shop-page .glo-empty, .shop-page .notif-empty, .shop-page .friends-empty {
+  padding: 36px 8px; text-align: center;
+}
+.shop-page .shop-top form { flex-shrink: 0; }

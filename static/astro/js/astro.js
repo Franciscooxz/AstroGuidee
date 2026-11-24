@@ -131,7 +131,11 @@ document.addEventListener('keydown', function (e) {
 document.addEventListener('click', function (e) {
   const toggle = e.target.closest('.q-report');
   if (toggle) {
-    const panel = toggle.parentElement.querySelector('.q-report-panel');
+    const current = document.querySelector('.q-block:not([hidden]) .q-report-wrap');
+    document.querySelectorAll('.q-report-panel').forEach(function (p) {
+      if (!current || p.parentElement !== current) p.hidden = true;
+    });
+    const panel = current && current.querySelector('.q-report-panel');
     if (panel) panel.hidden = !panel.hidden;
     return;
   }

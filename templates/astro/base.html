@@ -36,7 +36,7 @@
 
   <nav class="nav">
     <div class="nav-inner">
-      <a href="{% url 'astro:home' %}" class="brand">
+      <a href="{% if user.is_authenticated %}{% url 'astro:ruta' %}{% else %}{% url 'astro:home' %}{% endif %}" class="brand">
         {% include 'astro/_logo.html' with size=32 %} <span class="brand-txt">AstroGuide</span>
       </a>
       <div class="nav-links">
@@ -47,7 +47,6 @@
           <a href="{% url 'astro:league' %}" class="{% if active_nav == 'league' %}active{% endif %}">Ligas</a>
           <a href="{% url 'astro:store' %}" class="{% if active_nav == 'store' %}active{% endif %}">Tienda</a>
         {% else %}
-          <a href="{% url 'astro:home' %}#como">Cómo funciona</a>
           <a href="{% url 'astro:home' %}#muestra">Muestra</a>
           <a href="{% url 'astro:home' %}#temas">Temas</a>
         {% endif %}

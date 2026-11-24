@@ -129,7 +129,9 @@ def store(request):
     profile = _get_profile(request.user)
     _refill_hearts(profile)
     profile.save(update_fields=["hearts", "hearts_updated"])
-    items = ShopItem.objects.filter(is_active=True)
+    items = list(ShopItem.objects.filter(is_active=True))
+    for item in items:
+        item.shortfall = max(0, item.price - profile.coins)
     owned = set(Purchase.objects.filter(user=request.user).values_list("item__key", flat=True))
     return render(
         request,
