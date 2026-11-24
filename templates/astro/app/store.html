@@ -2,29 +2,31 @@
 {% block title %}Tienda — AstroGuide{% endblock %}
 {% block content %}
 <div class="wrap">
-  <section class="section">
-    <div class="section-head">
+  <section class="shop-page">
+    <header class="shop-top">
       <div>
-        <h2><span class="bar"></span>Tienda</h2>
-        <p>Gana Cosmos completando lecciones y gástalos aquí.</p>
+        <h2>Tienda</h2>
+        <p>Gana Cosmos en las lecciones y úsalos aquí.</p>
       </div>
-      <div class="coins-balance">{% include 'astro/_icon.html' with name='coin' size=26 %} <b>{{ profile.coins }}</b> Cosmos</div>
-    </div>
+      <div class="coins-balance">{% include 'astro/_icon.html' with name='coin' size=22 %} <b>{{ profile.coins }}</b></div>
+    </header>
 
     <h3 class="shop-sec">Power-ups</h3>
-    <div class="shop-grid">
+    <div class="shop-list">
       {% for item in powerups %}
       <div class="shop-card">
-        <div class="shop-ic">{% include 'astro/_icon.html' with name=item.icon size=44 %}</div>
-        <h3>{{ item.name }}</h3>
-        <p>{{ item.description }}</p>
-        {% if item.effect == 'streak_freeze' %}
-          <div class="owned">Tienes: <b>{{ profile.streak_freezes }}</b></div>
-        {% elif item.effect == 'double_xp' %}
-          <div class="owned">{% if profile.double_xp_pending %}Activo para tu próximo quiz{% else %}&nbsp;{% endif %}</div>
-        {% elif item.effect == 'refill_hearts' %}
-          <div class="owned">Tienes: <b>{{ profile.hearts }}</b>/{{ hearts_max }} vidas</div>
-        {% endif %}
+        <div class="shop-ic">{% include 'astro/_icon.html' with name=item.icon size=32 %}</div>
+        <div class="shop-body">
+          <h3>{{ item.name }}</h3>
+          <p>{{ item.description }}</p>
+          {% if item.effect == 'streak_freeze' %}
+            <div class="owned">Tienes {{ profile.streak_freezes }}</div>
+          {% elif item.effect == 'double_xp' and profile.double_xp_pending %}
+            <div class="owned">Activo en tu próximo quiz</div>
+          {% elif item.effect == 'refill_hearts' %}
+            <div class="owned">{{ profile.hearts }}/{{ hearts_max }} vidas</div>
+          {% endif %}
+        </div>
         <form method="post" action="{% url 'astro:buy_item' item.key %}">
           {% csrf_token %}
           <button type="submit" class="btn btn-primary buy-btn" {% if profile.coins < item.price %}disabled{% endif %}>
@@ -37,12 +39,14 @@
 
     {% if frames %}
     <h3 class="shop-sec">Marcos de avatar</h3>
-    <div class="shop-grid">
+    <div class="shop-list">
       {% for item in frames %}
       <div class="shop-card">
         <div class="frame-preview av-{{ item.key }}">{{ user.username|first|upper }}</div>
-        <h3>{{ item.name }}</h3>
-        <p>{{ item.description }}</p>
+        <div class="shop-body">
+          <h3>{{ item.name }}</h3>
+          <p>{{ item.description }}</p>
+        </div>
         {% if item.key in owned %}
           {% if profile.frame == item.key %}
             <form method="post" action="{% url 'astro:equip_frame' 'none' %}">{% csrf_token %}
