@@ -1,0 +1,9 @@
+{% load static %}
+<img class="dragon-mascot {{ class }}"
+     src="{% static 'astro/img/dragon-intro.webp' %}"
+     data-loop="{% static 'astro/img/dragon-loop.webp' %}"
+     data-still="{% static 'astro/img/dragon-still.png' %}"
+     alt=""
+     width="{{ size|default:112 }}"
+     height="{{ size|default:112 }}"
+     decoding="async">

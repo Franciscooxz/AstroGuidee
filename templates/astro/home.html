@@ -4,6 +4,7 @@
 <div class="wrap">
   <section class="home">
     <header class="home-hero">
+      {% include 'astro/_dragon.html' with class='home-dragon' size=148 %}
       <h1>Entiende el universo</h1>
       <p>Tarjetas claras y quizzes, desde el cielo que ves hasta las estrellas, las galaxias y los objetos extremos.</p>
       <a href="{% url 'astro:register' %}" class="btn btn-primary">{% include 'astro/_icon.html' with name='rocket' size=18 %} Crear cuenta gratis</a>

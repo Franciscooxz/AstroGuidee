@@ -24,7 +24,7 @@
 
     <div class="sky-hello">
       <h1>Explora el<br>universo</h1>
-      <img class="sky-mascot" src="{% static 'astro/img/logo.png' %}" alt="" width="112" height="112">
+      {% include 'astro/_dragon.html' with class='sky-mascot' size=112 %}
     </div>
 
     {% if earlier %}

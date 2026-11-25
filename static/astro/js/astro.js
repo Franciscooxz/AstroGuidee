@@ -1,5 +1,24 @@
 // AstroGuide — interaccion de tarjetas y progreso
 
+// Dragón: la entrada se reproduce una vez y sigue el bucle.
+// Quien pide menos movimiento ve el logo quieto.
+(function () {
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.querySelectorAll(".dragon-mascot").forEach(function (img) {
+    if (reduce) {
+      img.src = img.dataset.still;
+      return;
+    }
+    if (img.dataset.loop) {
+      var preload = new Image();
+      preload.src = img.dataset.loop;
+    }
+    window.setTimeout(function () {
+      if (img.isConnected && img.dataset.loop) img.src = img.dataset.loop;
+    }, 3400);
+  });
+})();
+
 // Toasts / notificaciones
 (function () {
   function dismiss(toast) {
