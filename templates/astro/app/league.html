@@ -32,6 +32,9 @@
       </p>
     </div>
 
+    {% if total < 2 %}
+    <p class="lg-alone">Todavía estás solo en esta liga. Cuando entre alguien más, aquí verás la tabla.</p>
+    {% else %}
     <div class="league-board">
       <div class="league-list">
         {% for r in rows %}
@@ -57,6 +60,8 @@
         {% endfor %}
       </div>
     </div>
+
+    {% endif %}
 
     {% if my_rank and my_rank > 30 %}
     <p class="lg-hint">Apareces en el puesto #{{ my_rank }} con {{ my_weekly }} XP esta semana.</p>

@@ -23,7 +23,10 @@
     </header>
 
     <div class="sky-hello">
-      <h1>Explora el<br>universo</h1>
+      <div>
+        <h1>Explora el<br>universo</h1>
+        <p class="sky-today">{% if daily_met %}{{ daily_done }} de {{ daily_goal }}. Listo por hoy{% else %}{{ daily_done }} de {{ daily_goal }} hoy{% endif %}</p>
+      </div>
       {% include 'astro/_dragon.html' with class='sky-mascot' size=112 %}
     </div>
 
@@ -122,6 +125,8 @@
         <b>¿Un repaso rápido?</b>
         {% if reviews_due %}
         <small>{{ reviews_due }} pregunta{{ reviews_due|pluralize }} pendiente{{ reviews_due|pluralize }}</small>
+        {% elif can_practice %}
+        <small>Puedes practicar otra vez</small>
         {% else %}
         <small>No tienes preguntas pendientes</small>
         {% endif %}

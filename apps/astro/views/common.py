@@ -345,6 +345,17 @@ def _ordered_lessons():
     )
 
 
+def _first_lesson():
+    lessons = _ordered_lessons()
+    return lessons[0] if lessons else None
+
+
+def _is_first_unit(lesson):
+    """La primera unidad no gasta vidas: el día 1 no se corta por un fallo."""
+    first = _first_lesson()
+    return bool(first and lesson.category_id == first.category_id)
+
+
 def _lesson_status(user, lessons=None):
     """Devuelve (status_por_id, completed_ids). status: completed / current / locked."""
     if lessons is None:
@@ -570,6 +581,8 @@ __all__ = [
     "_build_missions",
     "_check_streak_chest",
     "_due_reviews",
+    "_first_lesson",
+    "_is_first_unit",
     "_duel_questions",
     "_duel_role",
     "_get_apod",

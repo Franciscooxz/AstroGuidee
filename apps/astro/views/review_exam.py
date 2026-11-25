@@ -95,10 +95,29 @@ def finish_exam(request, slug):
     )
 
 
+def _review_batch(user):
+    """Tanda de hoy: vencidas, si no las falladas, si no las más cercanas."""
+    due = list(_due_reviews(user)[:REVIEW_BATCH])
+    if due:
+        return [it.question for it in due], "due"
+    weak = _weak_questions(user)
+    if weak:
+        return weak, "weak"
+    soon = list(
+        ReviewItem.objects.filter(user=user, question__is_active=True)
+        .select_related("question", "question__lesson")
+        .prefetch_related("question__options")
+        .order_by("due")[:REVIEW_BATCH]
+    )
+    if soon:
+        return [it.question for it in soon], "soon"
+    return [], "empty"
+
+
 @login_required(login_url=LOGIN_URL)
 def review(request):
-    """Repaso inteligente: presenta las preguntas vencidas (repeticion espaciada)."""
-    due = list(_due_reviews(request.user)[:REVIEW_BATCH])
+    """Repaso: lo que vence, y si no hay, otra tanda el mismo día."""
+    questions, kind = _review_batch(request.user)
     total_due = _due_reviews(request.user).count()
     next_item = (
         ReviewItem.objects.filter(user=request.user, due__gt=timezone.localdate())
@@ -113,8 +132,12 @@ def review(request):
         request,
         "astro/app/review.html",
         {
-            "items": due,
-            "questions": [it.question for it in due],
+            "items": questions,
+            "questions": questions,
+            "review_note": {
+                "weak": "Otra vuelta por lo que fallaste.",
+                "soon": "Nada vence hoy. Practicamos lo que viene antes.",
+            }.get(kind, ""),
             "total_due": total_due,
             "next_due": next_item.due if next_item else None,
             "total_items": total_items,

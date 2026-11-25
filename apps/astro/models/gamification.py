@@ -34,6 +34,9 @@ class Profile(models.Model):
     daily_claimed = models.DateField("Meta diaria cobrada el", null=True, blank=True)
     hearts = models.PositiveIntegerField("Vidas", default=5)
     hearts_updated = models.DateTimeField("Vidas actualizadas", null=True, blank=True)
+    reminder_on = models.BooleanField("Aviso diario", default=True)
+    reminder_hour = models.PositiveSmallIntegerField("Hora del aviso", default=19)
+    last_reminded = models.DateField("Ultimo aviso", null=True, blank=True)
 
     class Meta:
         verbose_name = "Perfil"

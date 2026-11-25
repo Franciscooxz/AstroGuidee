@@ -146,6 +146,17 @@ def settings_view(request):
                 profile.save(update_fields=["avatar"])
                 messages.success(request, "Perfil actualizado.")
                 return redirect("astro:settings")
+        elif "save_reminder" in request.POST:
+            profile.reminder_on = request.POST.get("reminder_on") == "1"
+            try:
+                hour = int(request.POST.get("reminder_hour", 19))
+            except (TypeError, ValueError):
+                hour = 19
+            if 0 <= hour <= 23:
+                profile.reminder_hour = hour
+            profile.save(update_fields=["reminder_on", "reminder_hour"])
+            messages.success(request, "Aviso actualizado.")
+            return redirect("astro:settings")
         elif "save_goal" in request.POST:
             try:
                 goal = int(request.POST.get("daily_goal", 1))
@@ -172,6 +183,7 @@ def settings_view(request):
             "pw_form": pw_form,
             "avatar_icons": AVATAR_ICONS,
             "daily_goals": DAILY_GOALS,
+            "reminder_hours": list(range(7, 23)),
             "active_nav": "profile",
         },
     )

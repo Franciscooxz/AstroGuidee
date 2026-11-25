@@ -50,6 +50,25 @@
       <button type="submit" name="save_goal" class="btn btn-primary">Guardar meta</button>
     </form>
 
+    <form method="post" class="form-card">
+      {% csrf_token %}
+      <h3 class="fs-title">Aviso del día siguiente</h3>
+      <p class="fs-sub">Un correo a la hora que elijas, con el enlace al repaso.</p>
+      <label class="goal-tile">
+        <input type="checkbox" name="reminder_on" value="1" {% if profile.reminder_on %}checked{% endif %}>
+        <b>Avísame</b>
+      </label>
+      <div class="form-row">
+        <label for="id_reminder_hour">Hora</label>
+        <select name="reminder_hour" id="id_reminder_hour" class="field">
+          {% for h in reminder_hours %}
+          <option value="{{ h }}" {% if profile.reminder_hour == h %}selected{% endif %}>{{ h }}:00</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" name="save_reminder" class="btn btn-primary">Guardar aviso</button>
+    </form>
+
     <!-- Contraseña -->
     <form method="post" class="form-card">
       {% csrf_token %}

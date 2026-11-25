@@ -14,6 +14,8 @@
     <button type="button" class="q-report quiz-flag" title="Reportar problema" aria-label="Reportar problema">{% include 'astro/_icon.html' with name='flag' size=20 %}</button>
   </div>
 
+  {% if review_note %}<p class="quiz-goal">{{ review_note }}</p>{% endif %}
+
   <div id="quizStage" data-mode="review"
        data-finish="{% url 'astro:finish_review' %}"
        data-ruta="{% url 'astro:ruta' %}">

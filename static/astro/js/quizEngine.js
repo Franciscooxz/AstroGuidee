@@ -10,7 +10,12 @@
   const bar = document.getElementById("quizBar");
   const total = blocks.length;
   const answers = {};
+  const replayLater = [];
+  let replaying = false;
+  let replayQueue = [];
+  let replayIdx = 0;
   let idx = 0;
+  const freeHearts = stage.dataset.freeHearts === "1";
 
   // Vidas (solo en modo quiz; en el resto no existe #quizHearts y es no-op)
   const heartsBox = document.getElementById("quizHearts");
@@ -102,7 +107,7 @@
     const val = input.value.trim();
     if (!val) return;
     block.classList.add("answered");
-    answers[block.dataset.qid] = val;
+    if (!replaying) answers[block.dataset.qid] = val;
 
     const accepted = Array.from(block.querySelectorAll(".q-answers span")).map(function (s) {
       return norm(s.dataset.text);
@@ -111,8 +116,9 @@
     input.classList.add(ok ? "correct" : "wrong");
     input.disabled = true;
     block.querySelector(".q-check").disabled = true;
+    if (!replaying && !ok) replayLater.push(block);
+    if (!ok && !replaying && !freeHearts) loseHeart();
     if (!ok) {
-      loseHeart();
       const first = block.querySelector(".q-answers span");
       const sol = document.createElement("div");
       sol.className = "q-solution";
@@ -128,13 +134,14 @@
     if (block.classList.contains("answered")) return;
     block.classList.add("answered");
 
-    answers[block.dataset.qid] = opt.dataset.oid;
+    if (!replaying) answers[block.dataset.qid] = opt.dataset.oid;
     const correct = opt.dataset.correct === "1";
     opt.classList.add(correct ? "correct" : "wrong");
+    if (!replaying && !correct) replayLater.push(block);
+    if (!correct && !replaying && !freeHearts) loseHeart();
     if (!correct) {
-      loseHeart();
       const right = block.querySelector('.q-opt[data-correct="1"]');
-      if (right) right.classList.add("correct");
+      if (right && right !== opt) right.classList.add("correct");
     }
     block.querySelectorAll(".q-opt").forEach(function (o) {
       o.classList.add("locked");
@@ -143,11 +150,57 @@
     block.querySelector(".q-next").disabled = false;
   }
 
+  function resetBlock(block) {
+    block.classList.remove("answered");
+    block.querySelectorAll(".q-opt").forEach(function (o) {
+      o.classList.remove("correct", "wrong", "locked");
+    });
+    const input = block.querySelector(".q-text-input");
+    if (input) {
+      input.classList.remove("correct", "wrong");
+      input.disabled = false;
+      input.value = "";
+    }
+    const check = block.querySelector(".q-check");
+    if (check) check.disabled = false;
+    const ex = block.querySelector(".q-explain");
+    if (ex) ex.hidden = true;
+    const sol = block.querySelector(".q-solution");
+    if (sol) sol.remove();
+    const next = block.querySelector(".q-next");
+    if (next) next.disabled = true;
+    const count = block.querySelector(".q-count");
+    if (count) count.textContent = "Otra vez";
+  }
+
+  function showReplay() {
+    const block = replayQueue[replayIdx];
+    resetBlock(block);
+    block.hidden = false;
+  }
+
   function onNext() {
-    blocks[idx].hidden = true;
-    idx++;
-    setBar();
-    if (idx < total) blocks[idx].hidden = false;
+    const current = replaying ? replayQueue[replayIdx] : blocks[idx];
+    if (current) current.hidden = true;
+    if (!replaying) {
+      idx++;
+      setBar();
+      if (idx < total) {
+        blocks[idx].hidden = false;
+        return;
+      }
+      if (mode === "quiz" && replayLater.length) {
+        replaying = true;
+        replayQueue = replayLater.slice();
+        replayIdx = 0;
+        showReplay();
+        return;
+      }
+      finish();
+      return;
+    }
+    replayIdx++;
+    if (replayIdx < replayQueue.length) showReplay();
     else finish();
   }
 
@@ -275,6 +328,29 @@
       try {
         confetti();
       } catch (e) {}
+    }
+    if (data.signup_url) {
+      return (
+        '<div class="result-card ' +
+        (passed ? "ok" : "fail") +
+        '">' +
+        badge(passed ? (data.perfect ? "perfect" : "ok") : "fail", passed ? "check" : "x") +
+        "<h2>" +
+        (passed ? "Lección lista" : "Casi lo tienes") +
+        "</h2>" +
+        '<p class="res-score">Acertaste <b>' +
+        data.correct +
+        "</b> de <b>" +
+        data.total +
+        "</b></p>" +
+        "<p class=\"res-score\">Crea tu cuenta para guardar esta lección.</p>" +
+        '<div class="res-actions">' +
+        (passed ? "" : '<a href="" onclick="location.reload();return false;" class="btn">Reintentar</a>') +
+        '<a href="' +
+        data.signup_url +
+        '" class="btn btn-primary">Crear cuenta y guardar</a>' +
+        "</div></div>"
+      );
     }
     const badgeClass = passed ? (data.perfect ? "perfect" : "ok") : "fail";
     return (

@@ -9,7 +9,7 @@
         <h2><span class="bar"></span>{% include 'astro/_icon.html' with name=lesson.icon size=30 class='inline' %} {{ lesson.title }}</h2>
         <p>{{ lesson.subtitle|default:lesson.category.name }} · Toca cada tarjeta para girarla.</p>
       </div>
-      <a href="{% url 'astro:ruta' %}" class="btn">← Mi ruta</a>
+      <a href="{% if user.is_authenticated %}{% url 'astro:ruta' %}{% else %}{% url 'astro:home' %}{% endif %}" class="btn">← {% if user.is_authenticated %}Mi ruta{% else %}Inicio{% endif %}</a>
     </div>
 
     {% if cards %}

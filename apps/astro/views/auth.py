@@ -18,7 +18,13 @@ def register(request):
         if not bot and form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect("astro:onboarding")  # a la bienvenida
+            from .learning import claim_guest_quiz
+
+            claim_guest_quiz(request)
+            profile = _get_profile(user)
+            profile.onboarded = True
+            profile.save(update_fields=["onboarded"])
+            return redirect("astro:ruta")
         if bot:
             form.add_error(None, "No pudimos verificar que eres humano. Vuelve a intentarlo.")
     else:
@@ -38,6 +44,9 @@ def login_view(request):
         form = LoginForm(request, data=request.POST)
         if not honeypot_tripped(request) and form.is_valid():
             login(request, form.get_user())
+            from .learning import claim_guest_quiz
+
+            claim_guest_quiz(request)
             return redirect(request.POST.get("next") or request.GET.get("next") or "astro:ruta")
         if honeypot_tripped(request):
             form.add_error(None, "No pudimos verificar que eres humano.")

@@ -18,6 +18,7 @@ def home(request):
             "categories": categories,
             "featured": featured,
             "featured_cards": featured_cards,
+            "start_lesson": _first_lesson(),
         },
     )
 

@@ -3,7 +3,8 @@ from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.core.cache import cache
-from django.test import TestCase
+from django.core.management import call_command
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -908,3 +909,106 @@ class SecurityTests(TestCase):
         )
         self.assertEqual(resp.status_code, 302)
         self.assertTrue(User.objects.filter(username="humano").exists())
+
+
+_HOOK_STATIC = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}
+
+
+@override_settings(STORAGES=_HOOK_STATIC)
+class HookTests(AstroBaseTest):
+    def test_guest_finishes_first_lesson_and_register_saves_it(self):
+        answers = {str(self.q1.id): self.o_ok.id, str(self.q2.id): "sol"}
+        guest = self.client.post(
+            reverse("astro:finish_quiz", args=[self.l1.slug]),
+            data=json.dumps({"answers": answers}),
+            content_type="application/json",
+        )
+        data = guest.json()
+        self.assertEqual(guest.status_code, 200)
+        self.assertFalse(data["saved"])
+        self.assertTrue(data["passed"])
+        self.assertIn("/registro/", data["signup_url"])
+        self.assertFalse(LessonProgress.objects.filter(lesson=self.l1, completed=True).exists())
+
+        blocked = self.client.post(
+            reverse("astro:finish_quiz", args=[self.l2.slug]),
+            data=json.dumps({"answers": {}}),
+            content_type="application/json",
+        )
+        self.assertEqual(blocked.status_code, 401)
+
+        resp = self.client.post(
+            reverse("astro:register"),
+            {
+                "username": "invitado",
+                "email": "invitado@example.com",
+                "password1": "Cosmos2026xyz",
+                "password2": "Cosmos2026xyz",
+            },
+        )
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.url, reverse("astro:ruta"))
+        user = User.objects.get(username="invitado")
+        self.assertTrue(Profile.objects.get(user=user).onboarded)
+        self.assertTrue(
+            LessonProgress.objects.filter(user=user, lesson=self.l1, completed=True).exists()
+        )
+
+    def test_first_unit_does_not_spend_hearts(self):
+        self.login()
+        data = self.complete_l1(text_answer="luna").json()
+        self.assertEqual(data["hearts_lost"], 0)
+        self.assertEqual(Profile.objects.get(user=self.user).hearts, 5)
+
+    def test_review_same_day_uses_upcoming(self):
+        from apps.astro.views.review_exam import _review_batch
+
+        self.login()
+        self.complete_l1()
+        questions, kind = _review_batch(self.user)
+        self.assertEqual(kind, "soon")
+        self.assertEqual(len(questions), 2)
+        page = self.client.get(reverse("astro:review"))
+        self.assertContains(page, "Nada vence hoy")
+
+    def test_home_starts_the_lesson_and_route_shows_today(self):
+        home = self.client.get(reverse("astro:home"))
+        self.assertContains(home, reverse("astro:lesson", args=["l1"]))
+        self.assertContains(home, "Empezar")
+        lesson = self.client.get(reverse("astro:lesson", args=["l1"]))
+        self.assertEqual(lesson.status_code, 200)
+        quiz = self.client.get(reverse("astro:quiz", args=[self.l1.slug]))
+        self.assertContains(quiz, 'data-free-hearts="1"')
+        self.assertNotContains(quiz, 'id="quizHearts"')
+        self.login()
+        route = self.client.get(reverse("astro:ruta"))
+        self.assertContains(route, "0 de 1 hoy")
+
+    def test_league_hides_board_when_alone(self):
+        self.login()
+        page = self.client.get(reverse("astro:league"))
+        self.assertContains(page, "Liga Cometa")
+        self.assertContains(page, "Todavía estás solo")
+        self.assertNotContains(page, "league-board")
+
+    def test_reminder_setting_and_command(self):
+        self.login()
+        self.user.email = "tester@example.com"
+        self.user.save()
+        saved = self.client.post(
+            reverse("astro:settings"),
+            {"save_reminder": "1", "reminder_hour": "8"},
+        )
+        self.assertEqual(saved.status_code, 302)
+        profile = Profile.objects.get(user=self.user)
+        self.assertFalse(profile.reminder_on)
+        self.assertEqual(profile.reminder_hour, 8)
+        profile.reminder_on = True
+        profile.reminder_hour = timezone.localtime().hour
+        profile.save()
+        call_command("send_reminders")
+        profile.refresh_from_db()
+        self.assertEqual(profile.last_reminded, timezone.localdate())
