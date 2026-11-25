@@ -6,7 +6,7 @@
     <header class="home-hero">
       {% include 'astro/_dragon.html' with class='home-dragon' size=148 %}
       <h1>Entiende el universo</h1>
-      <p>Tarjetas claras y quizzes, desde el cielo que ves hasta las estrellas, las galaxias y los objetos extremos.</p>
+      <p>Una ruta desde cero: el cielo, la Luna, los planetas y, más adelante, las estrellas y el universo.</p>
       {% if start_lesson %}
       <a href="{% url 'astro:lesson' start_lesson.slug %}" class="btn btn-primary">{% include 'astro/_icon.html' with name='rocket' size=18 %} Empezar</a>
       {% else %}
@@ -25,7 +25,7 @@
     {% endif %}
 
     <h2 class="shop-sec" id="temas">Qué aprenderás</h2>
-    <p class="home-lead">Empieza en el universo que ves y sigue por el Sistema Solar, las estrellas, las galaxias y los objetos extremos.</p>
+    <p class="home-lead">Las primeras ocho unidades ya se pueden recorrer. El resto está en borrador.</p>
     <div class="cats">
       {% for cat in categories %}
       <a href="{% url 'astro:ruta' %}" class="cat-chip">

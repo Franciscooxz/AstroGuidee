@@ -7,7 +7,9 @@
     <div class="section-head">
       <div>
         <h2><span class="bar"></span>{% include 'astro/_icon.html' with name=lesson.icon size=30 class='inline' %} {{ lesson.title }}</h2>
-        <p>{{ lesson.subtitle|default:lesson.category.name }} · Toca cada tarjeta para girarla.</p>
+        <p>{{ lesson.subtitle|default:lesson.category.name }}{% if lesson.duration_min %} · {{ lesson.duration_min }} min{% endif %}</p>
+        {% if lesson.objective %}<p class="lesson-objective"><b>Objetivo.</b> {{ lesson.objective }}</p>{% endif %}
+        {% if lesson.prerequisites %}<p class="lesson-pre">Antes: {{ lesson.prerequisites }}</p>{% endif %}
       </div>
       <a href="{% if user.is_authenticated %}{% url 'astro:ruta' %}{% else %}{% url 'astro:home' %}{% endif %}" class="btn">← {% if user.is_authenticated %}Mi ruta{% else %}Inicio{% endif %}</a>
     </div>
@@ -28,6 +30,16 @@
     </div>
     {% else %}
     <p style="color:var(--text-dim)">Esta lección aún no tiene tarjetas.</p>
+    {% endif %}
+
+    {% if lesson.summary %}<p class="lesson-sum"><b>En resumen.</b> {{ lesson.summary }}</p>{% endif %}
+    {% if lesson.connections %}<p class="lesson-pre">Se apoya en: {{ lesson.connections }}</p>{% endif %}
+    {% if lesson.references %}
+    <details class="lesson-sources">
+      <summary>Fuentes</summary>
+      <p class="lesson-pre">Comprobadas el {{ lesson.source_checked }}. Esta comprobación no es una revisión de una persona experta.</p>
+      {{ lesson.references|linebreaks }}
+    </details>
     {% endif %}
 
     <!-- Completar leccion -->

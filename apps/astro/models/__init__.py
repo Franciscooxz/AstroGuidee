@@ -4,7 +4,7 @@ Se re-exportan todos aqui para que `from apps.astro.models import X` siga
 funcionando y Django registre los modelos.
 """
 
-from .content import Card, Category, Lesson, Option, Question
+from .content import Card, Category, Lesson, Option, Question, Stage
 from .gamification import (
     Achievement,
     MissionClaim,
@@ -38,4 +38,5 @@ __all__ = [
     "Duel",
     "Follow",
     "QuestionReport",
+    "Stage",
 ]

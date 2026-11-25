@@ -6,6 +6,7 @@ from .models import (
     CardProgress,
     Category,
     Lesson,
+    Stage,
     LessonProgress,
     Option,
     Profile,
@@ -31,9 +32,16 @@ class CardInline(admin.TabularInline):
     ordering = ["order"]
 
 
+@admin.register(Stage)
+class StageAdmin(admin.ModelAdmin):
+    list_display = ["order", "name", "code"]
+    ordering = ["order"]
+
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ["name", "icon", "lesson_count", "card_count", "order", "is_active"]
+    list_display = ["code", "name", "stage", "status", "lesson_count", "order", "is_active"]
+    list_filter = ["status", "stage", "is_active"]
     list_editable = ["order", "is_active"]
     prepopulated_fields = {"slug": ("name",)}
     inlines = [LessonInline]

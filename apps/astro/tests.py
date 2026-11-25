@@ -917,6 +917,27 @@ _HOOK_STATIC = {
 }
 
 
+class LearningPathTests(TestCase):
+    def test_six_stages_and_twenty_four_units(self):
+        from apps.astro.models import Stage
+        from apps.astro.views.common import _first_lesson
+
+        self.assertEqual(Stage.objects.count(), 6)
+        published = Category.objects.filter(status="published", code__startswith="u")
+        drafts = Category.objects.filter(status="draft")
+        self.assertEqual(published.count(), 8)
+        self.assertEqual(drafts.count(), 16)
+        self.assertFalse(drafts.filter(is_active=True).exists())
+        self.assertFalse(drafts.filter(lessons__is_active=True).exists())
+        self.assertEqual(Category.objects.get(code="u05").lessons.filter(is_active=True).count(), 6)
+        lesson = Lesson.objects.get(slug="u01-escalas")
+        self.assertIn("https://science.nasa.gov/solar-system/", lesson.references)
+        self.assertEqual(lesson.review_state, "sources_checked")
+        self.assertEqual(_first_lesson().slug, "u01-escalas")
+        old = Category.objects.filter(code__isnull=True, is_active=True)
+        self.assertFalse(old.exists())
+
+
 @override_settings(STORAGES=_HOOK_STATIC)
 class HookTests(AstroBaseTest):
     def test_guest_finishes_first_lesson_and_register_saves_it(self):

@@ -4,10 +4,55 @@ from django.db import models
 from django.utils.text import slugify
 
 
+class Stage(models.Model):
+    """Etapa de la ruta. Agrupa unidades; no es un currículo oficial."""
+
+    code = models.SlugField("Código", max_length=20, unique=True)
+    name = models.CharField("Nombre", max_length=80)
+    summary = models.CharField("Resumen", max_length=240, blank=True)
+    order = models.PositiveIntegerField("Orden", default=0)
+
+    class Meta:
+        verbose_name = "Etapa"
+        verbose_name_plural = "Etapas"
+        ordering = ["order"]
+
+    def __str__(self):
+        return self.name
+
+
 class Category(models.Model):
-    """Un tema de estudio: Sistema Solar, Estrellas, Agujeros Negros, Galaxias..."""
+    """Una unidad de la ruta. El progreso se guarda por lección, no por el orden."""
+
+    STATUS = [
+        ("published", "Publicada"),
+        ("draft", "Borrador"),
+        ("archived", "Archivada"),
+    ]
 
     name = models.CharField("Nombre", max_length=100)
+    stage = models.ForeignKey(
+        Stage,
+        related_name="units",
+        on_delete=models.PROTECT,
+        verbose_name="Etapa",
+        null=True,
+        blank=True,
+    )
+    code = models.SlugField(
+        "Código estable",
+        max_length=20,
+        unique=True,
+        null=True,
+        blank=True,
+        help_text="Identificador de la unidad, por ejemplo u01. No cambia si se reordena.",
+    )
+    status = models.CharField(
+        "Estado editorial",
+        max_length=20,
+        choices=STATUS,
+        default="published",
+    )
     slug = models.SlugField("Slug", max_length=120, unique=True, blank=True)
     subtitle = models.CharField("Subtitulo", max_length=200, blank=True)
     description = models.TextField("Descripcion", blank=True)
@@ -78,12 +123,35 @@ class Category(models.Model):
 class Lesson(models.Model):
     """Una leccion dentro de una unidad. Agrupa unas cuantas tarjetas."""
 
+    REVIEW = [
+        ("unverified", "Sin comprobación documental"),
+        ("sources_checked", "Fuentes comprobadas; sin revisión experta"),
+        ("expert_reviewed", "Revisión humana experta"),
+    ]
+
     category = models.ForeignKey(
         Category, related_name="lessons", on_delete=models.CASCADE, verbose_name="Unidad"
     )
     title = models.CharField("Titulo", max_length=120)
     slug = models.SlugField("Slug", max_length=140, unique=True, blank=True)
     subtitle = models.CharField("Subtitulo", max_length=200, blank=True)
+    objective = models.TextField("Objetivo", blank=True)
+    prerequisites = models.CharField("Conocimientos previos", max_length=240, blank=True)
+    summary = models.TextField("Resumen", blank=True)
+    connections = models.CharField("Conexiones con lo anterior", max_length=240, blank=True)
+    references = models.TextField(
+        "Referencias",
+        blank=True,
+        help_text="Una fuente por línea, con el enlace de la página consultada.",
+    )
+    source_checked = models.DateField("Fecha de comprobación", null=True, blank=True)
+    review_state = models.CharField(
+        "Revisión",
+        max_length=24,
+        choices=REVIEW,
+        default="unverified",
+    )
+    duration_min = models.PositiveSmallIntegerField("Minutos estimados", default=4)
     icon = models.CharField("Icono", max_length=40, blank=True, default="")
     order = models.PositiveIntegerField("Orden", default=0)
     is_active = models.BooleanField("Activa", default=True)

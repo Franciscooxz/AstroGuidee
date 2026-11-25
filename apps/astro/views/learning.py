@@ -110,6 +110,7 @@ def ruta(request):
             "daily_goal": profile.daily_goal,
             "daily_met": daily_done >= profile.daily_goal,
             "active_nav": "ruta",
+            "draft_units": Category.objects.filter(status="draft").select_related("stage").order_by("order"),
         },
     )
 
