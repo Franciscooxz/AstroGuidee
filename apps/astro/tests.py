@@ -925,10 +925,12 @@ class LearningPathTests(TestCase):
         self.assertEqual(Stage.objects.count(), 6)
         published = Category.objects.filter(status="published", code__startswith="u")
         drafts = Category.objects.filter(status="draft")
-        self.assertEqual(published.count(), 8)
-        self.assertEqual(drafts.count(), 16)
+        self.assertEqual(published.count(), 24)
+        self.assertEqual(drafts.count(), 0)
         self.assertFalse(drafts.filter(is_active=True).exists())
-        self.assertFalse(drafts.filter(lessons__is_active=True).exists())
+        self.assertGreaterEqual(
+            Lesson.objects.filter(category__code="u24", is_active=True).count(), 4
+        )
         self.assertEqual(Category.objects.get(code="u05").lessons.filter(is_active=True).count(), 6)
         lesson = Lesson.objects.get(slug="u01-escalas")
         self.assertIn("https://science.nasa.gov/solar-system/", lesson.references)

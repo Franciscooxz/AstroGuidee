@@ -1,8 +1,8 @@
 """Ruta pedagógica de AstroGuide: 6 etapas y 24 unidades.
 
-Las unidades 1 a 8 se publican con lecciones redactadas a partir de páginas
-consultadas el 24 de noviembre de 2026. Las unidades 9 a 24 quedan en borrador:
-no tienen lecciones activas ni se presentan como verificadas.
+Las 24 unidades se publican con lecciones redactadas a partir de páginas
+consultadas el 24 de noviembre de 2026. Si una ficha no se abrió, esa idea
+no se pregunta.
 
 Esta ruta es una propuesta de la app. No es un currículo de la NASA ni de la UAI.
 Ninguna lección se marca como revisada por una persona experta.
@@ -74,6 +74,81 @@ S = {
         "https://astro4edu.org/es/bigideas/bigideas/",
         "Consultado el índice el 2026-11-24. Solo se usan los títulos visibles de las grandes ideas, no el folleto completo.",
     ),
+    "gravedad": (
+        "NASA Space Place: What Is Gravity?",
+        "https://spaceplace.nasa.gov/what-is-gravity/en/",
+        "Página actualizada el 2020-12-17 y consultada el 2026-11-24.",
+    ),
+    "orbitas": (
+        "NASA Space Place: What Is an Orbit?",
+        "https://spaceplace.nasa.gov/orbits/en/",
+        "Página actualizada el 2023-09-29 y consultada el 2026-11-24.",
+    ),
+    "kepler": (
+        "NASA Science: Orbits and Kepler's Laws",
+        "https://science.nasa.gov/resource/orbits-and-keplers-laws/",
+        "Transcripción de 2008, materiales del 2023-09-04, consultada el 2026-11-24.",
+    ),
+    "espectro": (
+        "NASA Imagine the Universe: Electromagnetic Spectrum",
+        "https://imagine.gsfc.nasa.gov/science/toolbox/emspectrum1.html",
+        "Página actualizada en marzo de 2013 y consultada el 2026-11-24.",
+    ),
+    "ems": (
+        "NASA Science: Introduction to the Electromagnetic Spectrum",
+        "https://science.nasa.gov/ems/01_intro",
+        "Texto de 2010 consultado el 2026-11-24.",
+    ),
+    "espectros": (
+        "NASA Imagine the Universe: Spectra",
+        "https://imagine.gsfc.nasa.gov/science/toolbox/spectra1.html",
+        "Página actualizada en agosto de 2013 y consultada el 2026-11-24.",
+    ),
+    "doppler": (
+        "NASA Imagine the Universe: Doppler Shifting",
+        "https://imagine.gsfc.nasa.gov/features/yba/M31_velocity/spectrum/doppler.html",
+        "Canción didáctica consultada el 2026-11-24. Solo se usa el sentido del desplazamiento; no su frase sobre un posible frenado futuro.",
+    ),
+    "sol": (
+        "NASA Science: Sun Facts",
+        "https://science.nasa.gov/sun/facts/",
+        "Consultada el 2026-11-24. No se pregunta el año galáctico exacto: otra ficha lo redondea distinto.",
+    ),
+    "estrellas": (
+        "NASA Science: Star Basics",
+        "https://science.nasa.gov/universe/stars/",
+        "Consultada el 2026-11-24.",
+    ),
+    "tipos": (
+        "NASA Science: Star Types",
+        "https://science.nasa.gov/universe/stars/types/",
+        "Consultada el 2026-11-24.",
+    ),
+    "agujeros": (
+        "NASA Science: Black Hole Basics",
+        "https://science.nasa.gov/universe/black-holes/",
+        "Consultada el 2026-11-24. No se preguntan récords de masa o distancia: cambian.",
+    ),
+    "galaxias": (
+        "NASA Science: Galaxy Basics",
+        "https://science.nasa.gov/universe/galaxies/",
+        "Consultada el 2026-11-24. Da unos 240 millones de años a la órbita galáctica; la ficha del Sol da unos 230. No se pregunta la cifra.",
+    ),
+    "historia": (
+        "NASA Science: Cosmic History",
+        "https://science.nasa.gov/universe/overview/",
+        "Consultada el 2026-11-24. La inflación y la energía oscura se presentan como ideas de los cosmólogos, no como objetos fotografiados.",
+    ),
+    "oscura": (
+        "NASA Space Place: What Is Dark Matter?",
+        "https://spaceplace.nasa.gov/dark-matter/en/",
+        "Página actualizada el 2024-03-29 y consultada el 2026-11-24. Los porcentajes son los de esa página, no un examen de cifras.",
+    ),
+    "exo": (
+        "NASA Science: Exoplanets",
+        "https://science.nasa.gov/exoplanets/",
+        "Consultada el 2026-11-24. El número de confirmados cambia: no se pregunta.",
+    ),
 }
 
 
@@ -120,25 +195,8 @@ STAGES = [
     ("e6", 6, "Investiga el universo", "Otros sistemas, galaxias, la expansión y lo que sigue abierto."),
 ]
 
-# Unidades 9-24: solo estructura. Sin lecciones publicadas.
-DRAFTS = [
-    (9, "e3", "u09", "Distancias enormes", "orbit", "Kilómetros, unidad astronómica, año luz y el tiempo que tarda la luz. Borrador, sin lecciones publicadas."),
-    (10, "e3", "u10", "Gravedad y movimiento", "planet", "Masa, peso, atracción, inercia y caída libre. Borrador, sin lecciones publicadas."),
-    (11, "e3", "u11", "Cómo funcionan las órbitas", "orbit", "Leyes de Kepler, elipses, periodos y satélites. Borrador, sin lecciones publicadas."),
-    (12, "e3", "u12", "Cómo nacen los sistemas planetarios", "sun", "Nubes, discos, acreción y la formación del sistema solar. Borrador, sin lecciones publicadas."),
-    (13, "e4", "u13", "La luz trae información", "star", "Ondas, longitud de onda, frecuencia y el espectro. Borrador, sin lecciones publicadas."),
-    (14, "e4", "u14", "Nuestros ojos tecnológicos", "target", "Telescopios, detectores y observatorios. Borrador, sin lecciones publicadas."),
-    (15, "e4", "u15", "Descifrar una estrella", "star", "Espectros, elementos, temperatura y el efecto Doppler. Borrador, sin lecciones publicadas."),
-    (16, "e4", "u16", "Conoce al Sol", "sun", "Estructura, fusión, actividad solar y la relación con la Tierra. Borrador, sin lecciones publicadas."),
-    (17, "e5", "u17", "Estrellas diferentes", "star", "Color, temperatura, luminosidad y brillo aparente. Borrador, sin lecciones publicadas."),
-    (18, "e5", "u18", "Nacer, vivir y cambiar", "galaxy", "Nebulosas, protoestrellas, secuencia principal y el diagrama H-R. Borrador, sin lecciones publicadas."),
-    (19, "e5", "u19", "El destino de las estrellas", "star", "Evolución según la masa. Borrador, sin lecciones publicadas."),
-    (20, "e5", "u20", "Gravedad extrema", "blackhole", "Relatividad introductoria, agujeros negros y ondas gravitacionales. Borrador, sin lecciones publicadas."),
-    (21, "e6", "u21", "Otros sistemas planetarios", "planet", "Exoplanetas, tránsitos, velocidad radial y habitabilidad. Borrador, sin lecciones publicadas."),
-    (22, "e6", "u22", "Galaxias y distancias cósmicas", "galaxy", "La Vía Láctea, tipos de galaxias y la escalera de distancias. Borrador, sin lecciones publicadas."),
-    (23, "e6", "u23", "Un universo que evoluciona", "galaxy", "Expansión, corrimiento al rojo, Big Bang y el fondo cósmico. Borrador, sin lecciones publicadas."),
-    (24, "e6", "u24", "Las preguntas abiertas", "atom", "Materia oscura, energía oscura, vida y los límites de lo que sabemos. Borrador, sin lecciones publicadas."),
-]
+# Ya no hay unidades en borrador: las 24 se publican en path_build y path_later.
+DRAFTS = []
 
 
 def _units():
@@ -663,5 +721,6 @@ def _units_sky_and_moon():
 
 def published_units():
     from .path_build import neighborhood_units
+    from .path_later import later_units
 
-    return _units() + _units_sky_and_moon() + neighborhood_units()
+    return _units() + _units_sky_and_moon() + neighborhood_units() + later_units()

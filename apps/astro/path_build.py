@@ -444,10 +444,10 @@ def validate_learning_path(apps=None):
         problems.append("Las 24 unidades no están en orden.")
     published = [unit for unit in units if unit.status == "published"]
     drafts = [unit for unit in units if unit.status == "draft"]
-    if [unit.order for unit in published] != list(range(1, 9)):
-        problems.append("Las publicadas no son las unidades 1 a 8.")
-    if [unit.order for unit in drafts] != list(range(9, 25)):
-        problems.append("Los borradores no son las unidades 9 a 24.")
+    if [unit.order for unit in published] != list(range(1, 25)):
+        problems.append("Las publicadas no son las unidades 1 a 24.")
+    if drafts:
+        problems.append("Quedan unidades en borrador.")
     for unit in drafts:
         if unit.is_active:
             problems.append(f"{unit.code} está en borrador y sigue activa.")
